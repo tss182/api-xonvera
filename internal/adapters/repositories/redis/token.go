@@ -90,10 +90,10 @@ func (r *TokenRepository) FindByRefreshToken(ctx context.Context, refreshToken s
 	return &token, nil
 }
 
-// Update updates an existing token in Redis
+// Update updates an existing token in Redis using atomic transaction
 func (r *TokenRepository) Update(ctx context.Context, token *domain.Token) error {
-	// Delete old tokens first (we'll recreate with new values)
-	// This is simpler than trying to update in place
+	// Use Redis pipeline for atomic update
+	pipe := r.client.Pipeline()
 
 	// Serialize new token data
 	data, err := json.Marshal(token)
@@ -101,16 +101,19 @@ func (r *TokenRepository) Update(ctx context.Context, token *domain.Token) error
 		return fmt.Errorf("failed to marshal token: %w", err)
 	}
 
-	// Update access token
 	accessKey := fmt.Sprintf("token:access:%s", token.AccessToken)
-	if err := r.client.Set(ctx, accessKey, data, time.Until(token.ExpiresAt)).Err(); err != nil {
-		return fmt.Errorf("failed to update access token: %w", err)
-	}
-
-	// Update refresh token
 	refreshKey := fmt.Sprintf("token:refresh:%s", token.RefreshToken)
-	if err := r.client.Set(ctx, refreshKey, data, time.Until(token.RefreshExpiresAt)).Err(); err != nil {
-		return fmt.Errorf("failed to update refresh token: %w", err)
+	userKey := fmt.Sprintf("token:user:%d", token.UserID)
+
+	// Queue all operations
+	pipe.Set(ctx, accessKey, data, time.Until(token.ExpiresAt))
+	pipe.Set(ctx, refreshKey, data, time.Until(token.RefreshExpiresAt))
+	pipe.Set(ctx, userKey, token.AccessToken, time.Until(token.ExpiresAt))
+
+	// Execute all operations atomically
+	_, err = pipe.Exec(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to update token: %w", err)
 	}
 
 	return nil

@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"app/xonvera-core/internal/infrastructure/config"
 	"app/xonvera-core/internal/infrastructure/logger"
@@ -20,7 +21,7 @@ func NewRedisClient(cfg *config.RedisConfig) *redis.Client {
 	})
 
 	// Test connection
-	ctx, cancel := context.WithTimeout(context.Background(), 5*1000000000)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := client.Ping(ctx).Err(); err != nil {

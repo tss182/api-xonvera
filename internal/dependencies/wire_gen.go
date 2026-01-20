@@ -35,7 +35,7 @@ func InitializeApplication() (*Application, error) {
 	}
 	redisConfig := ProvideRedisConfig(configConfig)
 	client := redis.NewRedisClient(redisConfig)
-	app := server.NewFiberApp(configConfig, client)
+	app := server.NewFiberApp(configConfig, client, db)
 	userRepository := repositoriesSql.NewUserRepository(db)
 	tokenRepository := repositoriesRedis.NewTokenRepository(client)
 	tokenConfig := ProvideTokenConfig(configConfig)

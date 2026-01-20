@@ -24,8 +24,8 @@ func (User) TableName() string {
 type RegisterRequest struct {
 	Name     string `json:"name" validate:"required,min=2,max=100"`
 	Email    string `json:"email" validate:"required,email,max=255"`
-	Phone    string `json:"phone" validate:"required,min=10,max=15"`
-	Password string `json:"password" validate:"required,min=6,max=100"`
+	Phone    string `json:"phone" validate:"required,min=10,max=15,e164"` // E.164 format
+	Password string `json:"password" validate:"required,min=8,max=100"`   // Stronger minimum
 }
 
 type LoginRequest struct {

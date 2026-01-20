@@ -6,8 +6,6 @@ import (
 	"app/xonvera-core/internal/core/domain"
 )
 
-
-
 // TokenRepository defines the interface for token data persistence
 type TokenRepository interface {
 	Create(ctx context.Context, token *domain.Token) error
