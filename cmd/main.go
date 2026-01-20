@@ -90,7 +90,7 @@ func main() {
 	})
 
 	// Setup routes
-	routes.SetupRoutes(fiberApp, app.AuthHandler, app.AuthMiddleware, app.Redis)
+	routes.SetupRoutes(fiberApp, app)
 
 	// Start server
 	addr := ":" + app.Config.App.Port

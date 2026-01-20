@@ -3,29 +3,34 @@ package routes
 import (
 	"app/xonvera-core/internal/adapters/handler/http"
 	"app/xonvera-core/internal/adapters/middleware"
+	"app/xonvera-core/internal/dependencies"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/redis/go-redis/v9"
 )
 
 func SetupRoutes(
 	app *fiber.App,
-	authHandler *http.AuthHandler,
-	authMiddleware *middleware.AuthMiddleware,
-	redisClient *redis.Client,
+	appWire *dependencies.Application,
 ) {
 
 	// Auth routes (public) with rate limiting
-	auth := app.Group("/auth", middleware.AuthRateLimiter(redisClient))
+	auth := app.Group("/auth", middleware.AuthRateLimiter(appWire.Redis))
 	{
-		auth.Post("/register", authHandler.Register)
-		auth.Post("/login", authHandler.Login)
-		auth.Post("/refresh", authHandler.RefreshToken)
-		auth.Post("/logout", authMiddleware.Authenticate(), authHandler.Logout)
+		auth.Post("/register", appWire.AuthHandler.Register)
+		auth.Post("/login", appWire.AuthHandler.Login)
+		auth.Post("/refresh", appWire.AuthHandler.RefreshToken)
+		auth.Post("/logout", appWire.AuthMiddleware.Authenticate(), appWire.AuthHandler.Logout)
+	}
+
+	// Package routes (public)
+	packages := app.Group("/packages")
+	{
+		packages.Get("/", appWire.PackageHandler.GetPackages)
+		packages.Get("/:id", appWire.PackageHandler.GetPackageByID)
 	}
 
 	// Protected routes example
-	logged := app.Group("/", authMiddleware.Authenticate())
+	logged := app.Group("/", appWire.AuthMiddleware.Authenticate())
 	{
 		// Example protected route
 		logged.Get("/profile", func(c *fiber.Ctx) error {

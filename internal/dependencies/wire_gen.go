@@ -11,6 +11,7 @@ import (
 	"app/xonvera-core/internal/adapters/middleware"
 	"app/xonvera-core/internal/adapters/repositories/redis"
 	"app/xonvera-core/internal/adapters/repositories/sql"
+	"app/xonvera-core/internal/core/ports/repository"
 	"app/xonvera-core/internal/core/services"
 	"app/xonvera-core/internal/infrastructure/config"
 	"app/xonvera-core/internal/infrastructure/database"
@@ -40,12 +41,15 @@ func InitializeApplication() (*Application, error) {
 	authService := services.NewAuthService(userRepository, tokenRepository, tokenService, tokenConfig)
 	duration := ProvideRequestTimeout(configConfig)
 	authHandler := http.NewAuthHandler(authService, duration)
+	packageRepository := repositoriesSql.NewPackageRepository(db)
+	packageHandler := http.NewPackageHandler(packageRepository)
 	authMiddleware := middleware.NewAuthMiddleware(authService, duration)
 	application := &Application{
 		Config:         configConfig,
 		DB:             db,
 		Redis:          client,
 		AuthHandler:    authHandler,
+		PackageHandler: packageHandler,
 		AuthMiddleware: authMiddleware,
 	}
 	return application, nil
@@ -57,7 +61,7 @@ func InitializeApplication() (*Application, error) {
 var ProviderSet = wire.NewSet(config.LoadConfig, ProvideDBConfig,
 	ProvideTokenConfig,
 	ProvideRedisConfig,
-	ProvideRequestTimeout, database.NewConnection, redis.NewRedisClient, repositoriesSql.NewUserRepository, repositoriesRedis.NewTokenRepository, services.NewTokenService, services.NewAuthService, http.NewAuthHandler, middleware.NewAuthMiddleware,
+	ProvideRequestTimeout, database.NewConnection, redis.NewRedisClient, repositoriesSql.NewUserRepository, repositoriesSql.NewPackageRepository, repositoriesRedis.NewTokenRepository, services.NewTokenService, services.NewAuthService, http.NewAuthHandler, http.NewPackageHandler, middleware.NewAuthMiddleware, wire.Bind(new(portRepository.PackageRepository), new(*repositoriesSql.PackageRepository)),
 )
 
 // ProvideDBConfig extracts DatabaseConfig from Config
@@ -86,5 +90,6 @@ type Application struct {
 	DB             *gorm.DB
 	Redis          *redis2.Client
 	AuthHandler    *http.AuthHandler
+	PackageHandler *http.PackageHandler
 	AuthMiddleware *middleware.AuthMiddleware
 }
