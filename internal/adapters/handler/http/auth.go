@@ -1,0 +1,164 @@
+package http
+
+import (
+	"context"
+	"time"
+
+	"app/xonvera-core/internal/adapters/validator"
+	"app/xonvera-core/internal/core/domain"
+	"app/xonvera-core/internal/core/ports/service"
+
+	"github.com/gofiber/fiber/v2"
+)
+
+type AuthHandler struct {
+	authService    portService.AuthService
+	requestTimeout time.Duration
+}
+
+func NewAuthHandler(authService portService.AuthService, requestTimeout time.Duration) *AuthHandler {
+	return &AuthHandler{
+		authService:    authService,
+		requestTimeout: requestTimeout,
+	}
+}
+
+// Register handles user registration
+// @Summary Register a new user
+// @Description Register a new user with name, email, phone, and password
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body domain.RegisterRequest true "Register Request"
+// @Success 201 {object} Response
+// @Failure 400 {object} Response
+// @Router /api/v1/auth/register [post]
+func (h *AuthHandler) Register(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.UserContext(), h.requestTimeout)
+	defer cancel()
+
+	var req domain.RegisterRequest
+
+	if err := c.BodyParser(&req); err != nil {
+		return ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
+	}
+
+	// Validate request
+	if err := validator.Validate(req); err != nil {
+		return ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+	}
+
+	response, err := h.authService.Register(ctx, &req)
+	if err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			return ErrorResponse(c, fiber.StatusRequestTimeout, "Request timeout")
+		}
+		return ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+	}
+
+	return SuccessResponse(c, fiber.StatusCreated, "User registered successfully", response)
+}
+
+// Login handles user login
+// @Summary Login user
+// @Description Login with email or phone and password
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body domain.LoginRequest true "Login Request"
+// @Success 200 {object} Response
+// @Failure 400 {object} Response
+// @Failure 401 {object} Response
+// @Router /api/v1/auth/login [post]
+func (h *AuthHandler) Login(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.UserContext(), h.requestTimeout)
+	defer cancel()
+
+	var req domain.LoginRequest
+
+	if err := c.BodyParser(&req); err != nil {
+		return ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
+	}
+
+	// Validate request
+	if err := validator.Validate(req); err != nil {
+		return ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+	}
+
+	response, err := h.authService.Login(ctx, &req)
+	if err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			return ErrorResponse(c, fiber.StatusRequestTimeout, "Request timeout")
+		}
+		return ErrorResponse(c, fiber.StatusUnauthorized, err.Error())
+	}
+
+	return SuccessResponse(c, fiber.StatusOK, "Login successful", response)
+}
+
+// RefreshToken handles token refresh
+// @Summary Refresh access token
+// @Description Get new access token using refresh token
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body domain.RefreshTokenRequest true "Refresh Token Request"
+// @Success 200 {object} Response
+// @Failure 400 {object} Response
+// @Failure 401 {object} Response
+// @Router /api/v1/auth/refresh [post]
+func (h *AuthHandler) RefreshToken(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.UserContext(), h.requestTimeout)
+	defer cancel()
+
+	var req domain.RefreshTokenRequest
+
+	if err := c.BodyParser(&req); err != nil {
+		return ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
+	}
+
+	if req.RefreshToken == "" {
+		return ErrorResponse(c, fiber.StatusBadRequest, "Refresh token is required")
+	}
+
+	response, err := h.authService.RefreshToken(ctx, &req)
+	if err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			return ErrorResponse(c, fiber.StatusRequestTimeout, "Request timeout")
+		}
+		return ErrorResponse(c, fiber.StatusUnauthorized, err.Error())
+	}
+
+	return SuccessResponse(c, fiber.StatusOK, "Token refreshed successfully", response)
+}
+
+// Logout handles user logout
+// @Summary Logout user
+// @Description Invalidate current access token
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} Response
+// @Failure 401 {object} Response
+// @Router /api/v1/auth/logout [post]
+func (h *AuthHandler) Logout(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.UserContext(), h.requestTimeout)
+	defer cancel()
+
+	// Get access token from context (set by auth middleware)
+	accessToken, ok := c.Locals("accessToken").(string)
+	if !ok || accessToken == "" {
+		return ErrorResponse(c, fiber.StatusUnauthorized, "Access token not found")
+	}
+
+	err := h.authService.Logout(ctx, accessToken)
+	if err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			return ErrorResponse(c, fiber.StatusRequestTimeout, "Request timeout")
+		}
+		return ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+	}
+
+	return SuccessResponse(c, fiber.StatusOK, "Logged out successfully", nil)
+}
