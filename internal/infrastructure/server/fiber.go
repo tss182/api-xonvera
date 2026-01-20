@@ -1,6 +1,8 @@
 package server
 
 import (
+	"time"
+
 	"app/xonvera-core/internal/adapters/middleware"
 	"app/xonvera-core/internal/infrastructure/config"
 
@@ -13,6 +15,8 @@ import (
 
 // NewFiberApp creates and configures a new Fiber application instance with middleware and routes
 func NewFiberApp(cfg *config.Config, redisClient *redis.Client) *fiber.App {
+	startTime := time.Now()
+
 	app := fiber.New(fiber.Config{
 		AppName: cfg.App.Name,
 	})
@@ -33,10 +37,12 @@ func NewFiberApp(cfg *config.Config, redisClient *redis.Client) *fiber.App {
 
 	// Health check endpoint
 	app.Get("/health", func(c *fiber.Ctx) error {
+		uptime := time.Since(startTime)
 		return c.JSON(fiber.Map{
-			"status": "healthy",
-			"app":    cfg.App.Name,
+			"status":  "healthy",
+			"app":     cfg.App.Name,
 			"version": cfg.App.Version,
+			"uptime":  uptime.String(),
 		})
 	})
 
