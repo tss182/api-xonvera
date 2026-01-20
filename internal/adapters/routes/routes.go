@@ -34,7 +34,10 @@ func SetupRoutes(
 	{
 		// Example protected route
 		logged.Get("/profile", func(c *fiber.Ctx) error {
-			userID := c.Locals("userID").(uint)
+			userID, ok := c.Locals("userID").(uint)
+			if !ok {
+				return http.NoAuth(c)
+			}
 			return http.OK(c, fiber.Map{
 				"user_id": userID,
 			})

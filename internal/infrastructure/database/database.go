@@ -91,9 +91,9 @@ func NewConnection(cfg *config.DatabaseConfig) (*gorm.DB, error) {
 		zap.String("host", cfg.Host),
 		zap.String("database", cfg.Name),
 		zap.Int("max_idle_conn", cfg.MaxIdleConn),
-		zap.Int("max_open_conn", cfg.MaxOpenConn),		
-		zap.Duration("conn_max_idle_time", cfg.ConnMaxIdleTime),		
-		zap.Duration("conn_max_life_time", cfg.ConnMaxLifeTime),		
+		zap.Int("max_open_conn", cfg.MaxOpenConn),
+		zap.Duration("conn_max_idle_time", cfg.ConnMaxIdleTime),
+		zap.Duration("conn_max_life_time", cfg.ConnMaxLifeTime),
 	)
 
 	return db, nil

@@ -202,7 +202,8 @@ func (s *authService) Logout(ctx context.Context, accessToken string) error {
 	// Find token by access token to verify it exists
 	storedToken, err := s.tokenRepo.FindByAccessToken(ctx, accessToken)
 	if err != nil {
-		// Token doesn't exist, consider it already logged out
+		// Token might already be deleted, still return success
+		logger.Debug("token not found during logout, already expired or deleted")
 		return nil
 	}
 

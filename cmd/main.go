@@ -6,6 +6,7 @@ import (
 	"app/xonvera-core/internal/adapters/routes"
 	"app/xonvera-core/internal/dependencies"
 	"app/xonvera-core/internal/infrastructure/database"
+	"app/xonvera-core/internal/infrastructure/graceful"
 	"app/xonvera-core/internal/infrastructure/logger"
 	"app/xonvera-core/internal/infrastructure/redis"
 
@@ -82,14 +83,19 @@ func main() {
 	// Setup routes
 	routes.SetupRoutes(app.FiberApp, app)
 
-	// Start server
+	// Start server in goroutine
 	addr := ":" + app.Config.App.Port
-	logger.Info("Starting server",
-		zap.String("app", app.Config.App.Name),
-		zap.String("addr", addr),
-		zap.String("env", app.Config.App.Env),
-	)
-	if err := app.FiberApp.Listen(addr); err != nil {
-		logger.Fatal("Failed to start server", zap.Error(err))
-	}
+	go func() {
+		logger.Info("Starting server",
+			zap.String("app", app.Config.App.Name),
+			zap.String("addr", addr),
+			zap.String("env", app.Config.App.Env),
+		)
+		if err := app.FiberApp.Listen(addr); err != nil {
+			logger.Fatal("Failed to start server", zap.Error(err))
+		}
+	}()
+
+	// Handle graceful shutdown
+	graceful.Shutdown(app.FiberApp, app.DB)
 }
