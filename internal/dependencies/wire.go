@@ -8,8 +8,9 @@ import (
 
 	"app/xonvera-core/internal/adapters/handler/http"
 	"app/xonvera-core/internal/adapters/middleware"
-	"app/xonvera-core/internal/adapters/repositories/redis"
-	"app/xonvera-core/internal/adapters/repositories/sql"
+	repositoriesRedis "app/xonvera-core/internal/adapters/repositories/redis"
+	repositoriesSql "app/xonvera-core/internal/adapters/repositories/sql"
+	portRepository "app/xonvera-core/internal/core/ports/repository"
 	"app/xonvera-core/internal/core/services"
 	"app/xonvera-core/internal/infrastructure/config"
 	"app/xonvera-core/internal/infrastructure/database"
@@ -37,6 +38,7 @@ var ProviderSet = wire.NewSet(
 
 	// Repositories
 	repositoriesSql.NewUserRepository,
+	repositoriesSql.NewPackageRepository,
 	repositoriesRedis.NewTokenRepository,
 
 	// Services
@@ -45,9 +47,13 @@ var ProviderSet = wire.NewSet(
 
 	// Handlers
 	http.NewAuthHandler,
+	http.NewPackageHandler,
 
 	// Middleware
 	middleware.NewAuthMiddleware,
+
+	// Bindings
+	wire.Bind(new(portRepository.PackageRepository), new(*repositoriesSql.PackageRepository)),
 )
 
 // ProvideDBConfig extracts DatabaseConfig from Config
@@ -76,6 +82,7 @@ type Application struct {
 	DB             *gorm.DB
 	Redis          *goredis.Client
 	AuthHandler    *http.AuthHandler
+	PackageHandler *http.PackageHandler
 	AuthMiddleware *middleware.AuthMiddleware
 }
 
