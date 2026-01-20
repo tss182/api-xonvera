@@ -4,19 +4,20 @@ import (
 	"context"
 
 	"app/xonvera-core/internal/core/domain"
+	portRepository "app/xonvera-core/internal/core/ports/repository"
 
 	"gorm.io/gorm"
 )
 
-type PackageRepository struct {
+type packageRepository struct {
 	db *gorm.DB
 }
 
-func NewPackageRepository(db *gorm.DB) *PackageRepository {
-	return &PackageRepository{db: db}
+func NewPackageRepository(db *gorm.DB) portRepository.PackageRepository {
+	return &packageRepository{db: db}
 }
 
-func (r *PackageRepository) GetAll(ctx context.Context) ([]domain.Package, error) {
+func (r *packageRepository) GetAll(ctx context.Context) ([]domain.Package, error) {
 	var packages []domain.Package
 	if err := r.db.WithContext(ctx).Find(&packages).Error; err != nil {
 		return nil, err
@@ -24,7 +25,7 @@ func (r *PackageRepository) GetAll(ctx context.Context) ([]domain.Package, error
 	return packages, nil
 }
 
-func (r *PackageRepository) GetByID(ctx context.Context, id string) (*domain.Package, error) {
+func (r *packageRepository) GetByID(ctx context.Context, id string) (*domain.Package, error) {
 	var pkg domain.Package
 	if err := r.db.WithContext(ctx).First(&pkg, "id = ?", id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -35,14 +36,14 @@ func (r *PackageRepository) GetByID(ctx context.Context, id string) (*domain.Pac
 	return &pkg, nil
 }
 
-func (r *PackageRepository) Create(ctx context.Context, pkg *domain.Package) error {
+func (r *packageRepository) Create(ctx context.Context, pkg *domain.Package) error {
 	return r.db.WithContext(ctx).Create(pkg).Error
 }
 
-func (r *PackageRepository) Update(ctx context.Context, pkg *domain.Package) error {
+func (r *packageRepository) Update(ctx context.Context, pkg *domain.Package) error {
 	return r.db.WithContext(ctx).Save(pkg).Error
 }
 
-func (r *PackageRepository) Delete(ctx context.Context, id string) error {
+func (r *packageRepository) Delete(ctx context.Context, id string) error {
 	return r.db.WithContext(ctx).Delete(&domain.Package{}, "id = ?", id).Error
 }

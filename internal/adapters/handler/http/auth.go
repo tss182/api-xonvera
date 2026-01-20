@@ -14,14 +14,14 @@ import (
 )
 
 type AuthHandler struct {
-	authService    portService.AuthService
-	requestTimeout time.Duration
+	service portService.AuthService
+	rto     time.Duration
 }
 
-func NewAuthHandler(authService portService.AuthService, requestTimeout time.Duration) *AuthHandler {
+func NewAuthHandler(service portService.AuthService, rto time.Duration) *AuthHandler {
 	return &AuthHandler{
-		authService:    authService,
-		requestTimeout: requestTimeout,
+		service: service,
+		rto:     rto,
 	}
 }
 
@@ -36,7 +36,7 @@ func NewAuthHandler(authService portService.AuthService, requestTimeout time.Dur
 // @Failure 400 {object} Response
 // @Router /api/v1/auth/register [post]
 func (h *AuthHandler) Register(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(c.UserContext(), h.requestTimeout)
+	ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
 	defer cancel()
 
 	var req domain.RegisterRequest
@@ -47,7 +47,7 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 		return BadRequest(c, err)
 	}
 
-	response, err := h.authService.Register(ctx, &req)
+	response, err := h.service.Register(ctx, &req)
 	if err != nil {
 		return HandlerErrorGlobal(c, err)
 	}
@@ -67,7 +67,7 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 // @Failure 401 {object} Response
 // @Router /api/v1/auth/login [post]
 func (h *AuthHandler) Login(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(c.UserContext(), h.requestTimeout)
+	ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
 	defer cancel()
 
 	var req domain.LoginRequest
@@ -78,7 +78,7 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		return BadRequest(c, err)
 	}
 
-	response, err := h.authService.Login(ctx, &req)
+	response, err := h.service.Login(ctx, &req)
 	if err != nil {
 		return HandlerErrorGlobal(c, err)
 	}
@@ -98,7 +98,7 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 // @Failure 401 {object} Response
 // @Router /api/v1/auth/refresh [post]
 func (h *AuthHandler) RefreshToken(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(c.UserContext(), h.requestTimeout)
+	ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
 	defer cancel()
 
 	var req domain.RefreshTokenRequest
@@ -109,7 +109,7 @@ func (h *AuthHandler) RefreshToken(c *fiber.Ctx) error {
 		return BadRequest(c, err)
 	}
 
-	response, err := h.authService.RefreshToken(ctx, &req)
+	response, err := h.service.RefreshToken(ctx, &req)
 	if err != nil {
 		return HandlerErrorGlobal(c, err)
 	}
@@ -128,7 +128,7 @@ func (h *AuthHandler) RefreshToken(c *fiber.Ctx) error {
 // @Failure 401 {object} Response
 // @Router /api/v1/auth/logout [post]
 func (h *AuthHandler) Logout(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(c.UserContext(), h.requestTimeout)
+	ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
 	defer cancel()
 
 	// Get access token from context (set by auth middleware)
@@ -137,7 +137,7 @@ func (h *AuthHandler) Logout(c *fiber.Ctx) error {
 		return NoAuth(c)
 	}
 
-	err := h.authService.Logout(ctx, accessToken)
+	err := h.service.Logout(ctx, accessToken)
 	if err != nil {
 		return HandlerErrorGlobal(c, err)
 	}

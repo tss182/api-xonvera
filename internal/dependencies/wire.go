@@ -10,7 +10,6 @@ import (
 	"app/xonvera-core/internal/adapters/middleware"
 	repositoriesRedis "app/xonvera-core/internal/adapters/repositories/redis"
 	repositoriesSql "app/xonvera-core/internal/adapters/repositories/sql"
-	portRepository "app/xonvera-core/internal/core/ports/repository"
 	"app/xonvera-core/internal/core/services"
 	"app/xonvera-core/internal/infrastructure/config"
 	"app/xonvera-core/internal/infrastructure/database"
@@ -44,6 +43,7 @@ var ProviderSet = wire.NewSet(
 	// Services
 	services.NewTokenService,
 	services.NewAuthService,
+	services.NewPackageService,
 
 	// Handlers
 	http.NewAuthHandler,
@@ -51,9 +51,6 @@ var ProviderSet = wire.NewSet(
 
 	// Middleware
 	middleware.NewAuthMiddleware,
-
-	// Bindings
-	wire.Bind(new(portRepository.PackageRepository), new(*repositoriesSql.PackageRepository)),
 )
 
 // ProvideDBConfig extracts DatabaseConfig from Config

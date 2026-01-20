@@ -11,7 +11,6 @@ import (
 	"app/xonvera-core/internal/adapters/middleware"
 	"app/xonvera-core/internal/adapters/repositories/redis"
 	"app/xonvera-core/internal/adapters/repositories/sql"
-	"app/xonvera-core/internal/core/ports/repository"
 	"app/xonvera-core/internal/core/services"
 	"app/xonvera-core/internal/infrastructure/config"
 	"app/xonvera-core/internal/infrastructure/database"
@@ -42,7 +41,8 @@ func InitializeApplication() (*Application, error) {
 	duration := ProvideRequestTimeout(configConfig)
 	authHandler := http.NewAuthHandler(authService, duration)
 	packageRepository := repositoriesSql.NewPackageRepository(db)
-	packageHandler := http.NewPackageHandler(packageRepository)
+	packageService := services.NewPackageService(packageRepository)
+	packageHandler := http.NewPackageHandler(packageService)
 	authMiddleware := middleware.NewAuthMiddleware(authService, duration)
 	application := &Application{
 		Config:         configConfig,
@@ -61,7 +61,7 @@ func InitializeApplication() (*Application, error) {
 var ProviderSet = wire.NewSet(config.LoadConfig, ProvideDBConfig,
 	ProvideTokenConfig,
 	ProvideRedisConfig,
-	ProvideRequestTimeout, database.NewConnection, redis.NewRedisClient, repositoriesSql.NewUserRepository, repositoriesSql.NewPackageRepository, repositoriesRedis.NewTokenRepository, services.NewTokenService, services.NewAuthService, http.NewAuthHandler, http.NewPackageHandler, middleware.NewAuthMiddleware, wire.Bind(new(portRepository.PackageRepository), new(*repositoriesSql.PackageRepository)),
+	ProvideRequestTimeout, database.NewConnection, redis.NewRedisClient, repositoriesSql.NewUserRepository, repositoriesSql.NewPackageRepository, repositoriesRedis.NewTokenRepository, services.NewTokenService, services.NewAuthService, services.NewPackageService, http.NewAuthHandler, http.NewPackageHandler, middleware.NewAuthMiddleware,
 )
 
 // ProvideDBConfig extracts DatabaseConfig from Config

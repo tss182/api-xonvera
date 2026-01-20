@@ -1,23 +1,23 @@
 package http
 
 import (
-	portRepository "app/xonvera-core/internal/core/ports/repository"
+	portService "app/xonvera-core/internal/core/ports/service"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type PackageHandler struct {
-	packageRepo portRepository.PackageRepository
+	service portService.PackageService
 }
 
-func NewPackageHandler(packageRepo portRepository.PackageRepository) *PackageHandler {
+func NewPackageHandler(service portService.PackageService) *PackageHandler {
 	return &PackageHandler{
-		packageRepo: packageRepo,
+		service: service,
 	}
 }
 
 func (h *PackageHandler) GetPackages(c *fiber.Ctx) error {
-	packages, err := h.packageRepo.GetAll(c.Context())
+	packages, err := h.service.GetPackages(c.Context())
 	if err != nil {
 		return ErrorResponse(c, fiber.StatusInternalServerError, "Failed to fetch packages: "+err.Error())
 	}
@@ -31,7 +31,7 @@ func (h *PackageHandler) GetPackageByID(c *fiber.Ctx) error {
 		return ErrorResponse(c, fiber.StatusBadRequest, "Invalid package ID")
 	}
 
-	pkg, err := h.packageRepo.GetByID(c.Context(), id)
+	pkg, err := h.service.GetPackageByID(c.Context(), id)
 	if err != nil {
 		return ErrorResponse(c, fiber.StatusInternalServerError, "Failed to fetch package")
 	}
@@ -41,12 +41,4 @@ func (h *PackageHandler) GetPackageByID(c *fiber.Ctx) error {
 	}
 
 	return SuccessResponse(c, fiber.StatusOK, "Package fetched successfully", pkg)
-}
-
-type CreatePackageRequest struct {
-	ID           string `json:"id" validate:"required,min=1,max=255"`
-	Name         string `json:"name" validate:"required,min=1,max=255"`
-	Price        int    `json:"price" validate:"required,min=0"`
-	DiscountType string `json:"discount_type" validate:"required,oneof=PERCENTAGE AMOUNT"`
-	Discount     int    `json:"discount" validate:"required,min=0"`
 }
