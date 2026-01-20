@@ -22,7 +22,9 @@ func NewRateLimiter(max int, duration time.Duration, redisClient *redis.Client) 
 	`
 
 	return func(c *fiber.Ctx) error {
-		key := fmt.Sprintf("ratelimit:%s", c.IP())
+		// Prefer member_id or userID for per-user limits; fallback to domain (hostname)
+		keyID := resolveRateLimitKey(c)
+		key := fmt.Sprintf("ratelimit:%s", keyID)
 		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 		defer cancel()
 
@@ -50,4 +52,16 @@ func AuthRateLimiter(redisClient *redis.Client) fiber.Handler {
 // APIRateLimiter creates a general rate limiter for API endpoints
 func APIRateLimiter(redisClient *redis.Client) fiber.Handler {
 	return NewRateLimiter(100, 1*time.Minute, redisClient) // 100 requests per minute
+}
+
+// resolveRateLimitKey builds the rate-limit key based on member/user identity, falling back to domain
+func resolveRateLimitKey(c *fiber.Ctx) string {
+	if userID := c.Locals("userID"); userID != nil {
+		if v := fmt.Sprint(userID); v != "" {
+			return v
+		}
+	}
+
+	// Last resort: IP
+	return c.IP()
 }
