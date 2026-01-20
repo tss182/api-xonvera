@@ -36,6 +36,7 @@ func NewFiberApp(cfg *config.Config, redisClient *redis.Client) *fiber.App {
 		return c.JSON(fiber.Map{
 			"status": "healthy",
 			"app":    cfg.App.Name,
+			"version": cfg.App.Version,
 		})
 	})
 

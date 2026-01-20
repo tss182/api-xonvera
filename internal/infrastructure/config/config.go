@@ -18,6 +18,7 @@ type Config struct {
 
 type AppConfig struct {
 	Name           string `mapstructure:"APP_NAME"`
+	Version        string `mapstructure:"APP_VERSION"`
 	Port           string `mapstructure:"APP_PORT"`
 	Env            string `mapstructure:"APP_ENV"`
 	RequestTimeout time.Duration
