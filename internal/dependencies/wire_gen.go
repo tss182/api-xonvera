@@ -15,6 +15,8 @@ import (
 	"app/xonvera-core/internal/infrastructure/config"
 	"app/xonvera-core/internal/infrastructure/database"
 	"app/xonvera-core/internal/infrastructure/redis"
+	"app/xonvera-core/internal/infrastructure/server"
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/wire"
 	redis2 "github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
@@ -33,6 +35,7 @@ func InitializeApplication() (*Application, error) {
 	}
 	redisConfig := ProvideRedisConfig(configConfig)
 	client := redis.NewRedisClient(redisConfig)
+	app := server.NewFiberApp(configConfig, client)
 	userRepository := repositoriesSql.NewUserRepository(db)
 	tokenRepository := repositoriesRedis.NewTokenRepository(client)
 	tokenConfig := ProvideTokenConfig(configConfig)
@@ -48,6 +51,7 @@ func InitializeApplication() (*Application, error) {
 		Config:         configConfig,
 		DB:             db,
 		Redis:          client,
+		FiberApp:       app,
 		AuthHandler:    authHandler,
 		PackageHandler: packageHandler,
 		AuthMiddleware: authMiddleware,
@@ -61,7 +65,7 @@ func InitializeApplication() (*Application, error) {
 var ProviderSet = wire.NewSet(config.LoadConfig, ProvideDBConfig,
 	ProvideTokenConfig,
 	ProvideRedisConfig,
-	ProvideRequestTimeout, database.NewConnection, redis.NewRedisClient, repositoriesSql.NewUserRepository, repositoriesSql.NewPackageRepository, repositoriesRedis.NewTokenRepository, services.NewTokenService, services.NewAuthService, services.NewPackageService, http.NewAuthHandler, http.NewPackageHandler, middleware.NewAuthMiddleware,
+	ProvideRequestTimeout, database.NewConnection, redis.NewRedisClient, server.NewFiberApp, repositoriesSql.NewUserRepository, repositoriesSql.NewPackageRepository, repositoriesRedis.NewTokenRepository, services.NewTokenService, services.NewAuthService, services.NewPackageService, http.NewAuthHandler, http.NewPackageHandler, middleware.NewAuthMiddleware,
 )
 
 // ProvideDBConfig extracts DatabaseConfig from Config
@@ -89,6 +93,7 @@ type Application struct {
 	Config         *config.Config
 	DB             *gorm.DB
 	Redis          *redis2.Client
+	FiberApp       *fiber.App
 	AuthHandler    *http.AuthHandler
 	PackageHandler *http.PackageHandler
 	AuthMiddleware *middleware.AuthMiddleware

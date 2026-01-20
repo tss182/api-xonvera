@@ -14,7 +14,9 @@ import (
 	"app/xonvera-core/internal/infrastructure/config"
 	"app/xonvera-core/internal/infrastructure/database"
 	"app/xonvera-core/internal/infrastructure/redis"
+	"app/xonvera-core/internal/infrastructure/server"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/wire"
 	goredis "github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
@@ -34,6 +36,9 @@ var ProviderSet = wire.NewSet(
 
 	// Redis
 	redis.NewRedisClient,
+
+	// Server
+	server.NewFiberApp,
 
 	// Repositories
 	repositoriesSql.NewUserRepository,
@@ -78,6 +83,7 @@ type Application struct {
 	Config         *config.Config
 	DB             *gorm.DB
 	Redis          *goredis.Client
+	FiberApp       *fiber.App
 	AuthHandler    *http.AuthHandler
 	PackageHandler *http.PackageHandler
 	AuthMiddleware *middleware.AuthMiddleware
