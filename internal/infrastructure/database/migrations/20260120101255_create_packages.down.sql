@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS app.packages;
+DROP SCHEMA IF EXISTS app;
