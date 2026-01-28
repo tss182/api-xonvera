@@ -114,11 +114,15 @@ func (r *TokenRepository) Update(ctx context.Context, token *domain.Token) error
 		if err == nil {
 			// Delete old access token key
 			oldAccessKey := fmt.Sprintf("token:access:%s", oldToken.AccessToken)
-			r.client.Del(ctx, oldAccessKey)
+			if err := r.client.Del(ctx, oldAccessKey).Err(); err != nil {
+				return fmt.Errorf("failed to delete old access token: %w", err)
+			}
 
 			// Delete old refresh token key
 			oldRefreshKey := fmt.Sprintf("token:refresh:%s", oldToken.RefreshToken)
-			r.client.Del(ctx, oldRefreshKey)
+			if err := r.client.Del(ctx, oldRefreshKey).Err(); err != nil {
+				return fmt.Errorf("failed to delete old refresh token: %w", err)
+			}
 		}
 	}
 

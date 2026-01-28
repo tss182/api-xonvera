@@ -14,6 +14,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	fiberlogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )
 
@@ -97,12 +98,15 @@ func main() {
 		zap.String("env", app.Config.App.Env),
 	)
 
+	// Channel to handle server errors
+	serverErrors := make(chan error, 1)
+
 	go func() {
 		if err := fiberApp.Listen(addr); err != nil {
-			logger.Fatal("Failed to start server", zap.Error(err))
+			serverErrors <- err
 		}
 	}()
 
-	// Handle graceful shutdown
-	graceful.Shutdown(fiberApp, app.DB, app.Redis)
+	// Handle graceful shutdown or server errors
+	graceful.Shutdown(fiberApp, app.DB, []*redis.Client{app.Redis}, serverErrors)
 }

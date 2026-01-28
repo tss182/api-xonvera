@@ -16,12 +16,17 @@ import (
 )
 
 // Shutdown handles graceful shutdown of the application
-func Shutdown(app *fiber.App, db *gorm.DB, redisClient ...*redis.Client) {
+func Shutdown(app *fiber.App, db *gorm.DB, redisClients []*redis.Client, serverErrors <-chan error) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
-	<-quit
-	logger.Info("Shutting down server...")
+	// Wait for either a signal or server error
+	select {
+	case <-quit:
+		logger.Info("Shutting down server...")
+	case err := <-serverErrors:
+		logger.Error("Server error, shutting down", zap.Error(err))
+	}
 
 	// Create shutdown context with timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -45,7 +50,7 @@ func Shutdown(app *fiber.App, db *gorm.DB, redisClient ...*redis.Client) {
 	}
 
 	// Close Redis connections
-	for _, client := range redisClient {
+	for _, client := range redisClients {
 		if client != nil {
 			if err := client.Close(); err != nil {
 				logger.Error("Failed to close Redis connection", zap.Error(err))
