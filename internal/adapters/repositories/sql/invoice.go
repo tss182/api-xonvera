@@ -19,12 +19,11 @@ func NewInvoiceRepository(db *gorm.DB) portRepository.InvoiceRepository {
 	return &invoiceRepository{db: db}
 }
 
-// GenerateInvoiceID generates an invoice ID with format: 220260126000001
+// GenerateInvoiceID generates an invoice ID with format: 2YYYYMMDD00001
 // 2 => invoice id prefix
-// 2026 => year
-// 01 => month (jan)
-// 26 => date
+// YYYYMMDD => year, month, date
 // 00001 => suffix auto increment
+// TODO: Implement daily sequence reset to ensure suffix stays within 00001-99999
 func (r *invoiceRepository) GenerateInvoiceID(ctx context.Context) (int64, error) {
 	now := time.Now()
 	

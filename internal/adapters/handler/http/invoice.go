@@ -72,7 +72,12 @@ func (h *InvoiceHandler) CreateInvoice(c *fiber.Ctx) error {
 	}
 
 	// Get the created invoice with items
-	invoiceItems, _ := h.service.GetInvoiceItems(ctx, invoice.ID)
+	invoiceItems, err := h.service.GetInvoiceItems(ctx, invoice.ID)
+	if err != nil {
+		logger.Error("failed to get invoice items after creation", zap.Int64("invoice_id", invoice.ID), zap.Error(err))
+		// Return invoice without items rather than failing the request
+		invoiceItems = []domain.InvoiceItem{}
+	}
 	response := dto.ToInvoiceResponse(invoice, invoiceItems)
 
 	return Created(c, response)
