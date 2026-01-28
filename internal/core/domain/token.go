@@ -24,6 +24,7 @@ type Token struct {
 func (Token) TableName() string {
 	return "auth.tokens"
 }
+
 type TokenPair struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`

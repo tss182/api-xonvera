@@ -21,6 +21,7 @@ type AppConfig struct {
 	Port           string `mapstructure:"APP_PORT"`
 	Env            string `mapstructure:"APP_ENV"`
 	RequestTimeout time.Duration
+	CORSOrigins    string `mapstructure:"CORS_ALLOWED_ORIGINS"`
 }
 
 type DatabaseConfig struct {
@@ -116,6 +117,7 @@ func setDefaults() {
 	viper.SetDefault("APP_PORT", "3000")
 	viper.SetDefault("APP_ENV", "development")
 	viper.SetDefault("APP_REQUEST_TIMEOUT", "30s")
+	viper.SetDefault("CORS_ALLOWED_ORIGINS", "*")
 
 	// Database defaults
 	viper.SetDefault("DB_HOST", "localhost")

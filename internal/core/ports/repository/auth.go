@@ -5,6 +5,7 @@ import (
 
 	"app/xonvera-core/internal/core/domain"
 )
+
 // UserRepository defines the interface for user data persistence
 type UserRepository interface {
 	Create(ctx context.Context, user *domain.User) error

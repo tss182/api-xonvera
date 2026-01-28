@@ -1,6 +1,7 @@
 package validator
 
 import "github.com/go-playground/validator/v10"
+
 const (
 	HandlerQuery = "query"
 	HandlerBody  = "body"
