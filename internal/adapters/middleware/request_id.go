@@ -1,10 +1,11 @@
 package middleware
 
 import (
-	"fmt"
+	"app/xonvera-core/internal/infrastructure/logger"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 )
 
 // RequestID middleware adds a unique request ID to each request
@@ -13,15 +14,15 @@ func RequestID() fiber.Handler {
 		// Check if request ID already exists in header
 		requestID := c.Get("X-Request-ID")
 		if requestID == "" {
-			// Generate new UUID if not present
+			// Generate new UUID v7
 			uuidV7, err := uuid.NewV7()
-			if err == nil {
+			if err != nil {
+				// Fallback to UUID v4
 				uuidV7 = uuid.New()
+				logger.Debug("Failed to generate UUIDv7, using UUIDv4", zap.Error(err))
 			}
 			requestID = uuidV7.String()
 		}
-
-		fmt.Println("request", requestID)
 
 		// Set request ID in context and response header
 		c.Locals("request_id", requestID)

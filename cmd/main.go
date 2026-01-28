@@ -99,6 +99,7 @@ func main() {
 	// Channel to handle server errors
 	serverErrors := make(chan error, 1)
 
+	// Start server in goroutine
 	go func() {
 		if err := fiberApp.Listen(addr); err != nil {
 			serverErrors <- err
@@ -107,14 +108,4 @@ func main() {
 
 	// Handle graceful shutdown or server errors
 	graceful.Shutdown(fiberApp, app.DB, app.Redis, serverErrors)
-	go func() {
-		logger.Info("Starting server",
-			zap.String("app", app.Config.App.Name),
-			zap.String("addr", addr),
-			zap.String("env", app.Config.App.Env),
-		)
-		if err := app.FiberApp.Listen(addr); err != nil {
-			logger.Fatal("Failed to start server", zap.Error(err))
-		}
-	}()
 }

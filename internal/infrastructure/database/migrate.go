@@ -2,11 +2,13 @@ package database
 
 import (
 	"errors"
-	"log"
+
+	"app/xonvera-core/internal/infrastructure/logger"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"go.uber.org/zap"
 )
 
 type Migrator struct {
@@ -22,30 +24,31 @@ func NewMigrator(databaseURL, migrationsPath string) (*Migrator, error) {
 }
 
 func (m *Migrator) Up() error {
-	log.Println("Running migrations up...")
+	logger.Info("Running database migrations up...")
 	err := m.migrate.Up()
 	if err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return err
 	}
 	if errors.Is(err, migrate.ErrNoChange) {
-		log.Println("No new migrations to apply")
+		logger.Info("No new migrations to apply")
 	} else {
-		log.Println("Migrations applied successfully")
+		logger.Info("Database migrations applied successfully")
 	}
 	return nil
 }
 
 func (m *Migrator) Down() error {
-	log.Println("Running migrations down...")
+	logger.Info("Running database migrations down...")
 	err := m.migrate.Down()
 	if err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return err
 	}
-	log.Println("Migrations rolled back successfully")
+	logger.Info("Database migrations rolled back successfully")
 	return nil
 }
 
 func (m *Migrator) Steps(n int) error {
+	logger.Info("Running database migration steps", zap.Int("steps", n))
 	return m.migrate.Steps(n)
 }
 

@@ -49,16 +49,19 @@ func (l *zapGormLogger) Trace(ctx context.Context, begin time.Time, fc func() (s
 		zap.String("sql", sql),
 	}
 
+	// Log errors with error level
 	if err != nil {
 		fields = append(fields, zap.Error(err))
-		l.zap.Error("query error", fields...)
+		l.zap.Error("database query error", fields...)
 		return
 	}
 
-	if elapsed > 200*time.Millisecond {
-		l.zap.Warn("slow query", fields...)
+	// Log slow queries with warning level
+	const slowQueryThreshold = 200 * time.Millisecond
+	if elapsed > slowQueryThreshold {
+		l.zap.Warn("slow database query", fields...)
 	} else {
-		l.zap.Debug("query", fields...)
+		l.zap.Debug("database query", fields...)
 	}
 }
 

@@ -41,7 +41,7 @@ func (s *authService) Register(ctx context.Context, req *domain.RegisterRequest)
 	// Check if email already exists
 	exists, err := s.userRepo.ExistsByEmail(ctx, req.Email)
 	if err != nil {
-		logger.Error("failed to check email existence", zap.Error(err))
+		logger.Error("failed to check email existence", zap.Error(err), zap.String("email", req.Email))
 		return nil, err
 	}
 	if exists {
@@ -51,21 +51,21 @@ func (s *authService) Register(ctx context.Context, req *domain.RegisterRequest)
 	// Check if phone already exists
 	exists, err = s.userRepo.ExistsByPhone(ctx, req.Phone)
 	if err != nil {
-		logger.Error("failed to check phone existence", zap.Error(err))
+		logger.Error("failed to check phone existence", zap.Error(err), zap.String("phone", req.Phone))
 		return nil, err
 	}
 	if exists {
 		return nil, errors.New("400:phone number already registered")
 	}
 
-	// Hash password
+	// Hash password with secure cost factor
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		logger.Error("failed to hash password", zap.Error(err))
 		return nil, errors.New("400:invalid register request")
 	}
 
-	// Create user
+	// Create new user
 	user := &domain.User{
 		Name:     req.Name,
 		Email:    req.Email,
@@ -74,24 +74,28 @@ func (s *authService) Register(ctx context.Context, req *domain.RegisterRequest)
 	}
 
 	if err := s.userRepo.Create(ctx, user); err != nil {
-		logger.Error("failed to create user", zap.Error(err))
+		logger.Error("failed to create user", zap.Error(err), zap.String("email", req.Email))
 		return nil, errors.New("400:invalid register request")
 	}
 
 	// Generate token pair
 	tokenPair, err := s.tokenService.GenerateTokenPair(user.ID)
 	if err != nil {
-		logger.Error("failed to generate token pair", zap.Error(err))
+		logger.Error("failed to generate token pair", zap.Error(err), zap.Uint("user_id", user.ID))
 		return nil, err
 	}
 
 	// Save token to database
 	if err := s.saveToken(ctx, user.ID, tokenPair); err != nil {
-		logger.Error("failed to save token", zap.Error(err))
+		logger.Error("failed to save token", zap.Error(err), zap.Uint("user_id", user.ID))
 		return nil, err
 	}
 
-	logger.Info("user registered successfully", zap.Uint("user_id", user.ID), zap.String("email", user.Email))
+	logger.Info("user registered successfully",
+		zap.Uint("user_id", user.ID),
+		zap.String("email", user.Email),
+		zap.String("phone", user.Phone),
+	)
 
 	return &domain.AuthResponse{
 		User:         user,
@@ -106,32 +110,36 @@ func (s *authService) Login(ctx context.Context, req *domain.LoginRequest) (*dom
 	user, err := s.userRepo.FindByEmailOrPhone(ctx, req.Username)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
+			logger.Debug("login failed: invalid credentials", zap.String("username", req.Username))
 			return nil, errors.New("400:invalid credentials")
 		}
-		logger.Error("failed to find user", zap.Error(err))
+		logger.Error("failed to find user", zap.Error(err), zap.String("username", req.Username))
 		return nil, err
 	}
 
 	// Verify password
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
-	if err != nil {
+	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+		logger.Debug("login failed: password mismatch", zap.Uint("user_id", user.ID))
 		return nil, errors.New("400:invalid credentials")
 	}
 
 	// Generate token pair
 	tokenPair, err := s.tokenService.GenerateTokenPair(user.ID)
 	if err != nil {
-		logger.Error("failed to generate token pair", zap.Error(err))
+		logger.Error("failed to generate token pair", zap.Error(err), zap.Uint("user_id", user.ID))
 		return nil, err
 	}
 
 	// Save token to database
 	if err := s.saveToken(ctx, user.ID, tokenPair); err != nil {
-		logger.Error("failed to save token", zap.Error(err))
+		logger.Error("failed to save token", zap.Error(err), zap.Uint("user_id", user.ID))
 		return nil, err
 	}
 
-	logger.Info("user logged in successfully", zap.Uint("user_id", user.ID))
+	logger.Info("user logged in successfully",
+		zap.Uint("user_id", user.ID),
+		zap.String("email", user.Email),
+	)
 
 	return &domain.AuthResponse{
 		User:         user,
@@ -233,12 +241,14 @@ func (s *authService) ValidateAccessToken(ctx context.Context, accessToken strin
 	// First validate token format and expiration
 	userID, err := s.tokenService.ValidateToken(accessToken)
 	if err != nil {
+		logger.Debug("token validation failed", zap.Error(err))
 		return 0, err
 	}
 
 	// Then check if token exists in database (not logged out)
 	_, err = s.tokenRepo.FindByAccessToken(ctx, accessToken)
 	if err != nil {
+		logger.Debug("token not found in repository (possibly logged out)", zap.Uint("user_id", userID))
 		return 0, errors.New("token has been invalidated")
 	}
 

@@ -55,7 +55,6 @@ type RedisConfig struct {
 
 func LoadConfig() *Config {
 	viper.SetConfigFile(".env")
-	// viper.SetConfigType("env")
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
@@ -75,48 +74,59 @@ func LoadConfig() *Config {
 		logger.Fatal("Invalid configuration", zap.Error(err))
 	}
 
-	// Parse duration strings
-	if timeoutStr := viper.GetString("APP_REQUEST_TIMEOUT"); timeoutStr != "" {
-		timeout, err := time.ParseDuration(timeoutStr)
-		if err != nil {
-			logger.Fatal("Failed to parse APP_REQUEST_TIMEOUT", zap.Error(err))
-		}
-		cfg.App.RequestTimeout = timeout
-	}
-
-	if idleTimeStr := viper.GetString("DB_OPT_CONN_MAX_IDLE_TIME"); idleTimeStr != "" {
-		idleTime, err := time.ParseDuration(idleTimeStr)
-		if err != nil {
-			logger.Fatal("Failed to parse DB_OPT_CONN_MAX_IDLE_TIME", zap.Error(err))
-		}
-		cfg.Database.ConnMaxIdleTime = idleTime
-	}
-
-	if lifeTimeStr := viper.GetString("DB_OPT_CONN_MAX_LIFE_TIME"); lifeTimeStr != "" {
-		lifeTime, err := time.ParseDuration(lifeTimeStr)
-		if err != nil {
-			logger.Fatal("Failed to parse DB_OPT_CONN_MAX_LIFE_TIME", zap.Error(err))
-		}
-		cfg.Database.ConnMaxLifeTime = lifeTime
-	}
-
-	if expire := viper.GetString("TOKEN_EXPIRE"); expire != "" {
-		duration, err := time.ParseDuration(expire)
-		if err != nil {
-			logger.Fatal("Failed to parse TOKEN_EXPIRE", zap.Error(err))
-		}
-		cfg.Token.Expired = duration
-	}
-
-	if refreshExpire := viper.GetString("TOKEN_REFRESH_EXPIRE"); refreshExpire != "" {
-		duration, err := time.ParseDuration(refreshExpire)
-		if err != nil {
-			logger.Fatal("Failed to parse TOKEN_REFRESH_EXPIRE", zap.Error(err))
-		}
-		cfg.Token.RefreshExpired = duration
-	}
+	// Parse duration configurations
+	parseDurationConfigs(&cfg)
 
 	return &cfg
+}
+
+// parseDurationConfigs parses all duration-based environment variables
+func parseDurationConfigs(cfg *Config) {
+	durationConfigs := []struct {
+		envKey    string
+		target    *time.Duration
+		fieldName string
+	}{
+		{
+			envKey:    "APP_REQUEST_TIMEOUT",
+			target:    &cfg.App.RequestTimeout,
+			fieldName: "APP_REQUEST_TIMEOUT",
+		},
+		{
+			envKey:    "DB_OPT_CONN_MAX_IDLE_TIME",
+			target:    &cfg.Database.ConnMaxIdleTime,
+			fieldName: "DB_OPT_CONN_MAX_IDLE_TIME",
+		},
+		{
+			envKey:    "DB_OPT_CONN_MAX_LIFE_TIME",
+			target:    &cfg.Database.ConnMaxLifeTime,
+			fieldName: "DB_OPT_CONN_MAX_LIFE_TIME",
+		},
+		{
+			envKey:    "TOKEN_EXPIRE",
+			target:    &cfg.Token.Expired,
+			fieldName: "TOKEN_EXPIRE",
+		},
+		{
+			envKey:    "TOKEN_REFRESH_EXPIRE",
+			target:    &cfg.Token.RefreshExpired,
+			fieldName: "TOKEN_REFRESH_EXPIRE",
+		},
+	}
+
+	for _, dc := range durationConfigs {
+		if timeoutStr := viper.GetString(dc.envKey); timeoutStr != "" {
+			duration, err := time.ParseDuration(timeoutStr)
+			if err != nil {
+				logger.Fatal("Failed to parse duration config",
+					zap.String("config", dc.fieldName),
+					zap.String("value", timeoutStr),
+					zap.Error(err),
+				)
+			}
+			*dc.target = duration
+		}
+	}
 }
 
 // Validate checks configuration for production readiness

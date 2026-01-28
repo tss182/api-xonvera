@@ -10,18 +10,46 @@ import (
 	"go.uber.org/zap"
 )
 
+// Sensitive field names to mask in logs
+var sensitiveFields = map[string]bool{
+	"password":        true,
+	"pwd":             true,
+	"pass":            true,
+	"secret":          true,
+	"token":           true,
+	"access_token":    true,
+	"refresh_token":   true,
+	"api_key":         true,
+	"apikey":          true,
+	"authorization":   true,
+	"auth":            true,
+	"bearer":          true,
+	"ssn":             true,
+	"social_security": true,
+	"credit_card":     true,
+	"creditcard":      true,
+	"cvv":             true,
+	"cvc":             true,
+	"pin":             true,
+}
+
+const (
+	maskedValue     = "***MASKED***"
+	maxBodyLogSize  = 2048 // Log max 2KB of body
+	jsonContentType = "application/json"
+)
+
 // BodyLogger logs request and response bodies with sensitive field masking
 func BodyLogger(env string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		// Get request ID from context
 		requestID := GetRequestID(c)
+
 		// Log request
 		logRequest(c, requestID)
-		//debug mode only
-		debug := false
-		if env == "development" {
-			debug = true
-		}
+
+		// Set debug mode based on environment
+		debug := env == "development"
 		c.Locals("debug", debug)
 
 		// Process request
@@ -34,6 +62,7 @@ func BodyLogger(env string) fiber.Handler {
 	}
 }
 
+// logRequest logs incoming request details
 func logRequest(c *fiber.Ctx, requestID string) {
 	method := c.Method()
 	path := c.Path()
@@ -46,19 +75,15 @@ func logRequest(c *fiber.Ctx, requestID string) {
 		zap.String("path", path),
 	)
 
-	// Log request body for POST/PUT/PATCH
-	if method == "POST" || method == "PUT" || method == "PATCH" {
+	// Log request body for mutation methods
+	if shouldLogBody(method) {
 		body := c.Body()
 		if len(body) > 0 {
-			maskedBody := maskSensitiveFields(body)
-			logger.Debug("Request body",
-				zap.String("request_id", requestID),
-				zap.String("body", string(maskedBody)),
-			)
+			logBodyData(requestID, body, "request")
 		}
 	}
 
-	// Log query params if present
+	// Log query parameters if present
 	if query != "" {
 		logger.Debug("Query parameters",
 			zap.String("request_id", requestID),
@@ -67,6 +92,7 @@ func logRequest(c *fiber.Ctx, requestID string) {
 	}
 }
 
+// logResponse logs outgoing response details
 func logResponse(c *fiber.Ctx, requestID string) {
 	status := c.Response().StatusCode()
 	contentType := c.Get("Content-Type")
@@ -79,16 +105,33 @@ func logResponse(c *fiber.Ctx, requestID string) {
 	)
 
 	// Log response body for JSON responses
-	if strings.Contains(contentType, "application/json") {
+	if strings.Contains(contentType, jsonContentType) {
 		body := c.Response().Body()
 		if len(body) > 0 {
-			maskedBody := maskSensitiveFields(body)
-			logger.Debug("Response body",
-				zap.String("request_id", requestID),
-				zap.String("body", string(maskedBody)),
-			)
+			logBodyData(requestID, body, "response")
 		}
 	}
+}
+
+// logBodyData logs body data with masking
+func logBodyData(requestID string, body []byte, bodyType string) {
+	if len(body) > maxBodyLogSize {
+		body = body[:maxBodyLogSize]
+	}
+
+	maskedBody := maskSensitiveFields(body)
+	logger.Debug("Body data",
+		zap.String("request_id", requestID),
+		zap.String("type", bodyType),
+		zap.String("data", string(maskedBody)),
+	)
+}
+
+// shouldLogBody determines if request body should be logged
+func shouldLogBody(method string) bool {
+	return method == fiber.MethodPost ||
+		method == fiber.MethodPut ||
+		method == fiber.MethodPatch
 }
 
 // maskSensitiveFields masks sensitive fields in JSON data
@@ -97,16 +140,17 @@ func maskSensitiveFields(data []byte) []byte {
 
 	// Try to unmarshal as JSON
 	if err := json.Unmarshal(data, &obj); err != nil {
-		// Not valid JSON, return as-is
+		// Not valid JSON, return as-is (truncated if needed)
 		return data
 	}
 
-	// Mask top-level sensitive fields
+	// Mask sensitive fields
 	maskFields(obj)
 
 	// Marshal back to JSON
 	maskedData, err := json.Marshal(obj)
 	if err != nil {
+		// If marshaling fails, return original
 		return data
 	}
 
@@ -119,7 +163,7 @@ func maskFields(obj interface{}) {
 	case map[string]interface{}:
 		for key, value := range v {
 			if isSensitiveField(key) {
-				v[key] = "***MASKED***"
+				v[key] = maskedValue
 			} else if isNestedObject(value) {
 				maskFields(value)
 			}
@@ -136,30 +180,7 @@ func maskFields(obj interface{}) {
 
 // isSensitiveField checks if a field should be masked
 func isSensitiveField(fieldName string) bool {
-	sensitiveFields := map[string]bool{
-		"password":        true,
-		"pwd":             true,
-		"pass":            true,
-		"secret":          true,
-		"token":           true,
-		"access_token":    true,
-		"refresh_token":   true,
-		"api_key":         true,
-		"apikey":          true,
-		"authorization":   true,
-		"auth":            true,
-		"bearer":          true,
-		"ssn":             true,
-		"social_security": true,
-		"credit_card":     true,
-		"creditcard":      true,
-		"cvv":             true,
-		"cvc":             true,
-		"pin":             true,
-	}
-
-	lowerField := strings.ToLower(fieldName)
-	return sensitiveFields[lowerField]
+	return sensitiveFields[strings.ToLower(fieldName)]
 }
 
 // isNestedObject checks if a value is a nested object or array
