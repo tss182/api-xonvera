@@ -2,6 +2,7 @@ package http
 
 import (
 	portService "app/xonvera-core/internal/core/ports/service"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -17,28 +18,24 @@ func NewPackageHandler(service portService.PackageService) *PackageHandler {
 }
 
 func (h *PackageHandler) GetPackages(c *fiber.Ctx) error {
-	packages, err := h.service.GetPackages(c.Context())
+	resp, err := h.service.GetPackages(c.Context())
 	if err != nil {
-		return ErrorResponse(c, fiber.StatusInternalServerError, "Failed to fetch packages: "+err.Error())
+		return HandlerErrorGlobal(c, err)
 	}
 
-	return SuccessResponse(c, fiber.StatusOK, "Packages fetched successfully", packages)
+	return OK(c, resp)
 }
 
 func (h *PackageHandler) GetPackageByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
-		return ErrorResponse(c, fiber.StatusBadRequest, "Invalid package ID")
+		return HandlerErrorGlobal(c, fmt.Errorf("400:invalid package"))
 	}
 
 	pkg, err := h.service.GetPackageByID(c.Context(), id)
 	if err != nil {
-		return ErrorResponse(c, fiber.StatusInternalServerError, "Failed to fetch package")
+		return HandlerErrorGlobal(c, err)
 	}
 
-	if pkg == nil {
-		return ErrorResponse(c, fiber.StatusNotFound, "Package not found")
-	}
-
-	return SuccessResponse(c, fiber.StatusOK, "Package fetched successfully", pkg)
+	return OK(c, pkg)
 }

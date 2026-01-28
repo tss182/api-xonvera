@@ -30,7 +30,7 @@ func NewFiberApp(cfg *config.Config, redisClient *redis.Client, db *gorm.DB) *fi
 	// Global middleware
 	app.Use(middleware.RequestID())
 	app.Use(recover.New())
-	app.Use(middleware.BodyLogger())
+	app.Use(middleware.BodyLogger(cfg.App.Env))
 	app.Use(fiberlogger.New(fiberlogger.Config{
 		Format: "${time} | ${status} | ${latency} | ${locals:requestID} | ${method} ${path}\n",
 	}))

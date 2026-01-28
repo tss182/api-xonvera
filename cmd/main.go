@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 
+	"app/xonvera-core/internal/adapters/middleware"
 	"app/xonvera-core/internal/adapters/routes"
 	"app/xonvera-core/internal/dependencies"
 	"app/xonvera-core/internal/infrastructure/database"
@@ -10,6 +11,10 @@ import (
 	"app/xonvera-core/internal/infrastructure/logger"
 	"app/xonvera-core/internal/infrastructure/redis"
 
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	fiberLog "github.com/gofiber/fiber/v2/middleware/logger"
+	fiberRecover "github.com/gofiber/fiber/v2/middleware/recover"
 	"go.uber.org/zap"
 )
 
@@ -57,12 +62,12 @@ func main() {
 
 	// Get Fiber app and Redis client from Wire
 	defer redis.CloseRedis(app.Redis)
-
+	fiberApp := app.FiberApp
 	// Global middleware
 	fiberApp.Use(middleware.RequestID())
-	fiberApp.Use(recover.New())
+	fiberApp.Use(fiberRecover.New())
 	fiberApp.Use(middleware.BodyLogger(app.Config.App.Env))
-	fiberApp.Use(fiberlogger.New(fiberlogger.Config{
+	fiberApp.Use(fiberLog.New(fiberLog.Config{
 		Format: "${time} | ${status} | ${latency} | ${locals:request_id} | ${method} ${path}\n",
 	}))
 	fiberApp.Use(middleware.APIRateLimiter(app.Redis))
