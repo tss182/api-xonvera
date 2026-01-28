@@ -86,7 +86,7 @@ func main() {
 	})
 
 	// Setup routes
-	routes.SetupRoutes(app.FiberApp, app)
+	routes.SetupRoutes(fiberApp, app)
 
 	// Start server in goroutine
 	addr := ":" + app.Config.App.Port
