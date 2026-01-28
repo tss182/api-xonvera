@@ -24,6 +24,7 @@ type AppConfig struct {
 	Env            string `mapstructure:"APP_ENV"`
 	AllowedOrigins string `mapstructure:"APP_ALLOWED_ORIGINS"`
 	RequestTimeout time.Duration
+	CORSOrigins    string `mapstructure:"CORS_ALLOWED_ORIGINS"`
 }
 
 type DatabaseConfig struct {

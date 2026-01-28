@@ -3,7 +3,6 @@ package repositoriesRedis
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"time"
 
@@ -33,19 +32,31 @@ func (r *TokenRepository) Create(ctx context.Context, token *domain.Token) error
 
 	// Store by access token
 	accessKey := fmt.Sprintf("token:access:%s", token.AccessToken)
-	if err := r.client.Set(ctx, accessKey, data, time.Until(token.ExpiresAt)).Err(); err != nil {
+	accessTTL := time.Until(token.ExpiresAt)
+	if accessTTL <= 0 {
+		return fmt.Errorf("access token already expired")
+	}
+	if err := r.client.Set(ctx, accessKey, data, accessTTL).Err(); err != nil {
 		return fmt.Errorf("failed to store access token: %w", err)
 	}
 
 	// Store by refresh token
 	refreshKey := fmt.Sprintf("token:refresh:%s", token.RefreshToken)
-	if err := r.client.Set(ctx, refreshKey, data, time.Until(token.RefreshExpiresAt)).Err(); err != nil {
+	refreshTTL := time.Until(token.RefreshExpiresAt)
+	if refreshTTL <= 0 {
+		return fmt.Errorf("refresh token already expired")
+	}
+	if err := r.client.Set(ctx, refreshKey, data, refreshTTL).Err(); err != nil {
 		return fmt.Errorf("failed to store refresh token: %w", err)
 	}
 
 	// Store user's token reference
 	userKey := fmt.Sprintf("token:user:%d", token.UserID)
-	if err := r.client.Set(ctx, userKey, token.AccessToken, time.Until(token.ExpiresAt)).Err(); err != nil {
+	userTTL := time.Until(token.ExpiresAt)
+	if userTTL <= 0 {
+		return fmt.Errorf("user token reference already expired")
+	}
+	if err := r.client.Set(ctx, userKey, token.AccessToken, userTTL).Err(); err != nil {
 		return fmt.Errorf("failed to store user token reference: %w", err)
 	}
 
@@ -57,7 +68,7 @@ func (r *TokenRepository) FindByAccessToken(ctx context.Context, accessToken str
 	key := fmt.Sprintf("token:access:%s", accessToken)
 	data, err := r.client.Get(ctx, key).Result()
 	if err == redis.Nil {
-		return nil, errors.New("token not found")
+		return nil, domain.ErrTokenNotFound
 	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to get token: %w", err)
@@ -76,7 +87,7 @@ func (r *TokenRepository) FindByRefreshToken(ctx context.Context, refreshToken s
 	key := fmt.Sprintf("token:refresh:%s", refreshToken)
 	data, err := r.client.Get(ctx, key).Result()
 	if err == redis.Nil {
-		return nil, errors.New("token not found")
+		return nil, domain.ErrTokenNotFound
 	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to get token: %w", err)
@@ -92,6 +103,27 @@ func (r *TokenRepository) FindByRefreshToken(ctx context.Context, refreshToken s
 
 // Update updates an existing token in Redis using atomic transaction
 func (r *TokenRepository) Update(ctx context.Context, token *domain.Token) error {
+	// We use the user reference to find the old access token
+	userKey := fmt.Sprintf("token:user:%d", token.UserID)
+	oldAccessToken, err := r.client.Get(ctx, userKey).Result()
+
+	// If old token exists, get it and delete the old keys
+	if err == nil && oldAccessToken != "" {
+		oldToken, err := r.FindByAccessToken(ctx, oldAccessToken)
+		if err == nil {
+			// Delete old access token key
+			oldAccessKey := fmt.Sprintf("token:access:%s", oldToken.AccessToken)
+			if err := r.client.Del(ctx, oldAccessKey).Err(); err != nil {
+				return fmt.Errorf("failed to delete old access token: %w", err)
+			}
+
+			// Delete old refresh token key
+			oldRefreshKey := fmt.Sprintf("token:refresh:%s", oldToken.RefreshToken)
+			if err := r.client.Del(ctx, oldRefreshKey).Err(); err != nil {
+				return fmt.Errorf("failed to delete old refresh token: %w", err)
+			}
+		}
+	}
 	// Use Redis pipeline for atomic update
 	pipe := r.client.Pipeline()
 
@@ -102,8 +134,23 @@ func (r *TokenRepository) Update(ctx context.Context, token *domain.Token) error
 	}
 
 	accessKey := fmt.Sprintf("token:access:%s", token.AccessToken)
+	accessTTL := time.Until(token.ExpiresAt)
+	if accessTTL <= 0 {
+		return fmt.Errorf("access token already expired")
+	}
+	if err := r.client.Set(ctx, accessKey, data, accessTTL).Err(); err != nil {
+		return fmt.Errorf("failed to update access token: %w", err)
+	}
+
+	// Update refresh token
 	refreshKey := fmt.Sprintf("token:refresh:%s", token.RefreshToken)
-	userKey := fmt.Sprintf("token:user:%d", token.UserID)
+	refreshTTL := time.Until(token.RefreshExpiresAt)
+	if refreshTTL <= 0 {
+		return fmt.Errorf("refresh token already expired")
+	}
+	if err := r.client.Set(ctx, refreshKey, data, refreshTTL).Err(); err != nil {
+		return fmt.Errorf("failed to update refresh token: %w", err)
+	}
 
 	// Queue all operations
 	pipe.Set(ctx, accessKey, data, time.Until(token.ExpiresAt))
@@ -114,6 +161,15 @@ func (r *TokenRepository) Update(ctx context.Context, token *domain.Token) error
 	_, err = pipe.Exec(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to update token: %w", err)
+	}
+
+	// Update user reference to point to new access token
+	userTTL := time.Until(token.ExpiresAt)
+	if userTTL <= 0 {
+		return fmt.Errorf("user token reference already expired")
+	}
+	if err := r.client.Set(ctx, userKey, token.AccessToken, userTTL).Err(); err != nil {
+		return fmt.Errorf("failed to update user token reference: %w", err)
 	}
 
 	return nil

@@ -46,7 +46,7 @@ func NewRateLimiter(max int, duration time.Duration, redisClient *redis.Client) 
 
 // AuthRateLimiter creates a stricter rate limiter for auth endpoints
 func AuthRateLimiter(redisClient *redis.Client) fiber.Handler {
-	return NewRateLimiter(5000, 15*time.Minute, redisClient) // 10 requests per 15 minutes
+	return NewRateLimiter(10, 15*time.Minute, redisClient) // 10 requests per 15 minutes
 }
 
 // APIRateLimiter creates a general rate limiter for API endpoints

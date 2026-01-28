@@ -151,7 +151,7 @@ func (s *authService) RefreshToken(ctx context.Context, req *domain.RefreshToken
 	// Find token in database
 	storedToken, err := s.tokenRepo.FindByRefreshToken(ctx, req.RefreshToken)
 	if err != nil {
-		if errors.Is(err, errors.New("token not found")) {
+		if errors.Is(err, domain.ErrTokenNotFound) {
 			return nil, errors.New("400:invalid refresh token")
 		}
 		logger.Error("failed to find refresh token", zap.Error(err))
