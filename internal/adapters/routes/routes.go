@@ -23,25 +23,19 @@ func SetupRoutes(
 	}
 
 	// Package routes (public)
-	packages := app.Group("/packages")
-	{
-		packages.Get("/", appWire.PackageHandler.GetPackages)
-		packages.Get("/:id", appWire.PackageHandler.GetPackageByID)
-	}
+	app.Get("/packages", appWire.PackageHandler.GetPackages)
+	app.Get("/packages/:id", appWire.PackageHandler.GetPackageByID)
 
 	// Invoice routes (public)
-	invoices := app.Group("/invoices")
-	{
-		invoices.Post("/", appWire.InvoiceHandler.CreateInvoice)
-		invoices.Get("/", appWire.InvoiceHandler.GetAllInvoices)
-		invoices.Get("/:id", appWire.InvoiceHandler.GetInvoiceByID)
-	}
+	app.Post("/invoices", appWire.InvoiceHandler.CreateInvoice)
+	app.Get("/invoices", appWire.InvoiceHandler.GetAllInvoices)
+	app.Get("/invoices/:id", appWire.InvoiceHandler.GetInvoiceByID)
 
 	// Protected routes example
-	logged := app.Group("/", appWire.AuthMiddleware.Authenticate())
+	protected := app.Group("/protected", appWire.AuthMiddleware.Authenticate())
 	{
 		// Example protected route
-		logged.Get("/profile", func(c *fiber.Ctx) error {
+		protected.Get("/profile", func(c *fiber.Ctx) error {
 			userID, ok := c.Locals("userID").(uint)
 			if !ok {
 				return http.NoAuth(c)
