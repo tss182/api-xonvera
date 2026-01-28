@@ -29,6 +29,14 @@ func SetupRoutes(
 		packages.Get("/:id", appWire.PackageHandler.GetPackageByID)
 	}
 
+	// Invoice routes (public)
+	invoices := app.Group("/invoices")
+	{
+		invoices.Post("/", appWire.InvoiceHandler.CreateInvoice)
+		invoices.Get("/", appWire.InvoiceHandler.GetAllInvoices)
+		invoices.Get("/:id", appWire.InvoiceHandler.GetInvoiceByID)
+	}
+
 	// Protected routes example
 	logged := app.Group("/", appWire.AuthMiddleware.Authenticate())
 	{

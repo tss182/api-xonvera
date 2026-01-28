@@ -64,3 +64,55 @@ func ToRefreshTokenRequest(req *RefreshTokenRequest) *domain.RefreshTokenRequest
 		RefreshToken: req.RefreshToken,
 	}
 }
+
+// ToInvoiceResponse converts domain.Invoice to InvoiceResponse
+func ToInvoiceResponse(invoice *domain.Invoice, items []domain.InvoiceItem) *InvoiceResponse {
+	if invoice == nil {
+		return nil
+	}
+	
+	var itemResponses []InvoiceItemResponse
+	for _, item := range items {
+		itemResponses = append(itemResponses, InvoiceItemResponse{
+			ID:          item.ID,
+			InvoiceID:   item.InvoiceID,
+			Description: item.Description,
+			Quantity:    item.Quantity,
+			UnitPrice:   item.UnitPrice,
+			Total:       item.Total,
+			CreatedAt:   item.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		})
+	}
+	
+	return &InvoiceResponse{
+		ID:          invoice.ID,
+		AddTo:       invoice.AddTo,
+		InvoiceFor:  invoice.InvoiceFor,
+		InvoiceFrom: invoice.InvoiceFrom,
+		Items:       itemResponses,
+		CreatedAt:   invoice.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		UpdatedAt:   invoice.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+	}
+}
+
+// ToInvoiceListResponse converts list of invoices to InvoiceListResponse
+func ToInvoiceListResponse(invoices []domain.Invoice, limit, offset int) *InvoiceListResponse {
+	var invoiceResponses []InvoiceResponse
+	for _, invoice := range invoices {
+		invoiceResponses = append(invoiceResponses, InvoiceResponse{
+			ID:          invoice.ID,
+			AddTo:       invoice.AddTo,
+			InvoiceFor:  invoice.InvoiceFor,
+			InvoiceFrom: invoice.InvoiceFrom,
+			CreatedAt:   invoice.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			UpdatedAt:   invoice.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		})
+	}
+	
+	return &InvoiceListResponse{
+		Invoices: invoiceResponses,
+		Total:    len(invoices),
+		Limit:    limit,
+		Offset:   offset,
+	}
+}

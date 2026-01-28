@@ -46,6 +46,9 @@ func InitializeApplication() (*Application, error) {
 	packageRepository := repositoriesSql.NewPackageRepository(db)
 	packageService := services.NewPackageService(packageRepository)
 	packageHandler := http.NewPackageHandler(packageService)
+	invoiceRepository := repositoriesSql.NewInvoiceRepository(db)
+	invoiceService := services.NewInvoiceService(invoiceRepository)
+	invoiceHandler := http.NewInvoiceHandler(invoiceService, duration)
 	authMiddleware := middleware.NewAuthMiddleware(authService, duration)
 	application := &Application{
 		Config:         configConfig,
@@ -54,6 +57,7 @@ func InitializeApplication() (*Application, error) {
 		FiberApp:       app,
 		AuthHandler:    authHandler,
 		PackageHandler: packageHandler,
+		InvoiceHandler: invoiceHandler,
 		AuthMiddleware: authMiddleware,
 	}
 	return application, nil
@@ -65,7 +69,7 @@ func InitializeApplication() (*Application, error) {
 var ProviderSet = wire.NewSet(config.LoadConfig, ProvideDBConfig,
 	ProvideTokenConfig,
 	ProvideRedisConfig,
-	ProvideRequestTimeout, database.NewConnection, redis.NewRedisClient, server.NewFiberApp, repositoriesSql.NewUserRepository, repositoriesSql.NewPackageRepository, repositoriesRedis.NewTokenRepository, services.NewTokenService, services.NewAuthService, services.NewPackageService, http.NewAuthHandler, http.NewPackageHandler, middleware.NewAuthMiddleware,
+	ProvideRequestTimeout, database.NewConnection, redis.NewRedisClient, server.NewFiberApp, repositoriesSql.NewUserRepository, repositoriesSql.NewPackageRepository, repositoriesSql.NewInvoiceRepository, repositoriesRedis.NewTokenRepository, services.NewTokenService, services.NewAuthService, services.NewPackageService, services.NewInvoiceService, http.NewAuthHandler, http.NewPackageHandler, http.NewInvoiceHandler, middleware.NewAuthMiddleware,
 )
 
 // ProvideDBConfig extracts DatabaseConfig from Config
@@ -96,5 +100,6 @@ type Application struct {
 	FiberApp       *fiber.App
 	AuthHandler    *http.AuthHandler
 	PackageHandler *http.PackageHandler
+	InvoiceHandler *http.InvoiceHandler
 	AuthMiddleware *middleware.AuthMiddleware
 }

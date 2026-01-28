@@ -43,16 +43,19 @@ var ProviderSet = wire.NewSet(
 	// Repositories
 	repositoriesSql.NewUserRepository,
 	repositoriesSql.NewPackageRepository,
+	repositoriesSql.NewInvoiceRepository,
 	repositoriesRedis.NewTokenRepository,
 
 	// Services
 	services.NewTokenService,
 	services.NewAuthService,
 	services.NewPackageService,
+	services.NewInvoiceService,
 
 	// Handlers
 	http.NewAuthHandler,
 	http.NewPackageHandler,
+	http.NewInvoiceHandler,
 
 	// Middleware
 	middleware.NewAuthMiddleware,
@@ -86,6 +89,7 @@ type Application struct {
 	FiberApp       *fiber.App
 	AuthHandler    *http.AuthHandler
 	PackageHandler *http.PackageHandler
+	InvoiceHandler *http.InvoiceHandler
 	AuthMiddleware *middleware.AuthMiddleware
 }
 

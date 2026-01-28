@@ -53,6 +53,10 @@ func OK(c *fiber.Ctx, resp interface{}) error {
 	return JSON(c, http.StatusOK, nil, resp, nil)
 }
 
+func Created(c *fiber.Ctx, resp interface{}) error {
+	return JSON(c, http.StatusCreated, nil, resp, nil)
+}
+
 // func Pagination[T any](c *fiber.Ctx, resp *pageResp[T]) error {
 // 	if resp.Data == nil {
 // 		resp.Data = []T{}
