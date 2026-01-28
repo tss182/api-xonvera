@@ -44,8 +44,8 @@ func TestAuthService_Register_Success(t *testing.T) {
 	}
 
 	tokenConfig := &config.TokenConfig{
-		SecretKey:         "test_secret_key",
-		Expired:       time.Hour * 1,
+		SecretKey:      "test_secret_key",
+		Expired:        time.Hour * 1,
 		RefreshExpired: time.Hour * 24 * 7,
 	}
 
@@ -82,8 +82,8 @@ func TestAuthService_Register_EmailAlreadyExists(t *testing.T) {
 	mockTokenService := &testutil.MockTokenService{}
 
 	tokenConfig := &config.TokenConfig{
-		SecretKey:         "test_secret_key",
-		Expired:       time.Hour * 1,
+		SecretKey:      "test_secret_key",
+		Expired:        time.Hour * 1,
 		RefreshExpired: time.Hour * 24 * 7,
 	}
 
@@ -120,8 +120,8 @@ func TestAuthService_Register_PhoneAlreadyExists(t *testing.T) {
 	mockTokenService := &testutil.MockTokenService{}
 
 	tokenConfig := &config.TokenConfig{
-		SecretKey:         "test_secret_key",
-		Expired:       time.Hour * 1,
+		SecretKey:      "test_secret_key",
+		Expired:        time.Hour * 1,
 		RefreshExpired: time.Hour * 24 * 7,
 	}
 
@@ -177,8 +177,8 @@ func TestAuthService_Login_Success(t *testing.T) {
 	}
 
 	tokenConfig := &config.TokenConfig{
-		SecretKey:         "test_secret_key",
-		Expired:       time.Hour * 1,
+		SecretKey:      "test_secret_key",
+		Expired:        time.Hour * 1,
 		RefreshExpired: time.Hour * 24 * 7,
 	}
 
@@ -222,8 +222,8 @@ func TestAuthService_Login_InvalidCredentials(t *testing.T) {
 	mockTokenService := &testutil.MockTokenService{}
 
 	tokenConfig := &config.TokenConfig{
-		SecretKey:         "test_secret_key",
-		Expired:       time.Hour * 1,
+		SecretKey:      "test_secret_key",
+		Expired:        time.Hour * 1,
 		RefreshExpired: time.Hour * 24 * 7,
 	}
 
@@ -255,8 +255,8 @@ func TestAuthService_Login_UserNotFound(t *testing.T) {
 	mockTokenService := &testutil.MockTokenService{}
 
 	tokenConfig := &config.TokenConfig{
-		SecretKey:         "test_secret_key",
-		Expired:       time.Hour * 1,
+		SecretKey:      "test_secret_key",
+		Expired:        time.Hour * 1,
 		RefreshExpired: time.Hour * 24 * 7,
 	}
 
@@ -295,8 +295,8 @@ func TestAuthService_Logout_Success(t *testing.T) {
 	mockTokenService := &testutil.MockTokenService{}
 
 	tokenConfig := &config.TokenConfig{
-		SecretKey:         "test_secret_key",
-		Expired:       time.Hour * 1,
+		SecretKey:      "test_secret_key",
+		Expired:        time.Hour * 1,
 		RefreshExpired: time.Hour * 24 * 7,
 	}
 
@@ -321,8 +321,8 @@ func TestAuthService_Logout_InvalidToken(t *testing.T) {
 	mockTokenService := &testutil.MockTokenService{}
 
 	tokenConfig := &config.TokenConfig{
-		SecretKey:         "test_secret_key",
-		Expired:       time.Hour * 1,
+		SecretKey:      "test_secret_key",
+		Expired:        time.Hour * 1,
 		RefreshExpired: time.Hour * 24 * 7,
 	}
 
@@ -354,8 +354,8 @@ func TestAuthService_ValidateAccessToken_Success(t *testing.T) {
 	}
 
 	tokenConfig := &config.TokenConfig{
-		SecretKey:         "test_secret_key",
-		Expired:       time.Hour * 1,
+		SecretKey:      "test_secret_key",
+		Expired:        time.Hour * 1,
 		RefreshExpired: time.Hour * 24 * 7,
 	}
 

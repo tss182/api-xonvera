@@ -10,12 +10,13 @@ import (
 	"app/xonvera-core/internal/infrastructure/logger"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
 // Shutdown handles graceful shutdown of the application
-func Shutdown(app *fiber.App, db *gorm.DB) {
+func Shutdown(app *fiber.App, db *gorm.DB, redisClient ...*redis.Client) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
@@ -39,6 +40,17 @@ func Shutdown(app *fiber.App, db *gorm.DB) {
 				logger.Error("Failed to close database", zap.Error(err))
 			} else {
 				logger.Info("Database connections closed")
+			}
+		}
+	}
+
+	// Close Redis connections
+	for _, client := range redisClient {
+		if client != nil {
+			if err := client.Close(); err != nil {
+				logger.Error("Failed to close Redis connection", zap.Error(err))
+			} else {
+				logger.Info("Redis connection closed")
 			}
 		}
 	}

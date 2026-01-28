@@ -7,8 +7,8 @@ import (
 	"app/xonvera-core/internal/adapters/routes"
 	"app/xonvera-core/internal/dependencies"
 	"app/xonvera-core/internal/infrastructure/database"
+	"app/xonvera-core/internal/infrastructure/graceful"
 	"app/xonvera-core/internal/infrastructure/logger"
-	"app/xonvera-core/internal/infrastructure/redis"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -64,9 +64,6 @@ func main() {
 		AppName: app.Config.App.Name,
 	})
 
-	// Get Redis client from Wire
-	defer redis.CloseRedis(app.Redis)
-
 	// Global middleware
 	fiberApp.Use(middleware.RequestID())
 	fiberApp.Use(recover.New())
@@ -76,7 +73,7 @@ func main() {
 	}))
 	fiberApp.Use(middleware.APIRateLimiter(app.Redis))
 	fiberApp.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
+		AllowOrigins: app.Config.App.CORSOrigins,
 		AllowMethods: "GET,POST,PUT,DELETE,PATCH,OPTIONS",
 		AllowHeaders: "Origin,Content-Type,Accept,Authorization",
 	}))
@@ -92,14 +89,20 @@ func main() {
 	// Setup routes
 	routes.SetupRoutes(fiberApp, app.AuthHandler, app.AuthMiddleware, app.Redis)
 
-	// Start server
+	// Start server in a goroutine
 	addr := ":" + app.Config.App.Port
 	logger.Info("Starting server",
 		zap.String("app", app.Config.App.Name),
 		zap.String("addr", addr),
 		zap.String("env", app.Config.App.Env),
 	)
-	if err := fiberApp.Listen(addr); err != nil {
-		logger.Fatal("Failed to start server", zap.Error(err))
-	}
+
+	go func() {
+		if err := fiberApp.Listen(addr); err != nil {
+			logger.Fatal("Failed to start server", zap.Error(err))
+		}
+	}()
+
+	// Handle graceful shutdown
+	graceful.Shutdown(fiberApp, app.DB, app.Redis)
 }
