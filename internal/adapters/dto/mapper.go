@@ -70,7 +70,7 @@ func ToInvoiceResponse(invoice *domain.Invoice, items []domain.InvoiceItem) *Inv
 	if invoice == nil {
 		return nil
 	}
-	
+
 	var itemResponses []InvoiceItemResponse
 	for _, item := range items {
 		itemResponses = append(itemResponses, InvoiceItemResponse{
@@ -83,7 +83,7 @@ func ToInvoiceResponse(invoice *domain.Invoice, items []domain.InvoiceItem) *Inv
 			CreatedAt:   item.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
 		})
 	}
-	
+
 	return &InvoiceResponse{
 		ID:          invoice.ID,
 		AddTo:       invoice.AddTo,
@@ -108,7 +108,7 @@ func ToInvoiceListResponse(invoices []domain.Invoice, limit, offset int) *Invoic
 			UpdatedAt:   invoice.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
 		})
 	}
-	
+
 	return &InvoiceListResponse{
 		Invoices: invoiceResponses,
 		Total:    len(invoices),

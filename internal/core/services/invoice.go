@@ -31,15 +31,15 @@ func (s *invoiceService) CreateInvoice(ctx context.Context, invoice *domain.Invo
 		logger.Error("failed to generate invoice ID", zap.Error(err))
 		return err
 	}
-	
+
 	invoice.ID = invoiceID
-	
+
 	// Create invoice with items
 	if err := s.invoiceRepo.Create(ctx, invoice, items); err != nil {
 		logger.Error("failed to create invoice", zap.Error(err))
 		return err
 	}
-	
+
 	return nil
 }
 
@@ -59,7 +59,7 @@ func (s *invoiceService) GetAllInvoices(ctx context.Context, limit, offset int) 
 	if limit > 100 {
 		return nil, errors.New("limit cannot exceed 100")
 	}
-	
+
 	invoices, err := s.invoiceRepo.GetAll(ctx, limit, offset)
 	if err != nil {
 		logger.Error("failed to get all invoices", zap.Error(err))

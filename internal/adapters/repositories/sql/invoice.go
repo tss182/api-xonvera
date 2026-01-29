@@ -26,24 +26,24 @@ func NewInvoiceRepository(db *gorm.DB) portRepository.InvoiceRepository {
 // TODO: Implement daily sequence reset to ensure suffix stays within 00001-99999
 func (r *invoiceRepository) GenerateInvoiceID(ctx context.Context) (int64, error) {
 	now := time.Now()
-	
+
 	// Format: 2 + YYYYMMDD + SSSSS
 	prefix := "2"
 	dateStr := now.Format("20060102") // YYYYMMDD
-	
+
 	// Get next sequence value
 	var suffix int
 	err := r.db.WithContext(ctx).Raw("SELECT nextval('billing.invoice_suffix_seq')").Scan(&suffix).Error
 	if err != nil {
 		return 0, err
 	}
-	
+
 	// Format the complete invoice ID
 	invoiceIDStr := fmt.Sprintf("%s%s%05d", prefix, dateStr, suffix)
-	
+
 	var invoiceID int64
 	fmt.Sscanf(invoiceIDStr, "%d", &invoiceID)
-	
+
 	return invoiceID, nil
 }
 
@@ -53,7 +53,7 @@ func (r *invoiceRepository) Create(ctx context.Context, invoice *domain.Invoice,
 		if err := tx.Create(invoice).Error; err != nil {
 			return err
 		}
-		
+
 		// Create invoice items if any
 		if len(items) > 0 {
 			for i := range items {
@@ -63,7 +63,7 @@ func (r *invoiceRepository) Create(ctx context.Context, invoice *domain.Invoice,
 				return err
 			}
 		}
-		
+
 		return nil
 	})
 }
@@ -80,14 +80,14 @@ func (r *invoiceRepository) GetByID(ctx context.Context, id int64) (*domain.Invo
 func (r *invoiceRepository) GetAll(ctx context.Context, limit, offset int) ([]domain.Invoice, error) {
 	var invoices []domain.Invoice
 	query := r.db.WithContext(ctx).Order("created_at DESC")
-	
+
 	if limit > 0 {
 		query = query.Limit(limit)
 	}
 	if offset > 0 {
 		query = query.Offset(offset)
 	}
-	
+
 	err := query.Find(&invoices).Error
 	if err != nil {
 		return nil, err
