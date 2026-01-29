@@ -44,6 +44,7 @@ var ProviderSet = wire.NewSet(
 	repositoriesSql.NewUserRepository,
 	repositoriesSql.NewPackageRepository,
 	repositoriesSql.NewInvoiceRepository,
+	repositoriesSql.NewTxRepository,
 	repositoriesRedis.NewTokenRepository,
 
 	// Services

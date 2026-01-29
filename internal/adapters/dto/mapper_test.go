@@ -88,27 +88,26 @@ func TestToInvoiceResponse(t *testing.T) {
 	createdAt := time.Date(2026, 1, 29, 12, 0, 0, 0, time.UTC)
 	updatedAt := time.Date(2026, 1, 29, 13, 0, 0, 0, time.UTC)
 	invoice := &domain.Invoice{
-		ID:          100,
-		AddTo:       "Client",
-		InvoiceFor:  "Services",
-		InvoiceFrom: "Company",
-		CreatedAt:   createdAt,
-		UpdatedAt:   updatedAt,
+		ID:        100,
+		Customer:  "Client",
+		Issuer:    "Company",
+		CreatedAt: createdAt,
+		UpdatedAt: updatedAt,
 	}
 	items := []domain.InvoiceItem{
 		{
 			ID:          1,
 			InvoiceID:   100,
 			Description: "Work",
-			Quantity:    2,
-			UnitPrice:   50,
+			Qty:         2,
+			Price:       50,
 			Total:       100,
 			CreatedAt:   createdAt,
 		},
 	}
 
 	resp := ToInvoiceResponse(invoice, items)
-	if resp.ID != invoice.ID || resp.AddTo != invoice.AddTo || resp.InvoiceFor != invoice.InvoiceFor || resp.InvoiceFrom != invoice.InvoiceFrom {
+	if resp.ID != invoice.ID || resp.Customer != invoice.Customer || resp.Issuer != invoice.Issuer {
 		t.Fatalf("unexpected invoice response: %+v", resp)
 	}
 	if len(resp.Items) != 1 || resp.Items[0].Description != "Work" {
@@ -123,9 +122,8 @@ func TestToInvoiceListResponse(t *testing.T) {
 	invoices := []domain.Invoice{
 		{
 			ID:        1,
-			AddTo:     "A",
-			InvoiceFor: "Service",
-			InvoiceFrom: "Company",
+			Customer:  "A",
+			Issuer:    "Company",
 			CreatedAt: time.Date(2026, 1, 29, 8, 0, 0, 0, time.UTC),
 			UpdatedAt: time.Date(2026, 1, 29, 9, 0, 0, 0, time.UTC),
 		},

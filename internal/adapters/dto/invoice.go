@@ -3,16 +3,17 @@ package dto
 // InvoiceItemRequest represents invoice item input
 type InvoiceItemRequest struct {
 	Description string `json:"description" validate:"required,min=1,max=500"`
-	Quantity    int    `json:"quantity" validate:"required,min=1"`
-	UnitPrice   int    `json:"unit_price" validate:"required,min=0"`
+	Qty         int    `json:"qty" validate:"required,min=1"`
+	Price       int    `json:"price" validate:"required,min=0"`
 }
 
 // CreateInvoiceRequest represents invoice creation input
 type CreateInvoiceRequest struct {
-	AddTo       string               `json:"add_to" validate:"required,min=1,max=500"`
-	InvoiceFor  string               `json:"invoice_for" validate:"required,min=1,max=500"`
-	InvoiceFrom string               `json:"invoice_from" validate:"required,min=1,max=500"`
-	Items       []InvoiceItemRequest `json:"items" validate:"required,min=1,dive"`
+	Issuer    string               `json:"issuer" validate:"required,min=1,max=200"`
+	Customer  string               `json:"customer" validate:"required,min=1,max=200"`
+	IssueDate string               `json:"issue_date" validate:"required,datetime=2006-01-02"`
+	Note      string               `json:"note" validate:"max=1000"`
+	Items     []InvoiceItemRequest `json:"items" validate:"required,min=1,dive"`
 }
 
 // InvoiceItemResponse represents invoice item output
@@ -20,8 +21,8 @@ type InvoiceItemResponse struct {
 	ID          uint   `json:"id"`
 	InvoiceID   int64  `json:"invoice_id"`
 	Description string `json:"description"`
-	Quantity    int    `json:"quantity"`
-	UnitPrice   int    `json:"unit_price"`
+	Qty         int    `json:"qty"`
+	Price       int    `json:"price"`
 	Total       int    `json:"total"`
 	CreatedAt   string `json:"created_at"`
 }
@@ -29,9 +30,8 @@ type InvoiceItemResponse struct {
 // InvoiceResponse represents invoice output
 type InvoiceResponse struct {
 	ID          int64                 `json:"id"`
-	AddTo       string                `json:"add_to"`
-	InvoiceFor  string                `json:"invoice_for"`
-	InvoiceFrom string                `json:"invoice_from"`
+	Customer    string                `json:"customer"`
+	Issuer      string                `json:"issuer"`
 	Items       []InvoiceItemResponse `json:"items,omitempty"`
 	CreatedAt   string                `json:"created_at"`
 	UpdatedAt   string                `json:"updated_at"`

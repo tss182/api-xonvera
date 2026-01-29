@@ -47,7 +47,8 @@ func InitializeApplication() (*Application, error) {
 	packageService := services.NewPackageService(packageRepository)
 	packageHandler := http.NewPackageHandler(packageService)
 	invoiceRepository := repositoriesSql.NewInvoiceRepository(db)
-	invoiceService := services.NewInvoiceService(invoiceRepository)
+	txRepository := repositoriesSql.NewTxRepository(db)
+	invoiceService := services.NewInvoiceService(invoiceRepository, txRepository)
 	invoiceHandler := http.NewInvoiceHandler(invoiceService, duration)
 	authMiddleware := middleware.NewAuthMiddleware(authService, duration)
 	application := &Application{
@@ -69,7 +70,7 @@ func InitializeApplication() (*Application, error) {
 var ProviderSet = wire.NewSet(config.LoadConfig, ProvideDBConfig,
 	ProvideTokenConfig,
 	ProvideRedisConfig,
-	ProvideRequestTimeout, database.NewConnection, redis.NewRedisClient, server.NewFiberApp, repositoriesSql.NewUserRepository, repositoriesSql.NewPackageRepository, repositoriesSql.NewInvoiceRepository, repositoriesRedis.NewTokenRepository, services.NewTokenService, services.NewAuthService, services.NewPackageService, services.NewInvoiceService, http.NewAuthHandler, http.NewPackageHandler, http.NewInvoiceHandler, middleware.NewAuthMiddleware,
+	ProvideRequestTimeout, database.NewConnection, redis.NewRedisClient, server.NewFiberApp, repositoriesSql.NewUserRepository, repositoriesSql.NewPackageRepository, repositoriesSql.NewInvoiceRepository, repositoriesSql.NewTxRepository, repositoriesRedis.NewTokenRepository, services.NewTokenService, services.NewAuthService, services.NewPackageService, services.NewInvoiceService, http.NewAuthHandler, http.NewPackageHandler, http.NewInvoiceHandler, middleware.NewAuthMiddleware,
 )
 
 // ProvideDBConfig extracts DatabaseConfig from Config

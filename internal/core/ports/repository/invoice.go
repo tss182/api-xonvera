@@ -4,12 +4,15 @@ import (
 	"context"
 
 	"app/xonvera-core/internal/core/domain"
+
+	"gorm.io/gorm"
 )
 
 type InvoiceRepository interface {
-	Create(ctx context.Context, invoice *domain.Invoice, items []domain.InvoiceItem) error
+	Create(ctx context.Context, tx *gorm.DB, data *domain.Invoice) error
+	CreateItem(ctx context.Context, tx *gorm.DB, data []domain.InvoiceItem) error
 	GetByID(ctx context.Context, id int64) (*domain.Invoice, error)
 	GetAll(ctx context.Context, limit, offset int) ([]domain.Invoice, error)
 	GetItems(ctx context.Context, invoiceID int64) ([]domain.InvoiceItem, error)
-	GenerateInvoiceID(ctx context.Context) (int64, error)
+	GenerateInvoiceID(ctx context.Context, tx *gorm.DB) (int64, error)
 }

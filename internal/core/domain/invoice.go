@@ -7,21 +7,22 @@ import (
 )
 
 type Invoice struct {
-	ID          int64          `json:"id" gorm:"primaryKey"`
-	AddTo       string         `json:"add_to" gorm:"not null"`
-	InvoiceFor  string         `json:"invoice_for" gorm:"not null"`
-	InvoiceFrom string         `json:"invoice_from" gorm:"not null"`
-	CreatedAt   time.Time      `json:"created_at"`
-	UpdatedAt   time.Time      `json:"updated_at"`
-	DeletedAt   gorm.DeletedAt `json:"-" gorm:"index"`
+	ID        int64     `json:"id" gorm:"primaryKey"`
+	Issuer    string    `json:"issuer" gorm:"not null"`
+	Customer  string    `json:"customer" gorm:"not null"`
+	IssueDate string    `json:"issue_date" gorm:"not null"`
+	Note      string    `json:"note" gorm:"not null"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt time.Time `json:"-" gorm:"index"`
 }
 
 type InvoiceItem struct {
 	ID          uint           `json:"id" gorm:"primaryKey"`
 	InvoiceID   int64          `json:"invoice_id" gorm:"not null;index"`
 	Description string         `json:"description" gorm:"not null"`
-	Quantity    int            `json:"quantity" gorm:"not null;default:1"`
-	UnitPrice   int            `json:"unit_price" gorm:"not null"`
+	Qty         int            `json:"qty" gorm:"not null;default:1"`
+	Price       int            `json:"price" gorm:"not null"`
 	Total       int            `json:"total" gorm:"not null"`
 	CreatedAt   time.Time      `json:"created_at"`
 	UpdatedAt   time.Time      `json:"updated_at"`

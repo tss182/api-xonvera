@@ -3,7 +3,9 @@ package services
 import (
 	"context"
 	"errors"
+	"time"
 
+	"app/xonvera-core/internal/adapters/dto"
 	"app/xonvera-core/internal/core/domain"
 	portRepository "app/xonvera-core/internal/core/ports/repository"
 	portService "app/xonvera-core/internal/core/ports/service"
@@ -13,30 +15,73 @@ import (
 )
 
 type invoiceService struct {
-	invoiceRepo portRepository.InvoiceRepository
+	repo portRepository.InvoiceRepository
+	tx   portRepository.TxRepository
 }
 
-func NewInvoiceService(
-	invoiceRepo portRepository.InvoiceRepository,
-) portService.InvoiceService {
+func NewInvoiceService(invoiceRepo portRepository.InvoiceRepository, tx portRepository.TxRepository) portService.InvoiceService {
 	return &invoiceService{
-		invoiceRepo: invoiceRepo,
+		repo: invoiceRepo,
+		tx:   tx,
 	}
 }
 
-func (s *invoiceService) CreateInvoice(ctx context.Context, invoice *domain.Invoice, items []domain.InvoiceItem) error {
+func (s *invoiceService) Create(ctx context.Context, req dto.CreateInvoiceRequest) error {
+	tx, err := s.tx.Begin()
+	if err != nil {
+		logger.Error("failed to begin transaction", zap.Error(err))
+		return err
+	}
+	defer tx.Rollback()
+
 	// Generate invoice ID
-	invoiceID, err := s.invoiceRepo.GenerateInvoiceID(ctx)
+	invoiceID, err := s.repo.GenerateInvoiceID(ctx, tx)
 	if err != nil {
 		logger.Error("failed to generate invoice ID", zap.Error(err))
 		return err
 	}
 
-	invoice.ID = invoiceID
+	t := time.Now()
 
-	// Create invoice with items
-	if err := s.invoiceRepo.Create(ctx, invoice, items); err != nil {
+	data := domain.Invoice{
+		ID:        invoiceID,
+		Issuer:    req.Issuer,
+		Customer:  req.Customer,
+		IssueDate: req.IssueDate,
+		Note:      req.Note,
+		CreatedAt: t,
+		UpdatedAt: t,
+	}
+
+	// Create invoice
+	err = s.repo.Create(ctx, tx, &data)
+	if err != nil {
 		logger.Error("failed to create invoice", zap.Error(err))
+		return err
+	}
+
+	//create invoice items
+	var items = make([]domain.InvoiceItem, 0, len(req.Items))
+	for _, v := range req.Items {
+		item := domain.InvoiceItem{
+			InvoiceID:   invoiceID,
+			Description: v.Description,
+			Qty:         v.Qty,
+			Price:       v.Price,
+			CreatedAt:   t,
+			UpdatedAt:   t,
+		}
+		items = append(items, item)
+	}
+	err = s.repo.CreateItem(ctx, tx, items)
+	if err != nil {
+		logger.Error("failed to create invoice items", zap.Error(err))
+		return err
+	}
+
+	err = tx.Commit().Error
+	if err != nil {
+		logger.Error("failed to commit transaction", zap.Error(err))
 		return err
 	}
 
@@ -44,7 +89,7 @@ func (s *invoiceService) CreateInvoice(ctx context.Context, invoice *domain.Invo
 }
 
 func (s *invoiceService) GetInvoiceByID(ctx context.Context, id int64) (*domain.Invoice, error) {
-	invoice, err := s.invoiceRepo.GetByID(ctx, id)
+	invoice, err := s.repo.GetByID(ctx, id)
 	if err != nil {
 		logger.Error("failed to get invoice by ID", zap.Int64("id", id), zap.Error(err))
 		return nil, err
@@ -60,7 +105,7 @@ func (s *invoiceService) GetAllInvoices(ctx context.Context, limit, offset int) 
 		return nil, errors.New("limit cannot exceed 100")
 	}
 
-	invoices, err := s.invoiceRepo.GetAll(ctx, limit, offset)
+	invoices, err := s.repo.GetAll(ctx, limit, offset)
 	if err != nil {
 		logger.Error("failed to get all invoices", zap.Error(err))
 		return nil, err
@@ -69,7 +114,7 @@ func (s *invoiceService) GetAllInvoices(ctx context.Context, limit, offset int) 
 }
 
 func (s *invoiceService) GetInvoiceItems(ctx context.Context, invoiceID int64) ([]domain.InvoiceItem, error) {
-	items, err := s.invoiceRepo.GetItems(ctx, invoiceID)
+	items, err := s.repo.GetItems(ctx, invoiceID)
 	if err != nil {
 		logger.Error("failed to get invoice items", zap.Int64("invoice_id", invoiceID), zap.Error(err))
 		return nil, err

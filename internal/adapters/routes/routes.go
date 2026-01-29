@@ -27,7 +27,7 @@ func SetupRoutes(
 	app.Get("/packages/:id", appWire.PackageHandler.GetPackageByID)
 
 	// Invoice routes (public)
-	app.Post("/invoices", appWire.InvoiceHandler.CreateInvoice)
+	app.Post("/invoices", appWire.InvoiceHandler.Create)
 	app.Get("/invoices", appWire.InvoiceHandler.GetAllInvoices)
 	app.Get("/invoices/:id", appWire.InvoiceHandler.GetInvoiceByID)
 

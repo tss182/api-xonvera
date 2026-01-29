@@ -61,16 +61,6 @@ func OK(c *fiber.Ctx, resp interface{}) error {
 	return JSON(c, http.StatusOK, nil, resp, nil)
 }
 
-// Created sends a 201 Created response with data
-func Created(c *fiber.Ctx, resp interface{}) error {
-	return JSON(c, http.StatusCreated, nil, resp, nil)
-}
-
-// Accepted sends a 202 Accepted response
-func Accepted(c *fiber.Ctx, resp interface{}) error {
-	return JSON(c, http.StatusAccepted, nil, resp, nil)
-}
-
 // NoAuth sends a 401 Unauthorized response
 func NoAuth(c *fiber.Ctx) error {
 	return JSON(c, http.StatusUnauthorized, []string{"unauthorized"}, nil, nil)

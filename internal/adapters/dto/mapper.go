@@ -77,18 +77,17 @@ func ToInvoiceResponse(invoice *domain.Invoice, items []domain.InvoiceItem) *Inv
 			ID:          item.ID,
 			InvoiceID:   item.InvoiceID,
 			Description: item.Description,
-			Quantity:    item.Quantity,
-			UnitPrice:   item.UnitPrice,
+			Qty:         item.Qty,
+			Price:       item.Price,
 			Total:       item.Total,
 			CreatedAt:   item.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
 		})
 	}
 
 	return &InvoiceResponse{
-		ID:          invoice.ID,
-		AddTo:       invoice.AddTo,
-		InvoiceFor:  invoice.InvoiceFor,
-		InvoiceFrom: invoice.InvoiceFrom,
+		ID:        invoice.ID,
+		Customer:  invoice.Customer,
+		Issuer:    invoice.Issuer,
 		Items:       itemResponses,
 		CreatedAt:   invoice.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
 		UpdatedAt:   invoice.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
@@ -100,12 +99,11 @@ func ToInvoiceListResponse(invoices []domain.Invoice, limit, offset int) *Invoic
 	var invoiceResponses []InvoiceResponse
 	for _, invoice := range invoices {
 		invoiceResponses = append(invoiceResponses, InvoiceResponse{
-			ID:          invoice.ID,
-			AddTo:       invoice.AddTo,
-			InvoiceFor:  invoice.InvoiceFor,
-			InvoiceFrom: invoice.InvoiceFrom,
-			CreatedAt:   invoice.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
-			UpdatedAt:   invoice.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			ID:        invoice.ID,
+			Customer:  invoice.Customer,
+			Issuer:    invoice.Issuer,
+			CreatedAt: invoice.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			UpdatedAt: invoice.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
 		})
 	}
 

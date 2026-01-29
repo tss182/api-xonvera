@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"app/xonvera-core/internal/core/domain"
-	"app/xonvera-core/internal/core/ports/repository"
+	portRepository "app/xonvera-core/internal/core/ports/repository"
 
 	"gorm.io/gorm"
 )
@@ -24,7 +24,7 @@ func NewInvoiceRepository(db *gorm.DB) portRepository.InvoiceRepository {
 // YYYYMMDD => year, month, date
 // 00001 => suffix auto increment
 // TODO: Implement daily sequence reset to ensure suffix stays within 00001-99999
-func (r *invoiceRepository) GenerateInvoiceID(ctx context.Context) (int64, error) {
+func (r *invoiceRepository) GenerateInvoiceID(ctx context.Context, tx *gorm.DB) (int64, error) {
 	now := time.Now()
 
 	// Format: 2 + YYYYMMDD + SSSSS
@@ -33,7 +33,7 @@ func (r *invoiceRepository) GenerateInvoiceID(ctx context.Context) (int64, error
 
 	// Get next sequence value
 	var suffix int
-	err := r.db.WithContext(ctx).Raw("SELECT nextval('billing.invoice_suffix_seq')").Scan(&suffix).Error
+	err := txDb(tx, r.db).WithContext(ctx).Raw("SELECT nextval('billing.invoice_suffix_seq')").Scan(&suffix).Error
 	if err != nil {
 		return 0, err
 	}
@@ -47,25 +47,12 @@ func (r *invoiceRepository) GenerateInvoiceID(ctx context.Context) (int64, error
 	return invoiceID, nil
 }
 
-func (r *invoiceRepository) Create(ctx context.Context, invoice *domain.Invoice, items []domain.InvoiceItem) error {
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// Create invoice
-		if err := tx.Create(invoice).Error; err != nil {
-			return err
-		}
+func (r *invoiceRepository) Create(ctx context.Context, tx *gorm.DB, data *domain.Invoice) error {
+	return txDb(tx, r.db).WithContext(ctx).Create(&data).Error
+}
 
-		// Create invoice items if any
-		if len(items) > 0 {
-			for i := range items {
-				items[i].InvoiceID = invoice.ID
-			}
-			if err := tx.Create(&items).Error; err != nil {
-				return err
-			}
-		}
-
-		return nil
-	})
+func (r *invoiceRepository) CreateItem(ctx context.Context, tx *gorm.DB, data []domain.InvoiceItem) error {
+	return txDb(tx, r.db).WithContext(ctx).Create(&data).Error
 }
 
 func (r *invoiceRepository) GetByID(ctx context.Context, id int64) (*domain.Invoice, error) {
