@@ -63,11 +63,13 @@ func (s *invoiceService) Create(ctx context.Context, req dto.CreateInvoiceReques
 	//create invoice items
 	var items = make([]domain.InvoiceItem, 0, len(req.Items))
 	for _, v := range req.Items {
+		total := v.Qty * v.Price
 		item := domain.InvoiceItem{
 			InvoiceID:   invoiceID,
 			Description: v.Description,
 			Qty:         v.Qty,
 			Price:       v.Price,
+			Total:       total,
 			CreatedAt:   t,
 			UpdatedAt:   t,
 		}

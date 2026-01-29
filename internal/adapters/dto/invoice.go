@@ -29,12 +29,14 @@ type InvoiceItemResponse struct {
 
 // InvoiceResponse represents invoice output
 type InvoiceResponse struct {
-	ID          int64                 `json:"id"`
-	Customer    string                `json:"customer"`
-	Issuer      string                `json:"issuer"`
-	Items       []InvoiceItemResponse `json:"items,omitempty"`
-	CreatedAt   string                `json:"created_at"`
-	UpdatedAt   string                `json:"updated_at"`
+	ID        int64                 `json:"id"`
+	Customer  string                `json:"customer"`
+	Issuer    string                `json:"issuer"`
+	IssueDate string                `json:"issue_date"`
+	Note      string                `json:"note"`
+	Items     []InvoiceItemResponse `json:"items,omitempty"`
+	CreatedAt string                `json:"created_at"`
+	UpdatedAt string                `json:"updated_at"`
 }
 
 // InvoiceListResponse represents list of invoices output

@@ -59,6 +59,9 @@ func (r *invoiceRepository) GetByID(ctx context.Context, id int64) (*domain.Invo
 	var invoice domain.Invoice
 	err := r.db.WithContext(ctx).Where("id = ?", id).First(&invoice).Error
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return &invoice, nil

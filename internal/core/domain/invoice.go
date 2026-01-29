@@ -7,14 +7,14 @@ import (
 )
 
 type Invoice struct {
-	ID        int64     `json:"id" gorm:"primaryKey"`
-	Issuer    string    `json:"issuer" gorm:"not null"`
-	Customer  string    `json:"customer" gorm:"not null"`
-	IssueDate string    `json:"issue_date" gorm:"not null"`
-	Note      string    `json:"note" gorm:"not null"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	DeletedAt time.Time `json:"-" gorm:"index"`
+	ID        int64          `json:"id" gorm:"primaryKey"`
+	Issuer    string         `json:"issuer" gorm:"not null"`
+	Customer  string         `json:"customer" gorm:"not null"`
+	IssueDate string         `json:"issue_date" gorm:"not null"`
+	Note      string         `json:"note" gorm:"not null"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 type InvoiceItem struct {

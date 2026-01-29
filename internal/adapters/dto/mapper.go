@@ -88,9 +88,11 @@ func ToInvoiceResponse(invoice *domain.Invoice, items []domain.InvoiceItem) *Inv
 		ID:        invoice.ID,
 		Customer:  invoice.Customer,
 		Issuer:    invoice.Issuer,
-		Items:       itemResponses,
-		CreatedAt:   invoice.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
-		UpdatedAt:   invoice.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		IssueDate: invoice.IssueDate,
+		Note:      invoice.Note,
+		Items:     itemResponses,
+		CreatedAt: invoice.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		UpdatedAt: invoice.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
 	}
 }
 
@@ -102,6 +104,8 @@ func ToInvoiceListResponse(invoices []domain.Invoice, limit, offset int) *Invoic
 			ID:        invoice.ID,
 			Customer:  invoice.Customer,
 			Issuer:    invoice.Issuer,
+			IssueDate: invoice.IssueDate,
+			Note:      invoice.Note,
 			CreatedAt: invoice.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
 			UpdatedAt: invoice.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
 		})
