@@ -1,0 +1,4008 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>cmd: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">app/xonvera-core/cmd/main.go (0.0%)</option>
+				
+				<option value="file1">app/xonvera-core/internal/adapters/dto/mapper.go (100.0%)</option>
+				
+				<option value="file2">app/xonvera-core/internal/adapters/handler/http/auth.go (0.0%)</option>
+				
+				<option value="file3">app/xonvera-core/internal/adapters/handler/http/invoice.go (0.0%)</option>
+				
+				<option value="file4">app/xonvera-core/internal/adapters/handler/http/package.go (0.0%)</option>
+				
+				<option value="file5">app/xonvera-core/internal/adapters/handler/http/response.go (0.0%)</option>
+				
+				<option value="file6">app/xonvera-core/internal/adapters/middleware/auth.go (0.0%)</option>
+				
+				<option value="file7">app/xonvera-core/internal/adapters/middleware/body_logger.go (0.0%)</option>
+				
+				<option value="file8">app/xonvera-core/internal/adapters/middleware/rate_limiter_redis.go (0.0%)</option>
+				
+				<option value="file9">app/xonvera-core/internal/adapters/middleware/request_id.go (0.0%)</option>
+				
+				<option value="file10">app/xonvera-core/internal/adapters/repositories/redis/token.go (0.0%)</option>
+				
+				<option value="file11">app/xonvera-core/internal/adapters/repositories/redis/token_mock.go (0.0%)</option>
+				
+				<option value="file12">app/xonvera-core/internal/adapters/repositories/sql/invoice.go (0.0%)</option>
+				
+				<option value="file13">app/xonvera-core/internal/adapters/repositories/sql/package.go (0.0%)</option>
+				
+				<option value="file14">app/xonvera-core/internal/adapters/repositories/sql/user.go (0.0%)</option>
+				
+				<option value="file15">app/xonvera-core/internal/adapters/repositories/sql/user_mock.go (0.0%)</option>
+				
+				<option value="file16">app/xonvera-core/internal/adapters/routes/routes.go (0.0%)</option>
+				
+				<option value="file17">app/xonvera-core/internal/core/domain/errors.go (100.0%)</option>
+				
+				<option value="file18">app/xonvera-core/internal/core/domain/invoice.go (0.0%)</option>
+				
+				<option value="file19">app/xonvera-core/internal/core/domain/package.go (0.0%)</option>
+				
+				<option value="file20">app/xonvera-core/internal/core/domain/token.go (0.0%)</option>
+				
+				<option value="file21">app/xonvera-core/internal/core/domain/user.go (0.0%)</option>
+				
+				<option value="file22">app/xonvera-core/internal/core/services/auth.go (0.0%)</option>
+				
+				<option value="file23">app/xonvera-core/internal/core/services/invoice.go (0.0%)</option>
+				
+				<option value="file24">app/xonvera-core/internal/core/services/package.go (0.0%)</option>
+				
+				<option value="file25">app/xonvera-core/internal/core/services/token.go (0.0%)</option>
+				
+				<option value="file26">app/xonvera-core/internal/dependencies/wire_gen.go (0.0%)</option>
+				
+				<option value="file27">app/xonvera-core/internal/infrastructure/config/config.go (0.0%)</option>
+				
+				<option value="file28">app/xonvera-core/internal/infrastructure/database/database.go (0.0%)</option>
+				
+				<option value="file29">app/xonvera-core/internal/infrastructure/database/migrate.go (0.0%)</option>
+				
+				<option value="file30">app/xonvera-core/internal/infrastructure/graceful/shutdown.go (0.0%)</option>
+				
+				<option value="file31">app/xonvera-core/internal/infrastructure/logger/logger.go (0.0%)</option>
+				
+				<option value="file32">app/xonvera-core/internal/infrastructure/redis/redis.go (0.0%)</option>
+				
+				<option value="file33">app/xonvera-core/internal/infrastructure/server/fiber.go (0.0%)</option>
+				
+				<option value="file34">app/xonvera-core/internal/testutil/mocks.go (0.0%)</option>
+				
+				<option value="file35">app/xonvera-core/internal/utils/utils.go (100.0%)</option>
+				
+				<option value="file36">app/xonvera-core/internal/utils/validator/init.go (100.0%)</option>
+				
+				<option value="file37">app/xonvera-core/internal/utils/validator/string.go (100.0%)</option>
+				
+				<option value="file38">app/xonvera-core/internal/utils/validator/validator.go (83.1%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "flag"
+
+        "app/xonvera-core/internal/adapters/middleware"
+        "app/xonvera-core/internal/adapters/routes"
+        "app/xonvera-core/internal/dependencies"
+        "app/xonvera-core/internal/infrastructure/database"
+        "app/xonvera-core/internal/infrastructure/graceful"
+        "app/xonvera-core/internal/infrastructure/logger"
+
+        "github.com/gofiber/fiber/v2"
+        "github.com/gofiber/fiber/v2/middleware/cors"
+        fiberLog "github.com/gofiber/fiber/v2/middleware/logger"
+        fiberRecover "github.com/gofiber/fiber/v2/middleware/recover"
+        "go.uber.org/zap"
+)
+
+func main() <span class="cov0" title="0">{
+        // Parse command line flags
+        runMigrations := flag.Bool("migrate", false, "Run database migrations")
+        migrateDown := flag.Bool("migrate-down", false, "Rollback database migrations by one step")
+        migrateReset := flag.Bool("migrate-reset", false, "Reset database migrations")
+        flag.Parse()
+
+        // Initialize application using Wire
+        app, err := dependencies.InitializeApplication()
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Fatal("Failed to initialize application", zap.Error(err))
+        }</span>
+
+        // Initialize logger with environment
+        <span class="cov0" title="0">logger.Init(app.Config.App.Env)
+        defer logger.Sync()
+
+        // Handle migrations if requested
+        if *runMigrations || *migrateDown || *migrateReset </span><span class="cov0" title="0">{
+                dsn := database.GetDSN(&amp;app.Config.Database)
+                migrator, err := database.NewMigrator(dsn, "file://internal/infrastructure/database/migrations")
+                if err != nil </span><span class="cov0" title="0">{
+                        logger.Fatal("Failed to create migrator", zap.Error(err))
+                }</span>
+                <span class="cov0" title="0">defer migrator.Close()
+
+                if *migrateDown </span><span class="cov0" title="0">{
+                        if err := migrator.Steps(-1); err != nil </span><span class="cov0" title="0">{
+                                logger.Fatal("Failed to rollback migrations", zap.Error(err))
+                        }</span>
+                } else<span class="cov0" title="0"> if *migrateReset </span><span class="cov0" title="0">{
+                        if err := migrator.Down(); err != nil </span><span class="cov0" title="0">{
+                                logger.Fatal("Failed to reset migrations", zap.Error(err))
+                        }</span>
+                } else<span class="cov0" title="0"> {
+                        if err := migrator.Up(); err != nil </span><span class="cov0" title="0">{
+                                logger.Fatal("Failed to run migrations", zap.Error(err))
+                        }</span>
+                }
+                <span class="cov0" title="0">return</span>
+        }
+
+        // Initialize Fiber app
+        <span class="cov0" title="0">fiberApp := app.FiberApp
+
+        // Global middleware
+        fiberApp.Use(middleware.RequestID())
+        fiberApp.Use(fiberRecover.New())
+        fiberApp.Use(middleware.BodyLogger(app.Config.App.Env))
+        fiberApp.Use(fiberLog.New(fiberLog.Config{
+                Format: "${time} | ${status} | ${latency} | ${locals:request_id} | ${method} ${path}\n",
+        }))
+        fiberApp.Use(middleware.APIRateLimiter(app.Redis))
+        fiberApp.Use(cors.New(cors.Config{
+                AllowOrigins: app.Config.App.CORSOrigins,
+                AllowMethods: "GET,POST,PUT,DELETE,PATCH,OPTIONS",
+                AllowHeaders: "Origin,Content-Type,Accept,Authorization",
+        }))
+
+        // Health check endpoint
+        fiberApp.Get("/health", func(c *fiber.Ctx) error </span><span class="cov0" title="0">{
+                return c.JSON(fiber.Map{
+                        "status": "healthy",
+                        "app":    app.Config.App.Name,
+                })
+        }</span>)
+
+        // Setup routes
+        <span class="cov0" title="0">routes.SetupRoutes(fiberApp, app)
+
+        addr := ":" + app.Config.App.Port
+        logger.Info("Starting server",
+                zap.String("app", app.Config.App.Name),
+                zap.String("addr", addr),
+                zap.String("env", app.Config.App.Env),
+        )
+
+        // Channel to handle server errors
+        serverErrors := make(chan error, 1)
+
+        // Start server in goroutine
+        go func() </span><span class="cov0" title="0">{
+                if err := fiberApp.Listen(addr); err != nil </span><span class="cov0" title="0">{
+                        serverErrors &lt;- err
+                }</span>
+        }()
+
+        // Handle graceful shutdown or server errors
+        <span class="cov0" title="0">graceful.Shutdown(fiberApp, app.DB, app.Redis, serverErrors)</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package dto
+
+import (
+        "app/xonvera-core/internal/core/domain"
+)
+
+// ToUserResponse converts domain.User to UserResponse
+func ToUserResponse(user *domain.User) *UserResponse <span class="cov8" title="1">{
+        if user == nil </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">return &amp;UserResponse{
+                ID:        user.ID,
+                Name:      user.Name,
+                Email:     user.Email,
+                Phone:     user.Phone,
+                CreatedAt: user.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+        }</span>
+}
+
+// ToAuthResponse converts domain.AuthResponse to dto.AuthResponse
+func ToAuthResponse(domainResp *domain.AuthResponse) *AuthResponse <span class="cov8" title="1">{
+        if domainResp == nil </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">return &amp;AuthResponse{
+                User:         ToUserResponse(domainResp.User),
+                AccessToken:  domainResp.AccessToken,
+                RefreshToken: domainResp.RefreshToken,
+                ExpiresAt:    domainResp.ExpiresAt,
+        }</span>
+}
+
+// ToRegisterRequest converts dto.RegisterRequest to domain.RegisterRequest
+func ToRegisterRequest(req *RegisterRequest) *domain.RegisterRequest <span class="cov8" title="1">{
+        if req == nil </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">return &amp;domain.RegisterRequest{
+                Name:     req.Name,
+                Email:    req.Email,
+                Phone:    req.Phone,
+                Password: req.Password,
+        }</span>
+}
+
+// ToLoginRequest converts dto.LoginRequest to domain.LoginRequest
+func ToLoginRequest(req *LoginRequest) *domain.LoginRequest <span class="cov8" title="1">{
+        if req == nil </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">return &amp;domain.LoginRequest{
+                Username: req.Username,
+                Password: req.Password,
+        }</span>
+}
+
+// ToRefreshTokenRequest converts dto.RefreshTokenRequest to domain.RefreshTokenRequest
+func ToRefreshTokenRequest(req *RefreshTokenRequest) *domain.RefreshTokenRequest <span class="cov8" title="1">{
+        if req == nil </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">return &amp;domain.RefreshTokenRequest{
+                RefreshToken: req.RefreshToken,
+        }</span>
+}
+
+// ToInvoiceResponse converts domain.Invoice to InvoiceResponse
+func ToInvoiceResponse(invoice *domain.Invoice, items []domain.InvoiceItem) *InvoiceResponse <span class="cov8" title="1">{
+        if invoice == nil </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">var itemResponses []InvoiceItemResponse
+        for _, item := range items </span><span class="cov8" title="1">{
+                itemResponses = append(itemResponses, InvoiceItemResponse{
+                        ID:          item.ID,
+                        InvoiceID:   item.InvoiceID,
+                        Description: item.Description,
+                        Quantity:    item.Quantity,
+                        UnitPrice:   item.UnitPrice,
+                        Total:       item.Total,
+                        CreatedAt:   item.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+                })
+        }</span>
+
+        <span class="cov8" title="1">return &amp;InvoiceResponse{
+                ID:          invoice.ID,
+                AddTo:       invoice.AddTo,
+                InvoiceFor:  invoice.InvoiceFor,
+                InvoiceFrom: invoice.InvoiceFrom,
+                Items:       itemResponses,
+                CreatedAt:   invoice.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+                UpdatedAt:   invoice.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+        }</span>
+}
+
+// ToInvoiceListResponse converts list of invoices to InvoiceListResponse
+func ToInvoiceListResponse(invoices []domain.Invoice, limit, offset int) *InvoiceListResponse <span class="cov8" title="1">{
+        var invoiceResponses []InvoiceResponse
+        for _, invoice := range invoices </span><span class="cov8" title="1">{
+                invoiceResponses = append(invoiceResponses, InvoiceResponse{
+                        ID:          invoice.ID,
+                        AddTo:       invoice.AddTo,
+                        InvoiceFor:  invoice.InvoiceFor,
+                        InvoiceFrom: invoice.InvoiceFrom,
+                        CreatedAt:   invoice.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+                        UpdatedAt:   invoice.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+                })
+        }</span>
+
+        <span class="cov8" title="1">return &amp;InvoiceListResponse{
+                Invoices: invoiceResponses,
+                Total:    len(invoices),
+                Limit:    limit,
+                Offset:   offset,
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package http
+
+import (
+        "context"
+        "time"
+
+        "app/xonvera-core/internal/core/domain"
+        portService "app/xonvera-core/internal/core/ports/service"
+        "app/xonvera-core/internal/infrastructure/logger"
+        "app/xonvera-core/internal/utils/validator"
+
+        "github.com/gofiber/fiber/v2"
+        "go.uber.org/zap"
+)
+
+type AuthHandler struct {
+        service portService.AuthService
+        rto     time.Duration
+}
+
+func NewAuthHandler(service portService.AuthService, rto time.Duration) *AuthHandler <span class="cov0" title="0">{
+        return &amp;AuthHandler{
+                service: service,
+                rto:     rto,
+        }
+}</span>
+
+// Register handles user registration
+// @Summary Register a new user
+// @Description Register a new user with name, email, phone, and password
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body domain.RegisterRequest true "Register Request"
+// @Success 201 {object} Response
+// @Failure 400 {object} Response
+// @Router /api/v1/auth/register [post]
+func (h *AuthHandler) Register(c *fiber.Ctx) error <span class="cov0" title="0">{
+        ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+        defer cancel()
+
+        var req domain.RegisterRequest
+
+        // Validate request
+        if err := validator.HandlerBindingError(c, &amp;req, validator.HandlerBody); err != nil </span><span class="cov0" title="0">{
+                logger.Error("error when binding request in auth service", zap.Strings("error validation query", err))
+                return BadRequest(c, err)
+        }</span>
+
+        <span class="cov0" title="0">response, err := h.service.Register(ctx, &amp;req)
+        if err != nil </span><span class="cov0" title="0">{
+                return HandlerErrorGlobal(c, err)
+        }</span>
+
+        <span class="cov0" title="0">return OK(c, response)</span>
+}
+
+// Login handles user login
+// @Summary Login user
+// @Description Login with email or phone and password
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body domain.LoginRequest true "Login Request"
+// @Success 200 {object} Response
+// @Failure 400 {object} Response
+// @Failure 401 {object} Response
+// @Router /api/v1/auth/login [post]
+func (h *AuthHandler) Login(c *fiber.Ctx) error <span class="cov0" title="0">{
+        ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+        defer cancel()
+
+        var req domain.LoginRequest
+
+        // Validate request
+        if err := validator.HandlerBindingError(c, &amp;req, validator.HandlerBody); err != nil </span><span class="cov0" title="0">{
+                logger.Error("error when binding request in auth service", zap.Strings("error validation query", err))
+                return BadRequest(c, err)
+        }</span>
+
+        <span class="cov0" title="0">response, err := h.service.Login(ctx, &amp;req)
+        if err != nil </span><span class="cov0" title="0">{
+                return HandlerErrorGlobal(c, err)
+        }</span>
+
+        <span class="cov0" title="0">return OK(c, response)</span>
+}
+
+// RefreshToken handles token refresh
+// @Summary Refresh access token
+// @Description Get new access token using refresh token
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body domain.RefreshTokenRequest true "Refresh Token Request"
+// @Success 200 {object} Response
+// @Failure 400 {object} Response
+// @Failure 401 {object} Response
+// @Router /api/v1/auth/refresh [post]
+func (h *AuthHandler) RefreshToken(c *fiber.Ctx) error <span class="cov0" title="0">{
+        ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+        defer cancel()
+
+        var req domain.RefreshTokenRequest
+
+        // Validate request
+        if err := validator.HandlerBindingError(c, &amp;req, validator.HandlerBody); err != nil </span><span class="cov0" title="0">{
+                logger.Error("error when binding request in auth service", zap.Strings("error validation query", err))
+                return BadRequest(c, err)
+        }</span>
+
+        <span class="cov0" title="0">response, err := h.service.RefreshToken(ctx, &amp;req)
+        if err != nil </span><span class="cov0" title="0">{
+                return HandlerErrorGlobal(c, err)
+        }</span>
+
+        <span class="cov0" title="0">return OK(c, response)</span>
+}
+
+// Logout handles user logout
+// @Summary Logout user
+// @Description Invalidate current access token
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} Response
+// @Failure 401 {object} Response
+// @Router /api/v1/auth/logout [post]
+func (h *AuthHandler) Logout(c *fiber.Ctx) error <span class="cov0" title="0">{
+        ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+        defer cancel()
+
+        // Get access token from context (set by auth middleware)
+        accessToken, ok := c.Locals("accessToken").(string)
+        if !ok || accessToken == "" </span><span class="cov0" title="0">{
+                return NoAuth(c)
+        }</span>
+
+        <span class="cov0" title="0">err := h.service.Logout(ctx, accessToken)
+        if err != nil </span><span class="cov0" title="0">{
+                return HandlerErrorGlobal(c, err)
+        }</span>
+
+        <span class="cov0" title="0">return OK(c, nil)</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package http
+
+import (
+        "context"
+        "strconv"
+        "time"
+
+        "app/xonvera-core/internal/adapters/dto"
+        "app/xonvera-core/internal/core/domain"
+        portService "app/xonvera-core/internal/core/ports/service"
+        "app/xonvera-core/internal/infrastructure/logger"
+        "app/xonvera-core/internal/utils/validator"
+
+        "github.com/gofiber/fiber/v2"
+        "go.uber.org/zap"
+)
+
+type InvoiceHandler struct {
+        service portService.InvoiceService
+        rto     time.Duration
+}
+
+func NewInvoiceHandler(service portService.InvoiceService, rto time.Duration) *InvoiceHandler <span class="cov0" title="0">{
+        return &amp;InvoiceHandler{
+                service: service,
+                rto:     rto,
+        }
+}</span>
+
+// CreateInvoice handles invoice creation
+// @Summary Create a new invoice
+// @Description Create a new invoice with items
+// @Tags Invoice
+// @Accept json
+// @Produce json
+// @Param request body dto.CreateInvoiceRequest true "Create Invoice Request"
+// @Success 201 {object} Response
+// @Failure 400 {object} Response
+// @Router /api/v1/invoices [post]
+func (h *InvoiceHandler) CreateInvoice(c *fiber.Ctx) error <span class="cov0" title="0">{
+        ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+        defer cancel()
+
+        var req dto.CreateInvoiceRequest
+
+        // Validate request
+        if err := validator.HandlerBindingError(c, &amp;req, validator.HandlerBody); err != nil </span><span class="cov0" title="0">{
+                logger.Error("error when binding request in invoice service", zap.Strings("error validation body", err))
+                return BadRequest(c, err)
+        }</span>
+
+        // Convert DTO to domain
+        <span class="cov0" title="0">invoice := &amp;domain.Invoice{
+                AddTo:       req.AddTo,
+                InvoiceFor:  req.InvoiceFor,
+                InvoiceFrom: req.InvoiceFrom,
+        }
+
+        items := make([]domain.InvoiceItem, len(req.Items))
+        for i, itemReq := range req.Items </span><span class="cov0" title="0">{
+                items[i] = domain.InvoiceItem{
+                        Description: itemReq.Description,
+                        Quantity:    itemReq.Quantity,
+                        UnitPrice:   itemReq.UnitPrice,
+                        Total:       itemReq.Quantity * itemReq.UnitPrice,
+                }
+        }</span>
+
+        <span class="cov0" title="0">err := h.service.CreateInvoice(ctx, invoice, items)
+        if err != nil </span><span class="cov0" title="0">{
+                return HandlerErrorGlobal(c, err)
+        }</span>
+
+        // Get the created invoice with items
+        <span class="cov0" title="0">invoiceItems, err := h.service.GetInvoiceItems(ctx, invoice.ID)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to get invoice items after creation", zap.Int64("invoice_id", invoice.ID), zap.Error(err))
+                // Return invoice without items rather than failing the request
+                invoiceItems = []domain.InvoiceItem{}
+        }</span>
+        <span class="cov0" title="0">response := dto.ToInvoiceResponse(invoice, invoiceItems)
+
+        return Created(c, response)</span>
+}
+
+// GetInvoiceByID handles getting an invoice by ID
+// @Summary Get invoice by ID
+// @Description Get invoice details by ID
+// @Tags Invoice
+// @Accept json
+// @Produce json
+// @Param id path int true "Invoice ID"
+// @Success 200 {object} Response
+// @Failure 400 {object} Response
+// @Failure 404 {object} Response
+// @Router /api/v1/invoices/{id} [get]
+func (h *InvoiceHandler) GetInvoiceByID(c *fiber.Ctx) error <span class="cov0" title="0">{
+        ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+        defer cancel()
+
+        idStr := c.Params("id")
+        id, err := strconv.ParseInt(idStr, 10, 64)
+        if err != nil </span><span class="cov0" title="0">{
+                return BadRequest(c, []string{"invalid invoice ID"})
+        }</span>
+
+        <span class="cov0" title="0">invoice, err := h.service.GetInvoiceByID(ctx, id)
+        if err != nil </span><span class="cov0" title="0">{
+                return HandlerErrorGlobal(c, err)
+        }</span>
+
+        // Get invoice items
+        <span class="cov0" title="0">items, err := h.service.GetInvoiceItems(ctx, id)
+        if err != nil </span><span class="cov0" title="0">{
+                return HandlerErrorGlobal(c, err)
+        }</span>
+
+        <span class="cov0" title="0">response := dto.ToInvoiceResponse(invoice, items)
+        return OK(c, response)</span>
+}
+
+// GetAllInvoices handles getting all invoices with pagination
+// @Summary Get all invoices
+// @Description Get all invoices with pagination
+// @Tags Invoice
+// @Accept json
+// @Produce json
+// @Param limit query int false "Limit" default(20)
+// @Param offset query int false "Offset" default(0)
+// @Success 200 {object} Response
+// @Failure 400 {object} Response
+// @Router /api/v1/invoices [get]
+func (h *InvoiceHandler) GetAllInvoices(c *fiber.Ctx) error <span class="cov0" title="0">{
+        ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+        defer cancel()
+
+        // Get pagination parameters
+        limit := c.QueryInt("limit", 20)
+        offset := c.QueryInt("offset", 0)
+
+        invoices, err := h.service.GetAllInvoices(ctx, limit, offset)
+        if err != nil </span><span class="cov0" title="0">{
+                return HandlerErrorGlobal(c, err)
+        }</span>
+
+        <span class="cov0" title="0">response := dto.ToInvoiceListResponse(invoices, limit, offset)
+        return OK(c, response)</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package http
+
+import (
+        portService "app/xonvera-core/internal/core/ports/service"
+        "fmt"
+
+        "github.com/gofiber/fiber/v2"
+)
+
+type PackageHandler struct {
+        service portService.PackageService
+}
+
+func NewPackageHandler(service portService.PackageService) *PackageHandler <span class="cov0" title="0">{
+        return &amp;PackageHandler{
+                service: service,
+        }
+}</span>
+
+func (h *PackageHandler) GetPackages(c *fiber.Ctx) error <span class="cov0" title="0">{
+        resp, err := h.service.GetPackages(c.Context())
+        if err != nil </span><span class="cov0" title="0">{
+                return HandlerErrorGlobal(c, err)
+        }</span>
+
+        <span class="cov0" title="0">return OK(c, resp)</span>
+}
+
+func (h *PackageHandler) GetPackageByID(c *fiber.Ctx) error <span class="cov0" title="0">{
+        id := c.Params("id")
+        if id == "" </span><span class="cov0" title="0">{
+                return HandlerErrorGlobal(c, fmt.Errorf("400:invalid package"))
+        }</span>
+
+        <span class="cov0" title="0">pkg, err := h.service.GetPackageByID(c.Context(), id)
+        if err != nil </span><span class="cov0" title="0">{
+                return HandlerErrorGlobal(c, err)
+        }</span>
+
+        <span class="cov0" title="0">return OK(c, pkg)</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package http
+
+import (
+        "database/sql"
+        "errors"
+        "fmt"
+        "net/http"
+        "strconv"
+        "strings"
+
+        "github.com/gofiber/fiber/v2"
+        "gorm.io/gorm"
+)
+
+type (
+        Map map[string]interface{}
+
+        Resp struct {
+                RequestID string      `json:"request_id"`
+                Errors    []string    `json:"errors,omitempty"`
+                Data      interface{} `json:"data"`
+                Meta      interface{} `json:"meta,omitempty"`
+        }
+)
+
+// JSON sends a JSON response with the given status code
+func JSON(c *fiber.Ctx, httpStatus int, errs []string, data, meta interface{}) error <span class="cov0" title="0">{
+        // Validate HTTP status code
+        if httpStatus &lt; 100 || httpStatus &gt; 599 </span><span class="cov0" title="0">{
+                httpStatus = http.StatusInternalServerError
+        }</span>
+
+        // Extract request ID from context
+        <span class="cov0" title="0">requestID := extractRequestID(c)
+
+        // Default empty data to empty map
+        if data == nil </span><span class="cov0" title="0">{
+                data = Map{}
+        }</span>
+
+        <span class="cov0" title="0">resp := Resp{
+                RequestID: requestID,
+                Errors:    errs,
+                Data:      data,
+                Meta:      meta,
+        }
+
+        return c.Status(httpStatus).JSON(resp)</span>
+}
+
+// extractRequestID safely extracts request ID from context
+func extractRequestID(c *fiber.Ctx) string <span class="cov0" title="0">{
+        if req, ok := c.Locals("request_id").(string); ok </span><span class="cov0" title="0">{
+                return req
+        }</span>
+        <span class="cov0" title="0">return ""</span>
+}
+
+// OK sends a 200 OK response with data
+func OK(c *fiber.Ctx, resp interface{}) error <span class="cov0" title="0">{
+        return JSON(c, http.StatusOK, nil, resp, nil)
+}</span>
+
+// Created sends a 201 Created response with data
+func Created(c *fiber.Ctx, resp interface{}) error <span class="cov0" title="0">{
+        return JSON(c, http.StatusCreated, nil, resp, nil)
+}</span>
+
+// Accepted sends a 202 Accepted response
+func Accepted(c *fiber.Ctx, resp interface{}) error <span class="cov0" title="0">{
+        return JSON(c, http.StatusAccepted, nil, resp, nil)
+}</span>
+
+// NoAuth sends a 401 Unauthorized response
+func NoAuth(c *fiber.Ctx) error <span class="cov0" title="0">{
+        return JSON(c, http.StatusUnauthorized, []string{"unauthorized"}, nil, nil)
+}</span>
+
+// BadRequest sends a 400 Bad Request response
+func BadRequest(c *fiber.Ctx, errs []string) error <span class="cov0" title="0">{
+        return JSON(c, http.StatusBadRequest, errs, nil, nil)
+}</span>
+
+// NotFound sends a 404 Not Found response
+func NotFound(c *fiber.Ctx, errs []string) error <span class="cov0" title="0">{
+        return JSON(c, http.StatusNotFound, errs, nil, nil)
+}</span>
+
+// Conflict sends a 409 Conflict response
+func Conflict(c *fiber.Ctx, errs []string) error <span class="cov0" title="0">{
+        return JSON(c, http.StatusConflict, errs, nil, nil)
+}</span>
+
+// InternalServerError sends a 500 Internal Server Error response
+func InternalServerError(c *fiber.Ctx, errs []string, debugError bool) error <span class="cov0" title="0">{
+        if errs == nil || !debugError </span><span class="cov0" title="0">{
+                errs = []string{"internal server error"}
+        }</span>
+        <span class="cov0" title="0">return JSON(c, http.StatusInternalServerError, errs, nil, nil)</span>
+}
+
+// ErrorLimited sends a 429 Too Many Requests response
+func ErrorLimited(c *fiber.Ctx, errs []string) error <span class="cov0" title="0">{
+        return JSON(c, http.StatusTooManyRequests, errs, nil, nil)
+}</span>
+
+// HandlerErrorGlobal is the global error handler for the application
+func HandlerErrorGlobal(c *fiber.Ctx, err error) error <span class="cov0" title="0">{
+        // Handle record not found errors
+        if errors.Is(err, sql.ErrNoRows) || errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                return NotFound(c, []string{"data not found"})
+        }</span>
+
+        // Check if debug mode is enabled
+        <span class="cov0" title="0">debug := isDebugMode(c)
+
+        // Parse error string for HTTP code and message
+        // Format: "httpCode:message:data"
+        errs := strings.Split(err.Error(), ":")
+        if len(errs) &gt;= 2 </span><span class="cov0" title="0">{
+                httpCode, err := strconv.Atoi(errs[0])
+                if err == nil &amp;&amp; httpCode &gt;= 200 &amp;&amp; httpCode &lt;= 599 </span><span class="cov0" title="0">{
+                        var errResp []string
+                        if len(errs) &gt; 1 &amp;&amp; errs[1] != "" </span><span class="cov0" title="0">{
+                                errResp = []string{strings.TrimSpace(errs[1])}
+                        }</span>
+
+                        <span class="cov0" title="0">var resp interface{}
+                        if len(errs) &gt;= 3 &amp;&amp; errs[2] != "" </span><span class="cov0" title="0">{
+                                resp = strings.Split(errs[2], ",")
+                        }</span>
+
+                        <span class="cov0" title="0">return JSON(c, httpCode, errResp, resp, nil)</span>
+                }
+        }
+
+        // Default to internal server error
+        <span class="cov0" title="0">return InternalServerError(c, []string{err.Error()}, debug)</span>
+}
+
+// isDebugMode checks if debug mode is enabled in context
+func isDebugMode(c *fiber.Ctx) bool <span class="cov0" title="0">{
+        if val, ok := c.Locals("debug").(bool); ok </span><span class="cov0" title="0">{
+                return val
+        }</span>
+        <span class="cov0" title="0">return false</span>
+}
+
+// RecoveryError handles panic recovery
+func RecoveryError(c *fiber.Ctx, r any) error <span class="cov0" title="0">{
+        var err error
+        switch v := r.(type) </span>{
+        case error:<span class="cov0" title="0">
+                err = v</span>
+        case string:<span class="cov0" title="0">
+                err = fmt.Errorf("%s", v)</span>
+        case int:<span class="cov0" title="0">
+                err = fmt.Errorf("%d", v)</span>
+        default:<span class="cov0" title="0">
+                err = fmt.Errorf("unknown error panic: %v", v)</span>
+        }
+        <span class="cov0" title="0">return HandlerErrorGlobal(c, err)</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package middleware
+
+import (
+        "app/xonvera-core/internal/adapters/handler/http"
+        portService "app/xonvera-core/internal/core/ports/service"
+        "app/xonvera-core/internal/infrastructure/logger"
+        "context"
+        "strings"
+        "time"
+
+        "github.com/gofiber/fiber/v2"
+        "go.uber.org/zap"
+)
+
+const (
+        authorizationHeader = "Authorization"
+        bearerScheme        = "bearer"
+        userIDContextKey    = "userID"
+        accessTokenKey      = "accessToken"
+)
+
+type AuthMiddleware struct {
+        authService    portService.AuthService
+        requestTimeout time.Duration
+}
+
+func NewAuthMiddleware(authService portService.AuthService, requestTimeout time.Duration) *AuthMiddleware <span class="cov0" title="0">{
+        return &amp;AuthMiddleware{
+                authService:    authService,
+                requestTimeout: requestTimeout,
+        }
+}</span>
+
+// Authenticate validates the access token from the Authorization header
+func (m *AuthMiddleware) Authenticate() fiber.Handler <span class="cov0" title="0">{
+        return func(c *fiber.Ctx) error </span><span class="cov0" title="0">{
+                authHeader := c.Get(authorizationHeader)
+                if authHeader == "" </span><span class="cov0" title="0">{
+                        logger.Debug("Missing authorization header", zap.String("request_id", GetRequestID(c)))
+                        return http.NoAuth(c)
+                }</span>
+
+                // Extract Bearer token
+                <span class="cov0" title="0">token, err := extractBearerToken(authHeader)
+                if err != nil </span><span class="cov0" title="0">{
+                        logger.Debug("Invalid authorization header format", zap.String("request_id", GetRequestID(c)))
+                        return http.NoAuth(c)
+                }</span>
+
+                // Validate token with timeout
+                <span class="cov0" title="0">ctx, cancel := context.WithTimeout(c.UserContext(), m.requestTimeout)
+                defer cancel()
+
+                userID, err := m.authService.ValidateAccessToken(ctx, token)
+                if err != nil </span><span class="cov0" title="0">{
+                        logger.Debug("Token validation failed",
+                                zap.String("request_id", GetRequestID(c)),
+                                zap.Error(err),
+                        )
+                        return http.NoAuth(c)
+                }</span>
+
+                // Set user ID and token in context for downstream handlers
+                <span class="cov0" title="0">c.Locals(userIDContextKey, userID)
+                c.Locals(accessTokenKey, token)
+
+                return c.Next()</span>
+        }
+}
+
+// extractBearerToken extracts the token from a Bearer authorization header
+func extractBearerToken(authHeader string) (string, error) <span class="cov0" title="0">{
+        parts := strings.Fields(authHeader)
+        if len(parts) != 2 </span><span class="cov0" title="0">{
+                return "", fiber.NewError(fiber.StatusUnauthorized, "invalid authorization header")
+        }</span>
+
+        <span class="cov0" title="0">if strings.ToLower(parts[0]) != bearerScheme </span><span class="cov0" title="0">{
+                return "", fiber.NewError(fiber.StatusUnauthorized, "invalid authorization scheme")
+        }</span>
+
+        <span class="cov0" title="0">return parts[1], nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package middleware
+
+import (
+        "encoding/json"
+        "strings"
+
+        "app/xonvera-core/internal/infrastructure/logger"
+
+        "github.com/gofiber/fiber/v2"
+        "go.uber.org/zap"
+)
+
+// Sensitive field names to mask in logs
+var sensitiveFields = map[string]bool{
+        "password":        true,
+        "pwd":             true,
+        "pass":            true,
+        "secret":          true,
+        "token":           true,
+        "access_token":    true,
+        "refresh_token":   true,
+        "api_key":         true,
+        "apikey":          true,
+        "authorization":   true,
+        "auth":            true,
+        "bearer":          true,
+        "ssn":             true,
+        "social_security": true,
+        "credit_card":     true,
+        "creditcard":      true,
+        "cvv":             true,
+        "cvc":             true,
+        "pin":             true,
+}
+
+const (
+        maskedValue     = "***MASKED***"
+        maxBodyLogSize  = 2048 // Log max 2KB of body
+        jsonContentType = "application/json"
+)
+
+// BodyLogger logs request and response bodies with sensitive field masking
+func BodyLogger(env string) fiber.Handler <span class="cov0" title="0">{
+        return func(c *fiber.Ctx) error </span><span class="cov0" title="0">{
+                // Get request ID from context
+                requestID := GetRequestID(c)
+
+                // Log request
+                logRequest(c, requestID)
+
+                // Set debug mode based on environment
+                debug := env == "development"
+                c.Locals("debug", debug)
+
+                // Process request
+                err := c.Next()
+
+                // Log response
+                logResponse(c, requestID)
+
+                return err
+        }</span>
+}
+
+// logRequest logs incoming request details
+func logRequest(c *fiber.Ctx, requestID string) <span class="cov0" title="0">{
+        method := c.Method()
+        path := c.Path()
+        query := c.Query("*")
+
+        // Log basic request info
+        logger.Info("Request received",
+                zap.String("request_id", requestID),
+                zap.String("method", method),
+                zap.String("path", path),
+        )
+
+        // Log request body for mutation methods
+        if shouldLogBody(method) </span><span class="cov0" title="0">{
+                body := c.Body()
+                if len(body) &gt; 0 </span><span class="cov0" title="0">{
+                        logBodyData(requestID, body, "request")
+                }</span>
+        }
+
+        // Log query parameters if present
+        <span class="cov0" title="0">if query != "" </span><span class="cov0" title="0">{
+                logger.Debug("Query parameters",
+                        zap.String("request_id", requestID),
+                        zap.String("query", query),
+                )
+        }</span>
+}
+
+// logResponse logs outgoing response details
+func logResponse(c *fiber.Ctx, requestID string) <span class="cov0" title="0">{
+        status := c.Response().StatusCode()
+        contentType := c.Get("Content-Type")
+
+        // Log basic response info
+        logger.Info("Response sent",
+                zap.String("request_id", requestID),
+                zap.Int("status_code", status),
+                zap.String("content_type", contentType),
+        )
+
+        // Log response body for JSON responses
+        if strings.Contains(contentType, jsonContentType) </span><span class="cov0" title="0">{
+                body := c.Response().Body()
+                if len(body) &gt; 0 </span><span class="cov0" title="0">{
+                        logBodyData(requestID, body, "response")
+                }</span>
+        }
+}
+
+// logBodyData logs body data with masking
+func logBodyData(requestID string, body []byte, bodyType string) <span class="cov0" title="0">{
+        if len(body) &gt; maxBodyLogSize </span><span class="cov0" title="0">{
+                body = body[:maxBodyLogSize]
+        }</span>
+
+        <span class="cov0" title="0">maskedBody := maskSensitiveFields(body)
+        logger.Debug("Body data",
+                zap.String("request_id", requestID),
+                zap.String("type", bodyType),
+                zap.String("data", string(maskedBody)),
+        )</span>
+}
+
+// shouldLogBody determines if request body should be logged
+func shouldLogBody(method string) bool <span class="cov0" title="0">{
+        return method == fiber.MethodPost ||
+                method == fiber.MethodPut ||
+                method == fiber.MethodPatch
+}</span>
+
+// maskSensitiveFields masks sensitive fields in JSON data
+func maskSensitiveFields(data []byte) []byte <span class="cov0" title="0">{
+        var obj map[string]interface{}
+
+        // Try to unmarshal as JSON
+        if err := json.Unmarshal(data, &amp;obj); err != nil </span><span class="cov0" title="0">{
+                // Not valid JSON, return as-is (truncated if needed)
+                return data
+        }</span>
+
+        // Mask sensitive fields
+        <span class="cov0" title="0">maskFields(obj)
+
+        // Marshal back to JSON
+        maskedData, err := json.Marshal(obj)
+        if err != nil </span><span class="cov0" title="0">{
+                // If marshaling fails, return original
+                return data
+        }</span>
+
+        <span class="cov0" title="0">return maskedData</span>
+}
+
+// maskFields recursively masks sensitive fields in a map
+func maskFields(obj interface{}) <span class="cov0" title="0">{
+        switch v := obj.(type) </span>{
+        case map[string]interface{}:<span class="cov0" title="0">
+                for key, value := range v </span><span class="cov0" title="0">{
+                        if isSensitiveField(key) </span><span class="cov0" title="0">{
+                                v[key] = maskedValue
+                        }</span> else<span class="cov0" title="0"> if isNestedObject(value) </span><span class="cov0" title="0">{
+                                maskFields(value)
+                        }</span>
+                }
+        case []interface{}:<span class="cov0" title="0">
+                for i, item := range v </span><span class="cov0" title="0">{
+                        if isNestedObject(item) </span><span class="cov0" title="0">{
+                                maskFields(item)
+                                v[i] = item
+                        }</span>
+                }
+        }
+}
+
+// isSensitiveField checks if a field should be masked
+func isSensitiveField(fieldName string) bool <span class="cov0" title="0">{
+        return sensitiveFields[strings.ToLower(fieldName)]
+}</span>
+
+// isNestedObject checks if a value is a nested object or array
+func isNestedObject(value interface{}) bool <span class="cov0" title="0">{
+        switch value.(type) </span>{
+        case map[string]interface{}, []interface{}:<span class="cov0" title="0">
+                return true</span>
+        default:<span class="cov0" title="0">
+                return false</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package middleware
+
+import (
+        "app/xonvera-core/internal/adapters/handler/http"
+        "app/xonvera-core/internal/infrastructure/logger"
+        "context"
+        "fmt"
+        "time"
+
+        "github.com/gofiber/fiber/v2"
+        "github.com/redis/go-redis/v9"
+        "go.uber.org/zap"
+)
+
+const (
+        // Rate limiter constants
+        AuthRateLimitRequests = 10
+        AuthRateLimitDuration = 15 * time.Minute
+        APIRateLimitRequests  = 100
+        APIRateLimitDuration  = 1 * time.Minute
+        RedisContextTimeout   = 1 * time.Second
+)
+
+// Lua script for atomic INCR + EXPIRE operation
+const rateLimitLuaScript = `
+        local current = redis.call('INCR', KEYS[1])
+        if current == 1 then
+                redis.call('EXPIRE', KEYS[1], ARGV[1])
+        end
+        return current
+`
+
+// NewRateLimiter creates a rate limiting middleware with Redis storage
+func NewRateLimiter(max int, duration time.Duration, redisClient *redis.Client) fiber.Handler <span class="cov0" title="0">{
+        return func(c *fiber.Ctx) error </span><span class="cov0" title="0">{
+                // Resolve rate limit key from userID or IP
+                keyID := resolveRateLimitKey(c)
+                key := fmt.Sprintf("ratelimit:%s", keyID)
+
+                ctx, cancel := context.WithTimeout(context.Background(), RedisContextTimeout)
+                defer cancel()
+
+                // Execute atomic increment with expiration
+                count, err := redisClient.Eval(ctx, rateLimitLuaScript, []string{key}, int(duration.Seconds())).Int64()
+                if err != nil </span><span class="cov0" title="0">{
+                        // If Redis fails, allow the request to proceed (fail-open)
+                        logger.Warn("Rate limiter Redis error, allowing request",
+                                zap.String("key", key),
+                                zap.Error(err),
+                        )
+                        return c.Next()
+                }</span>
+
+                // Check if limit exceeded
+                <span class="cov0" title="0">if count &gt; int64(max) </span><span class="cov0" title="0">{
+                        logger.Debug("Rate limit exceeded",
+                                zap.String("key", keyID),
+                                zap.Int64("count", count),
+                                zap.Int("limit", max),
+                        )
+                        return http.ErrorLimited(c, []string{"Rate limit exceeded. Please try again later"})
+                }</span>
+
+                <span class="cov0" title="0">return c.Next()</span>
+        }
+}
+
+// AuthRateLimiter creates a stricter rate limiter for auth endpoints
+func AuthRateLimiter(redisClient *redis.Client) fiber.Handler <span class="cov0" title="0">{
+        return NewRateLimiter(AuthRateLimitRequests, AuthRateLimitDuration, redisClient)
+}</span>
+
+// APIRateLimiter creates a general rate limiter for API endpoints
+func APIRateLimiter(redisClient *redis.Client) fiber.Handler <span class="cov0" title="0">{
+        return NewRateLimiter(APIRateLimitRequests, APIRateLimitDuration, redisClient)
+}</span>
+
+// resolveRateLimitKey builds the rate-limit key based on userID or IP
+func resolveRateLimitKey(c *fiber.Ctx) string <span class="cov0" title="0">{
+        if userID := c.Locals("userID"); userID != nil </span><span class="cov0" title="0">{
+                if v := fmt.Sprint(userID); v != "" </span><span class="cov0" title="0">{
+                        return v
+                }</span>
+        }
+
+        // Fallback to IP address
+        <span class="cov0" title="0">return c.IP()</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package middleware
+
+import (
+        "app/xonvera-core/internal/infrastructure/logger"
+
+        "github.com/gofiber/fiber/v2"
+        "github.com/google/uuid"
+        "go.uber.org/zap"
+)
+
+// RequestID middleware adds a unique request ID to each request
+func RequestID() fiber.Handler <span class="cov0" title="0">{
+        return func(c *fiber.Ctx) error </span><span class="cov0" title="0">{
+                // Check if request ID already exists in header
+                requestID := c.Get("X-Request-ID")
+                if requestID == "" </span><span class="cov0" title="0">{
+                        // Generate new UUID v7
+                        uuidV7, err := uuid.NewV7()
+                        if err != nil </span><span class="cov0" title="0">{
+                                // Fallback to UUID v4
+                                uuidV7 = uuid.New()
+                                logger.Debug("Failed to generate UUIDv7, using UUIDv4", zap.Error(err))
+                        }</span>
+                        <span class="cov0" title="0">requestID = uuidV7.String()</span>
+                }
+
+                // Set request ID in context and response header
+                <span class="cov0" title="0">c.Locals("request_id", requestID)
+                c.Set("X-Request-ID", requestID)
+
+                return c.Next()</span>
+        }
+}
+
+// GetRequestID retrieves the request ID from the context
+func GetRequestID(c *fiber.Ctx) string <span class="cov0" title="0">{
+        if id, ok := c.Locals("request_id").(string); ok </span><span class="cov0" title="0">{
+                return id
+        }</span>
+        <span class="cov0" title="0">return ""</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package repositoriesRedis
+
+import (
+        "context"
+        "encoding/json"
+        "fmt"
+        "time"
+
+        "app/xonvera-core/internal/core/domain"
+        "app/xonvera-core/internal/core/ports/repository"
+
+        "github.com/redis/go-redis/v9"
+)
+
+// TokenRedisRepository handles token storage using Redis
+type TokenRepository struct {
+        client *redis.Client
+}
+
+// NewTokenRepository creates a new token Redis repository
+func NewTokenRepository(client *redis.Client) portRepository.TokenRepository <span class="cov0" title="0">{
+        return &amp;TokenRepository{client: client}
+}</span>
+
+// Create saves a token to Redis with expiration
+func (r *TokenRepository) Create(ctx context.Context, token *domain.Token) error <span class="cov0" title="0">{
+        // Serialize token to JSON
+        data, err := json.Marshal(token)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to marshal token: %w", err)
+        }</span>
+
+        // Store by access token
+        <span class="cov0" title="0">accessKey := fmt.Sprintf("token:access:%s", token.AccessToken)
+        accessTTL := time.Until(token.ExpiresAt)
+        if accessTTL &lt;= 0 </span><span class="cov0" title="0">{
+                return fmt.Errorf("access token already expired")
+        }</span>
+        <span class="cov0" title="0">if err := r.client.Set(ctx, accessKey, data, accessTTL).Err(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to store access token: %w", err)
+        }</span>
+
+        // Store by refresh token
+        <span class="cov0" title="0">refreshKey := fmt.Sprintf("token:refresh:%s", token.RefreshToken)
+        refreshTTL := time.Until(token.RefreshExpiresAt)
+        if refreshTTL &lt;= 0 </span><span class="cov0" title="0">{
+                return fmt.Errorf("refresh token already expired")
+        }</span>
+        <span class="cov0" title="0">if err := r.client.Set(ctx, refreshKey, data, refreshTTL).Err(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to store refresh token: %w", err)
+        }</span>
+
+        // Store user's token reference
+        <span class="cov0" title="0">userKey := fmt.Sprintf("token:user:%d", token.UserID)
+        userTTL := time.Until(token.ExpiresAt)
+        if userTTL &lt;= 0 </span><span class="cov0" title="0">{
+                return fmt.Errorf("user token reference already expired")
+        }</span>
+        <span class="cov0" title="0">if err := r.client.Set(ctx, userKey, token.AccessToken, userTTL).Err(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to store user token reference: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+// FindByAccessToken retrieves a token by access token from Redis
+func (r *TokenRepository) FindByAccessToken(ctx context.Context, accessToken string) (*domain.Token, error) <span class="cov0" title="0">{
+        key := fmt.Sprintf("token:access:%s", accessToken)
+        data, err := r.client.Get(ctx, key).Result()
+        if err == redis.Nil </span><span class="cov0" title="0">{
+                return nil, domain.ErrTokenNotFound
+        }</span>
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to get token: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">var token domain.Token
+        if err := json.Unmarshal([]byte(data), &amp;token); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to unmarshal token: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return &amp;token, nil</span>
+}
+
+// FindByRefreshToken retrieves a token by refresh token from Redis
+func (r *TokenRepository) FindByRefreshToken(ctx context.Context, refreshToken string) (*domain.Token, error) <span class="cov0" title="0">{
+        key := fmt.Sprintf("token:refresh:%s", refreshToken)
+        data, err := r.client.Get(ctx, key).Result()
+        if err == redis.Nil </span><span class="cov0" title="0">{
+                return nil, domain.ErrTokenNotFound
+        }</span>
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to get token: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">var token domain.Token
+        if err := json.Unmarshal([]byte(data), &amp;token); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to unmarshal token: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return &amp;token, nil</span>
+}
+
+// Update updates an existing token in Redis using atomic transaction
+func (r *TokenRepository) Update(ctx context.Context, token *domain.Token) error <span class="cov0" title="0">{
+        // We use the user reference to find the old access token
+        userKey := fmt.Sprintf("token:user:%d", token.UserID)
+        oldAccessToken, err := r.client.Get(ctx, userKey).Result()
+
+        // If old token exists, get it and delete the old keys
+        if err == nil &amp;&amp; oldAccessToken != "" </span><span class="cov0" title="0">{
+                oldToken, err := r.FindByAccessToken(ctx, oldAccessToken)
+                if err == nil </span><span class="cov0" title="0">{
+                        // Delete old access token key
+                        oldAccessKey := fmt.Sprintf("token:access:%s", oldToken.AccessToken)
+                        if err := r.client.Del(ctx, oldAccessKey).Err(); err != nil </span><span class="cov0" title="0">{
+                                return fmt.Errorf("failed to delete old access token: %w", err)
+                        }</span>
+
+                        // Delete old refresh token key
+                        <span class="cov0" title="0">oldRefreshKey := fmt.Sprintf("token:refresh:%s", oldToken.RefreshToken)
+                        if err := r.client.Del(ctx, oldRefreshKey).Err(); err != nil </span><span class="cov0" title="0">{
+                                return fmt.Errorf("failed to delete old refresh token: %w", err)
+                        }</span>
+                }
+        }
+        // Use Redis pipeline for atomic update
+        <span class="cov0" title="0">pipe := r.client.Pipeline()
+
+        // Serialize new token data
+        data, err := json.Marshal(token)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to marshal token: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">accessKey := fmt.Sprintf("token:access:%s", token.AccessToken)
+        accessTTL := time.Until(token.ExpiresAt)
+        if accessTTL &lt;= 0 </span><span class="cov0" title="0">{
+                return fmt.Errorf("access token already expired")
+        }</span>
+        <span class="cov0" title="0">if err := r.client.Set(ctx, accessKey, data, accessTTL).Err(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to update access token: %w", err)
+        }</span>
+
+        // Update refresh token
+        <span class="cov0" title="0">refreshKey := fmt.Sprintf("token:refresh:%s", token.RefreshToken)
+        refreshTTL := time.Until(token.RefreshExpiresAt)
+        if refreshTTL &lt;= 0 </span><span class="cov0" title="0">{
+                return fmt.Errorf("refresh token already expired")
+        }</span>
+        <span class="cov0" title="0">if err := r.client.Set(ctx, refreshKey, data, refreshTTL).Err(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to update refresh token: %w", err)
+        }</span>
+
+        // Queue all operations
+        <span class="cov0" title="0">pipe.Set(ctx, accessKey, data, time.Until(token.ExpiresAt))
+        pipe.Set(ctx, refreshKey, data, time.Until(token.RefreshExpiresAt))
+        pipe.Set(ctx, userKey, token.AccessToken, time.Until(token.ExpiresAt))
+
+        // Execute all operations atomically
+        _, err = pipe.Exec(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to update token: %w", err)
+        }</span>
+
+        // Update user reference to point to new access token
+        <span class="cov0" title="0">userTTL := time.Until(token.ExpiresAt)
+        if userTTL &lt;= 0 </span><span class="cov0" title="0">{
+                return fmt.Errorf("user token reference already expired")
+        }</span>
+        <span class="cov0" title="0">if err := r.client.Set(ctx, userKey, token.AccessToken, userTTL).Err(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to update user token reference: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+// Delete removes a token from Redis by finding it first via access token
+func (r *TokenRepository) Delete(ctx context.Context, id uint) error <span class="cov0" title="0">{
+        // Note: This implementation is constrained by the interface which uses ID
+        // In practice, the Logout flow should call this after finding the token
+        // The actual deletion is handled in the Logout method which has the token
+        // This is a no-op as we'll delete via DeleteByAccessToken helper
+        return nil
+}</span>
+
+// DeleteByAccessToken is a helper to delete a token by its access token
+func (r *TokenRepository) DeleteByAccessToken(ctx context.Context, accessToken string) error <span class="cov0" title="0">{
+        // Get the token first to find the refresh token
+        token, err := r.FindByAccessToken(ctx, accessToken)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        // Delete access token
+        <span class="cov0" title="0">accessKey := fmt.Sprintf("token:access:%s", token.AccessToken)
+        if err := r.client.Del(ctx, accessKey).Err(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to delete access token: %w", err)
+        }</span>
+
+        // Delete refresh token
+        <span class="cov0" title="0">refreshKey := fmt.Sprintf("token:refresh:%s", token.RefreshToken)
+        if err := r.client.Del(ctx, refreshKey).Err(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to delete refresh token: %w", err)
+        }</span>
+
+        // Delete user reference
+        <span class="cov0" title="0">userKey := fmt.Sprintf("token:user:%d", token.UserID)
+        if err := r.client.Del(ctx, userKey).Err(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to delete user token reference: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+// DeleteByUserID removes all tokens for a user from Redis
+func (r *TokenRepository) DeleteByUserID(ctx context.Context, userID uint) error <span class="cov0" title="0">{
+        // Get user's token reference
+        userKey := fmt.Sprintf("token:user:%d", userID)
+        accessToken, err := r.client.Get(ctx, userKey).Result()
+        if err == redis.Nil </span><span class="cov0" title="0">{
+                return nil // No tokens found
+        }</span>
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to get user token: %w", err)
+        }</span>
+
+        // Get the token to find refresh token
+        <span class="cov0" title="0">token, err := r.FindByAccessToken(ctx, accessToken)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        // Delete access token
+        <span class="cov0" title="0">accessKey := fmt.Sprintf("token:access:%s", token.AccessToken)
+        if err := r.client.Del(ctx, accessKey).Err(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to delete access token: %w", err)
+        }</span>
+
+        // Delete refresh token
+        <span class="cov0" title="0">refreshKey := fmt.Sprintf("token:refresh:%s", token.RefreshToken)
+        if err := r.client.Del(ctx, refreshKey).Err(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to delete refresh token: %w", err)
+        }</span>
+
+        // Delete user reference
+        <span class="cov0" title="0">if err := r.client.Del(ctx, userKey).Err(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to delete user token reference: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+// DeleteExpiredTokens is a no-op for Redis as Redis automatically expires keys
+func (r *TokenRepository) DeleteExpiredTokens(ctx context.Context) error <span class="cov0" title="0">{
+        // Redis automatically handles TTL expiration, so no action needed
+        return nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package repositoriesRedis
+
+import (
+        "context"
+
+        "app/xonvera-core/internal/core/domain"
+)
+
+// MockTokenRepository is a mock implementation of portRepository.TokenRepository for testing
+type MockTokenRepository struct {
+        CreateFunc              func(ctx context.Context, token *domain.Token) error
+        FindByAccessTokenFunc   func(ctx context.Context, accessToken string) (*domain.Token, error)
+        FindByRefreshTokenFunc  func(ctx context.Context, refreshToken string) (*domain.Token, error)
+        UpdateFunc              func(ctx context.Context, token *domain.Token) error
+        DeleteFunc              func(ctx context.Context, id uint) error
+        DeleteByUserIDFunc      func(ctx context.Context, userID uint) error
+        DeleteExpiredTokensFunc func(ctx context.Context) error
+}
+
+func (m *MockTokenRepository) Create(ctx context.Context, token *domain.Token) error <span class="cov0" title="0">{
+        if m.CreateFunc != nil </span><span class="cov0" title="0">{
+                return m.CreateFunc(ctx, token)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (m *MockTokenRepository) FindByAccessToken(ctx context.Context, accessToken string) (*domain.Token, error) <span class="cov0" title="0">{
+        if m.FindByAccessTokenFunc != nil </span><span class="cov0" title="0">{
+                return m.FindByAccessTokenFunc(ctx, accessToken)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockTokenRepository) FindByRefreshToken(ctx context.Context, refreshToken string) (*domain.Token, error) <span class="cov0" title="0">{
+        if m.FindByRefreshTokenFunc != nil </span><span class="cov0" title="0">{
+                return m.FindByRefreshTokenFunc(ctx, refreshToken)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockTokenRepository) Update(ctx context.Context, token *domain.Token) error <span class="cov0" title="0">{
+        if m.UpdateFunc != nil </span><span class="cov0" title="0">{
+                return m.UpdateFunc(ctx, token)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (m *MockTokenRepository) Delete(ctx context.Context, id uint) error <span class="cov0" title="0">{
+        if m.DeleteFunc != nil </span><span class="cov0" title="0">{
+                return m.DeleteFunc(ctx, id)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (m *MockTokenRepository) DeleteByUserID(ctx context.Context, userID uint) error <span class="cov0" title="0">{
+        if m.DeleteByUserIDFunc != nil </span><span class="cov0" title="0">{
+                return m.DeleteByUserIDFunc(ctx, userID)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (m *MockTokenRepository) DeleteExpiredTokens(ctx context.Context) error <span class="cov0" title="0">{
+        if m.DeleteExpiredTokensFunc != nil </span><span class="cov0" title="0">{
+                return m.DeleteExpiredTokensFunc(ctx)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package repositoriesSql
+
+import (
+        "context"
+        "fmt"
+        "time"
+
+        "app/xonvera-core/internal/core/domain"
+        "app/xonvera-core/internal/core/ports/repository"
+
+        "gorm.io/gorm"
+)
+
+type invoiceRepository struct {
+        db *gorm.DB
+}
+
+func NewInvoiceRepository(db *gorm.DB) portRepository.InvoiceRepository <span class="cov0" title="0">{
+        return &amp;invoiceRepository{db: db}
+}</span>
+
+// GenerateInvoiceID generates an invoice ID with format: 2YYYYMMDD00001
+// 2 =&gt; invoice id prefix
+// YYYYMMDD =&gt; year, month, date
+// 00001 =&gt; suffix auto increment
+// TODO: Implement daily sequence reset to ensure suffix stays within 00001-99999
+func (r *invoiceRepository) GenerateInvoiceID(ctx context.Context) (int64, error) <span class="cov0" title="0">{
+        now := time.Now()
+
+        // Format: 2 + YYYYMMDD + SSSSS
+        prefix := "2"
+        dateStr := now.Format("20060102") // YYYYMMDD
+
+        // Get next sequence value
+        var suffix int
+        err := r.db.WithContext(ctx).Raw("SELECT nextval('billing.invoice_suffix_seq')").Scan(&amp;suffix).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+
+        // Format the complete invoice ID
+        <span class="cov0" title="0">invoiceIDStr := fmt.Sprintf("%s%s%05d", prefix, dateStr, suffix)
+
+        var invoiceID int64
+        fmt.Sscanf(invoiceIDStr, "%d", &amp;invoiceID)
+
+        return invoiceID, nil</span>
+}
+
+func (r *invoiceRepository) Create(ctx context.Context, invoice *domain.Invoice, items []domain.InvoiceItem) error <span class="cov0" title="0">{
+        return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error </span><span class="cov0" title="0">{
+                // Create invoice
+                if err := tx.Create(invoice).Error; err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+
+                // Create invoice items if any
+                <span class="cov0" title="0">if len(items) &gt; 0 </span><span class="cov0" title="0">{
+                        for i := range items </span><span class="cov0" title="0">{
+                                items[i].InvoiceID = invoice.ID
+                        }</span>
+                        <span class="cov0" title="0">if err := tx.Create(&amp;items).Error; err != nil </span><span class="cov0" title="0">{
+                                return err
+                        }</span>
+                }
+
+                <span class="cov0" title="0">return nil</span>
+        })
+}
+
+func (r *invoiceRepository) GetByID(ctx context.Context, id int64) (*domain.Invoice, error) <span class="cov0" title="0">{
+        var invoice domain.Invoice
+        err := r.db.WithContext(ctx).Where("id = ?", id).First(&amp;invoice).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return &amp;invoice, nil</span>
+}
+
+func (r *invoiceRepository) GetAll(ctx context.Context, limit, offset int) ([]domain.Invoice, error) <span class="cov0" title="0">{
+        var invoices []domain.Invoice
+        query := r.db.WithContext(ctx).Order("created_at DESC")
+
+        if limit &gt; 0 </span><span class="cov0" title="0">{
+                query = query.Limit(limit)
+        }</span>
+        <span class="cov0" title="0">if offset &gt; 0 </span><span class="cov0" title="0">{
+                query = query.Offset(offset)
+        }</span>
+
+        <span class="cov0" title="0">err := query.Find(&amp;invoices).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return invoices, nil</span>
+}
+
+func (r *invoiceRepository) GetItems(ctx context.Context, invoiceID int64) ([]domain.InvoiceItem, error) <span class="cov0" title="0">{
+        var items []domain.InvoiceItem
+        err := r.db.WithContext(ctx).Where("invoice_id = ?", invoiceID).Find(&amp;items).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return items, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package repositoriesSql
+
+import (
+        "context"
+
+        "app/xonvera-core/internal/core/domain"
+        portRepository "app/xonvera-core/internal/core/ports/repository"
+
+        "gorm.io/gorm"
+)
+
+type packageRepository struct {
+        db *gorm.DB
+}
+
+func NewPackageRepository(db *gorm.DB) portRepository.PackageRepository <span class="cov0" title="0">{
+        return &amp;packageRepository{db: db}
+}</span>
+
+func (r *packageRepository) GetAll(ctx context.Context) ([]domain.Package, error) <span class="cov0" title="0">{
+        var packages []domain.Package
+        if err := r.db.WithContext(ctx).Find(&amp;packages).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return packages, nil</span>
+}
+
+func (r *packageRepository) GetByID(ctx context.Context, id string) (*domain.Package, error) <span class="cov0" title="0">{
+        var pkg domain.Package
+        if err := r.db.WithContext(ctx).First(&amp;pkg, "id = ?", id).Error; err != nil </span><span class="cov0" title="0">{
+                if err == gorm.ErrRecordNotFound </span><span class="cov0" title="0">{
+                        return nil, nil
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">return &amp;pkg, nil</span>
+}
+
+func (r *packageRepository) Create(ctx context.Context, pkg *domain.Package) error <span class="cov0" title="0">{
+        return r.db.WithContext(ctx).Create(pkg).Error
+}</span>
+
+func (r *packageRepository) Update(ctx context.Context, pkg *domain.Package) error <span class="cov0" title="0">{
+        return r.db.WithContext(ctx).Save(pkg).Error
+}</span>
+
+func (r *packageRepository) Delete(ctx context.Context, id string) error <span class="cov0" title="0">{
+        return r.db.WithContext(ctx).Delete(&amp;domain.Package{}, "id = ?", id).Error
+}</span>
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package repositoriesSql
+
+import (
+        "context"
+
+        "app/xonvera-core/internal/core/domain"
+        "app/xonvera-core/internal/core/ports/repository"
+
+        "gorm.io/gorm"
+)
+
+type userRepository struct {
+        db *gorm.DB
+}
+
+func NewUserRepository(db *gorm.DB) portRepository.UserRepository <span class="cov0" title="0">{
+        return &amp;userRepository{db: db}
+}</span>
+
+func (r *userRepository) Create(ctx context.Context, user *domain.User) error <span class="cov0" title="0">{
+        return r.db.WithContext(ctx).Create(user).Error
+}</span>
+
+func (r *userRepository) FindByEmail(ctx context.Context, email string) (*domain.User, error) <span class="cov0" title="0">{
+        var user domain.User
+        err := r.db.WithContext(ctx).Where("email = ?", email).First(&amp;user).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return &amp;user, nil</span>
+}
+
+func (r *userRepository) FindByPhone(ctx context.Context, phone string) (*domain.User, error) <span class="cov0" title="0">{
+        var user domain.User
+        err := r.db.WithContext(ctx).Where("phone = ?", phone).First(&amp;user).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return &amp;user, nil</span>
+}
+
+func (r *userRepository) FindByEmailOrPhone(ctx context.Context, username string) (*domain.User, error) <span class="cov0" title="0">{
+        var user domain.User
+        err := r.db.WithContext(ctx).Where("email = ? OR phone = ?", username, username).First(&amp;user).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return &amp;user, nil</span>
+}
+
+func (r *userRepository) FindByID(ctx context.Context, id uint) (*domain.User, error) <span class="cov0" title="0">{
+        var user domain.User
+        err := r.db.WithContext(ctx).First(&amp;user, id).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return &amp;user, nil</span>
+}
+
+func (r *userRepository) ExistsByEmail(ctx context.Context, email string) (bool, error) <span class="cov0" title="0">{
+        var count int64
+        err := r.db.WithContext(ctx).Model(&amp;domain.User{}).Where("email = ?", email).Count(&amp;count).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">return count &gt; 0, nil</span>
+}
+
+func (r *userRepository) ExistsByPhone(ctx context.Context, phone string) (bool, error) <span class="cov0" title="0">{
+        var count int64
+        err := r.db.WithContext(ctx).Model(&amp;domain.User{}).Where("phone = ?", phone).Count(&amp;count).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">return count &gt; 0, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package repositoriesSql
+
+import (
+        "context"
+
+        "app/xonvera-core/internal/core/domain"
+)
+
+// MockUserRepository is a mock implementation of portRepository.UserRepository for testing
+type MockUserRepository struct {
+        CreateFunc             func(ctx context.Context, user *domain.User) error
+        FindByEmailFunc        func(ctx context.Context, email string) (*domain.User, error)
+        FindByPhoneFunc        func(ctx context.Context, phone string) (*domain.User, error)
+        FindByEmailOrPhoneFunc func(ctx context.Context, username string) (*domain.User, error)
+        FindByIDFunc           func(ctx context.Context, id uint) (*domain.User, error)
+        ExistsByEmailFunc      func(ctx context.Context, email string) (bool, error)
+        ExistsByPhoneFunc      func(ctx context.Context, phone string) (bool, error)
+}
+
+func (m *MockUserRepository) Create(ctx context.Context, user *domain.User) error <span class="cov0" title="0">{
+        if m.CreateFunc != nil </span><span class="cov0" title="0">{
+                return m.CreateFunc(ctx, user)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (m *MockUserRepository) FindByEmail(ctx context.Context, email string) (*domain.User, error) <span class="cov0" title="0">{
+        if m.FindByEmailFunc != nil </span><span class="cov0" title="0">{
+                return m.FindByEmailFunc(ctx, email)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockUserRepository) FindByPhone(ctx context.Context, phone string) (*domain.User, error) <span class="cov0" title="0">{
+        if m.FindByPhoneFunc != nil </span><span class="cov0" title="0">{
+                return m.FindByPhoneFunc(ctx, phone)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockUserRepository) FindByEmailOrPhone(ctx context.Context, username string) (*domain.User, error) <span class="cov0" title="0">{
+        if m.FindByEmailOrPhoneFunc != nil </span><span class="cov0" title="0">{
+                return m.FindByEmailOrPhoneFunc(ctx, username)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockUserRepository) FindByID(ctx context.Context, id uint) (*domain.User, error) <span class="cov0" title="0">{
+        if m.FindByIDFunc != nil </span><span class="cov0" title="0">{
+                return m.FindByIDFunc(ctx, id)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockUserRepository) ExistsByEmail(ctx context.Context, email string) (bool, error) <span class="cov0" title="0">{
+        if m.ExistsByEmailFunc != nil </span><span class="cov0" title="0">{
+                return m.ExistsByEmailFunc(ctx, email)
+        }</span>
+        <span class="cov0" title="0">return false, nil</span>
+}
+
+func (m *MockUserRepository) ExistsByPhone(ctx context.Context, phone string) (bool, error) <span class="cov0" title="0">{
+        if m.ExistsByPhoneFunc != nil </span><span class="cov0" title="0">{
+                return m.ExistsByPhoneFunc(ctx, phone)
+        }</span>
+        <span class="cov0" title="0">return false, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package routes
+
+import (
+        "app/xonvera-core/internal/adapters/handler/http"
+        "app/xonvera-core/internal/adapters/middleware"
+        "app/xonvera-core/internal/dependencies"
+
+        "github.com/gofiber/fiber/v2"
+)
+
+func SetupRoutes(
+        app *fiber.App,
+        appWire *dependencies.Application,
+) <span class="cov0" title="0">{
+
+        // Auth routes (public) with rate limiting
+        auth := app.Group("/auth", middleware.AuthRateLimiter(appWire.Redis))
+        </span><span class="cov0" title="0">{
+                auth.Post("/register", appWire.AuthHandler.Register)
+                auth.Post("/login", appWire.AuthHandler.Login)
+                auth.Post("/refresh", appWire.AuthHandler.RefreshToken)
+                auth.Post("/logout", appWire.AuthMiddleware.Authenticate(), appWire.AuthHandler.Logout)
+        }</span>
+
+        // Package routes (public)
+        <span class="cov0" title="0">app.Get("/packages", appWire.PackageHandler.GetPackages)
+        app.Get("/packages/:id", appWire.PackageHandler.GetPackageByID)
+
+        // Invoice routes (public)
+        app.Post("/invoices", appWire.InvoiceHandler.CreateInvoice)
+        app.Get("/invoices", appWire.InvoiceHandler.GetAllInvoices)
+        app.Get("/invoices/:id", appWire.InvoiceHandler.GetInvoiceByID)
+
+        // Protected routes example
+        protected := app.Group("/protected", appWire.AuthMiddleware.Authenticate())
+        </span><span class="cov0" title="0">{
+                // Example protected route
+                protected.Get("/profile", func(c *fiber.Ctx) error </span><span class="cov0" title="0">{
+                        userID, ok := c.Locals("userID").(uint)
+                        if !ok </span><span class="cov0" title="0">{
+                                return http.NoAuth(c)
+                        }</span>
+                        <span class="cov0" title="0">return http.OK(c, fiber.Map{
+                                "user_id": userID,
+                        })</span>
+                })
+        }
+
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package domain
+
+import "errors"
+
+var (
+        // Authentication errors
+        ErrInvalidCredentials = errors.New("invalid credentials")
+        ErrEmailAlreadyExists = errors.New("email already registered")
+        ErrPhoneAlreadyExists = errors.New("phone number already registered")
+        ErrInvalidToken       = errors.New("invalid or expired token")
+        ErrTokenNotFound      = errors.New("token not found")
+
+        // User errors
+        ErrUserNotFound      = errors.New("user not found")
+        ErrUserAlreadyExists = errors.New("user already exists")
+
+        // Validation errors
+        ErrInvalidInput         = errors.New("invalid input")
+        ErrPasswordTooShort     = errors.New("password must be at least 6 characters")
+        ErrRequiredFieldMissing = errors.New("required field is missing")
+
+        // Internal errors
+        ErrInternalServer    = errors.New("internal server error")
+        ErrDatabaseOperation = errors.New("database operation failed")
+)
+
+// AppError represents an application error with additional context
+type AppError struct {
+        Err        error
+        Message    string
+        StatusCode int
+}
+
+func (e *AppError) Error() string <span class="cov8" title="1">{
+        if e.Message != "" </span><span class="cov8" title="1">{
+                return e.Message
+        }</span>
+        <span class="cov8" title="1">return e.Err.Error()</span>
+}
+
+func (e *AppError) Unwrap() error <span class="cov8" title="1">{
+        return e.Err
+}</span>
+
+// NewAppError creates a new application error
+func NewAppError(err error, message string, statusCode int) *AppError <span class="cov8" title="1">{
+        return &amp;AppError{
+                Err:        err,
+                Message:    message,
+                StatusCode: statusCode,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package domain
+
+import (
+        "time"
+
+        "gorm.io/gorm"
+)
+
+type Invoice struct {
+        ID          int64          `json:"id" gorm:"primaryKey"`
+        AddTo       string         `json:"add_to" gorm:"not null"`
+        InvoiceFor  string         `json:"invoice_for" gorm:"not null"`
+        InvoiceFrom string         `json:"invoice_from" gorm:"not null"`
+        CreatedAt   time.Time      `json:"created_at"`
+        UpdatedAt   time.Time      `json:"updated_at"`
+        DeletedAt   gorm.DeletedAt `json:"-" gorm:"index"`
+}
+
+type InvoiceItem struct {
+        ID          uint           `json:"id" gorm:"primaryKey"`
+        InvoiceID   int64          `json:"invoice_id" gorm:"not null;index"`
+        Description string         `json:"description" gorm:"not null"`
+        Quantity    int            `json:"quantity" gorm:"not null;default:1"`
+        UnitPrice   int            `json:"unit_price" gorm:"not null"`
+        Total       int            `json:"total" gorm:"not null"`
+        CreatedAt   time.Time      `json:"created_at"`
+        UpdatedAt   time.Time      `json:"updated_at"`
+        DeletedAt   gorm.DeletedAt `json:"-" gorm:"index"`
+}
+
+func (Invoice) TableName() string <span class="cov0" title="0">{
+        return "billing.invoices"
+}</span>
+
+func (InvoiceItem) TableName() string <span class="cov0" title="0">{
+        return "billing.invoice_items"
+}</span>
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package domain
+
+import (
+        "time"
+
+        "gorm.io/gorm"
+)
+
+type DiscountType string
+
+const (
+        DiscountTypePercentage DiscountType = "percentage"
+        DiscountTypeAmount     DiscountType = "amount"
+)
+
+type Package struct {
+        ID           string         `json:"id" gorm:"primaryKey"`
+        Name         string         `json:"name" gorm:"not null"`
+        Price        int            `json:"price" gorm:"not null"`
+        DiscountType DiscountType   `json:"discount_type" gorm:"not null;default:'percentage'"`
+        Discount     int            `json:"discount" gorm:"not null;default:0"`
+        Duration     string         `json:"duration" gorm:"not null;default:'1d'"`
+        CreatedAt    time.Time      `json:"created_at"`
+        UpdatedAt    time.Time      `json:"updated_at"`
+        DeletedAt    gorm.DeletedAt `json:"-" gorm:"index"`
+}
+
+func (Package) TableName() string <span class="cov0" title="0">{
+        return "catalog.packages"
+}</span>
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">package domain
+
+import (
+        "time"
+
+        "gorm.io/gorm"
+)
+
+type Token struct {
+        ID               uint           `json:"id" gorm:"primaryKey"`
+        UserID           uint           `json:"user_id" gorm:"index;not null"`
+        AccessToken      string         `json:"-" gorm:"type:text;index;not null"`
+        RefreshToken     string         `json:"-" gorm:"type:text;uniqueIndex;not null"`
+        ExpiresAt        time.Time      `json:"expires_at" gorm:"not null"`
+        RefreshExpiresAt time.Time      `json:"refresh_expires_at" gorm:"not null"`
+        CreatedAt        time.Time      `json:"created_at"`
+        UpdatedAt        time.Time      `json:"updated_at"`
+        DeletedAt        gorm.DeletedAt `json:"-" gorm:"index"`
+
+        // Relations
+        User *User `json:"user,omitempty" gorm:"foreignKey:UserID"`
+}
+
+func (Token) TableName() string <span class="cov0" title="0">{
+        return "auth.tokens"
+}</span>
+
+type TokenPair struct {
+        AccessToken  string `json:"access_token"`
+        RefreshToken string `json:"refresh_token"`
+        ExpiresAt    int64  `json:"expires_at"`
+}
+
+type RefreshTokenRequest struct {
+        RefreshToken string `json:"refresh_token" validate:"required"`
+}
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">package domain
+
+import (
+        "time"
+
+        "gorm.io/gorm"
+)
+
+type User struct {
+        ID        uint           `json:"id" gorm:"primaryKey"`
+        Name      string         `json:"name" gorm:"not null"`
+        Email     string         `json:"email" gorm:"uniqueIndex;not null"`
+        Phone     string         `json:"phone" gorm:"uniqueIndex;not null"`
+        Password  string         `json:"-" gorm:"not null"`
+        CreatedAt time.Time      `json:"created_at"`
+        UpdatedAt time.Time      `json:"updated_at"`
+        DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+}
+
+func (User) TableName() string <span class="cov0" title="0">{
+        return "auth.users"
+}</span>
+
+type RegisterRequest struct {
+        Name     string `json:"name" validate:"required,min=2,max=100"`
+        Email    string `json:"email" validate:"required,email,max=255"`
+        Phone    string `json:"phone" validate:"required,min=10,max=15,e164"` // E.164 format
+        Password string `json:"password" validate:"required,min=8,max=100"`   // Stronger minimum
+}
+
+type LoginRequest struct {
+        Username string `json:"username" validate:"required,min=3,max=255"` // can be email or phone
+        Password string `json:"password" validate:"required,min=6,max=100"`
+}
+
+type AuthResponse struct {
+        User         *User  `json:"user"`
+        AccessToken  string `json:"access_token"`
+        RefreshToken string `json:"refresh_token"`
+        ExpiresAt    int64  `json:"expires_at"`
+}
+</pre>
+		
+		<pre class="file" id="file22" style="display: none">package services
+
+import (
+        "context"
+        "errors"
+        "time"
+
+        "app/xonvera-core/internal/core/domain"
+        portRepository "app/xonvera-core/internal/core/ports/repository"
+        portService "app/xonvera-core/internal/core/ports/service"
+        "app/xonvera-core/internal/infrastructure/config"
+        "app/xonvera-core/internal/infrastructure/logger"
+
+        "go.uber.org/zap"
+        "golang.org/x/crypto/bcrypt"
+        "gorm.io/gorm"
+)
+
+type authService struct {
+        userRepo     portRepository.UserRepository
+        tokenRepo    portRepository.TokenRepository
+        tokenService portService.TokenService
+        tokenConfig  *config.TokenConfig
+}
+
+func NewAuthService(
+        userRepo portRepository.UserRepository,
+        tokenRepo portRepository.TokenRepository,
+        tokenService portService.TokenService,
+        tokenConfig *config.TokenConfig,
+) portService.AuthService <span class="cov0" title="0">{
+        return &amp;authService{
+                userRepo:     userRepo,
+                tokenRepo:    tokenRepo,
+                tokenService: tokenService,
+                tokenConfig:  tokenConfig,
+        }
+}</span>
+
+func (s *authService) Register(ctx context.Context, req *domain.RegisterRequest) (*domain.AuthResponse, error) <span class="cov0" title="0">{
+        // Check if email already exists
+        exists, err := s.userRepo.ExistsByEmail(ctx, req.Email)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to check email existence", zap.Error(err), zap.String("email", req.Email))
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">if exists </span><span class="cov0" title="0">{
+                return nil, errors.New("400:email already registered")
+        }</span>
+
+        // Check if phone already exists
+        <span class="cov0" title="0">exists, err = s.userRepo.ExistsByPhone(ctx, req.Phone)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to check phone existence", zap.Error(err), zap.String("phone", req.Phone))
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">if exists </span><span class="cov0" title="0">{
+                return nil, errors.New("400:phone number already registered")
+        }</span>
+
+        // Hash password with secure cost factor
+        <span class="cov0" title="0">hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to hash password", zap.Error(err))
+                return nil, errors.New("400:invalid register request")
+        }</span>
+
+        // Create new user
+        <span class="cov0" title="0">user := &amp;domain.User{
+                Name:     req.Name,
+                Email:    req.Email,
+                Phone:    req.Phone,
+                Password: string(hashedPassword),
+        }
+
+        if err := s.userRepo.Create(ctx, user); err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to create user", zap.Error(err), zap.String("email", req.Email))
+                return nil, errors.New("400:invalid register request")
+        }</span>
+
+        // Generate token pair
+        <span class="cov0" title="0">tokenPair, err := s.tokenService.GenerateTokenPair(user.ID)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to generate token pair", zap.Error(err), zap.Uint("user_id", user.ID))
+                return nil, err
+        }</span>
+
+        // Save token to database
+        <span class="cov0" title="0">if err := s.saveToken(ctx, user.ID, tokenPair); err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to save token", zap.Error(err), zap.Uint("user_id", user.ID))
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">logger.Info("user registered successfully",
+                zap.Uint("user_id", user.ID),
+                zap.String("email", user.Email),
+                zap.String("phone", user.Phone),
+        )
+
+        return &amp;domain.AuthResponse{
+                User:         user,
+                AccessToken:  tokenPair.AccessToken,
+                RefreshToken: tokenPair.RefreshToken,
+                ExpiresAt:    tokenPair.ExpiresAt,
+        }, nil</span>
+}
+
+func (s *authService) Login(ctx context.Context, req *domain.LoginRequest) (*domain.AuthResponse, error) <span class="cov0" title="0">{
+        // Find user by email or phone
+        user, err := s.userRepo.FindByEmailOrPhone(ctx, req.Username)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        logger.Debug("login failed: invalid credentials", zap.String("username", req.Username))
+                        return nil, errors.New("400:invalid credentials")
+                }</span>
+                <span class="cov0" title="0">logger.Error("failed to find user", zap.Error(err), zap.String("username", req.Username))
+                return nil, err</span>
+        }
+
+        // Verify password
+        <span class="cov0" title="0">if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil </span><span class="cov0" title="0">{
+                logger.Debug("login failed: password mismatch", zap.Uint("user_id", user.ID))
+                return nil, errors.New("400:invalid credentials")
+        }</span>
+
+        // Generate token pair
+        <span class="cov0" title="0">tokenPair, err := s.tokenService.GenerateTokenPair(user.ID)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to generate token pair", zap.Error(err), zap.Uint("user_id", user.ID))
+                return nil, err
+        }</span>
+
+        // Save token to database
+        <span class="cov0" title="0">if err := s.saveToken(ctx, user.ID, tokenPair); err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to save token", zap.Error(err), zap.Uint("user_id", user.ID))
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">logger.Info("user logged in successfully",
+                zap.Uint("user_id", user.ID),
+                zap.String("email", user.Email),
+        )
+
+        return &amp;domain.AuthResponse{
+                User:         user,
+                AccessToken:  tokenPair.AccessToken,
+                RefreshToken: tokenPair.RefreshToken,
+                ExpiresAt:    tokenPair.ExpiresAt,
+        }, nil</span>
+}
+
+func (s *authService) RefreshToken(ctx context.Context, req *domain.RefreshTokenRequest) (*domain.AuthResponse, error) <span class="cov0" title="0">{
+        // Validate refresh token format
+        userID, err := s.tokenService.ValidateRefreshToken(req.RefreshToken)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, errors.New("400:invalid refresh token")
+        }</span>
+
+        // Find token in database
+        <span class="cov0" title="0">storedToken, err := s.tokenRepo.FindByRefreshToken(ctx, req.RefreshToken)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, domain.ErrTokenNotFound) </span><span class="cov0" title="0">{
+                        return nil, errors.New("400:invalid refresh token")
+                }</span>
+                <span class="cov0" title="0">logger.Error("failed to find refresh token", zap.Error(err))
+                return nil, err</span>
+        }
+
+        // Check if token is expired
+        <span class="cov0" title="0">if time.Now().After(storedToken.RefreshExpiresAt) </span><span class="cov0" title="0">{
+                return nil, errors.New("400:refresh token has expired")
+        }</span>
+
+        // Get user
+        <span class="cov0" title="0">user, err := s.userRepo.FindByID(ctx, userID)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to find user", zap.Error(err))
+                return nil, errors.New("400:invalid refresh token")
+        }</span>
+
+        // Generate new token pair
+        <span class="cov0" title="0">tokenPair, err := s.tokenService.GenerateTokenPair(userID)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to generate token pair", zap.Error(err))
+                return nil, err
+        }</span>
+
+        // Update token in database
+        <span class="cov0" title="0">storedToken.AccessToken = tokenPair.AccessToken
+        storedToken.RefreshToken = tokenPair.RefreshToken
+        storedToken.ExpiresAt = time.Unix(tokenPair.ExpiresAt, 0)
+        storedToken.RefreshExpiresAt = time.Now().Add(s.tokenConfig.RefreshExpired)
+
+        if err := s.tokenRepo.Update(ctx, storedToken); err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to update token", zap.Error(err))
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">logger.Info("token refreshed successfully", zap.Uint("user_id", userID))
+
+        return &amp;domain.AuthResponse{
+                User:         user,
+                AccessToken:  tokenPair.AccessToken,
+                RefreshToken: tokenPair.RefreshToken,
+                ExpiresAt:    tokenPair.ExpiresAt,
+        }, nil</span>
+}
+
+func (s *authService) Logout(ctx context.Context, accessToken string) error <span class="cov0" title="0">{
+        // Find token by access token to verify it exists
+        storedToken, err := s.tokenRepo.FindByAccessToken(ctx, accessToken)
+        if err != nil </span><span class="cov0" title="0">{
+                // Token might already be deleted, still return success
+                logger.Debug("token not found during logout, already expired or deleted")
+                return nil
+        }</span>
+
+        // Delete token from repository (will work for both DB and Redis implementations)
+        <span class="cov0" title="0">if err := s.tokenRepo.DeleteByUserID(ctx, storedToken.UserID); err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to delete token", zap.Error(err))
+                return err
+        }</span>
+
+        <span class="cov0" title="0">logger.Info("user logged out successfully", zap.Uint("user_id", storedToken.UserID))
+        return nil</span>
+}
+
+func (s *authService) saveToken(ctx context.Context, userID uint, tokenPair *domain.TokenPair) error <span class="cov0" title="0">{
+        token := &amp;domain.Token{
+                UserID:           userID,
+                AccessToken:      tokenPair.AccessToken,
+                RefreshToken:     tokenPair.RefreshToken,
+                ExpiresAt:        time.Unix(tokenPair.ExpiresAt, 0),
+                RefreshExpiresAt: time.Now().Add(s.tokenConfig.RefreshExpired),
+        }
+
+        return s.tokenRepo.Create(ctx, token)
+}</span>
+
+func (s *authService) ValidateAccessToken(ctx context.Context, accessToken string) (uint, error) <span class="cov0" title="0">{
+        // First validate token format and expiration
+        userID, err := s.tokenService.ValidateToken(accessToken)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Debug("token validation failed", zap.Error(err))
+                return 0, err
+        }</span>
+
+        // Then check if token exists in database (not logged out)
+        <span class="cov0" title="0">_, err = s.tokenRepo.FindByAccessToken(ctx, accessToken)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Debug("token not found in repository (possibly logged out)", zap.Uint("user_id", userID))
+                return 0, errors.New("token has been invalidated")
+        }</span>
+
+        <span class="cov0" title="0">return userID, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file23" style="display: none">package services
+
+import (
+        "context"
+        "errors"
+
+        "app/xonvera-core/internal/core/domain"
+        portRepository "app/xonvera-core/internal/core/ports/repository"
+        portService "app/xonvera-core/internal/core/ports/service"
+        "app/xonvera-core/internal/infrastructure/logger"
+
+        "go.uber.org/zap"
+)
+
+type invoiceService struct {
+        invoiceRepo portRepository.InvoiceRepository
+}
+
+func NewInvoiceService(
+        invoiceRepo portRepository.InvoiceRepository,
+) portService.InvoiceService <span class="cov0" title="0">{
+        return &amp;invoiceService{
+                invoiceRepo: invoiceRepo,
+        }
+}</span>
+
+func (s *invoiceService) CreateInvoice(ctx context.Context, invoice *domain.Invoice, items []domain.InvoiceItem) error <span class="cov0" title="0">{
+        // Generate invoice ID
+        invoiceID, err := s.invoiceRepo.GenerateInvoiceID(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to generate invoice ID", zap.Error(err))
+                return err
+        }</span>
+
+        <span class="cov0" title="0">invoice.ID = invoiceID
+
+        // Create invoice with items
+        if err := s.invoiceRepo.Create(ctx, invoice, items); err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to create invoice", zap.Error(err))
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (s *invoiceService) GetInvoiceByID(ctx context.Context, id int64) (*domain.Invoice, error) <span class="cov0" title="0">{
+        invoice, err := s.invoiceRepo.GetByID(ctx, id)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to get invoice by ID", zap.Int64("id", id), zap.Error(err))
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return invoice, nil</span>
+}
+
+func (s *invoiceService) GetAllInvoices(ctx context.Context, limit, offset int) ([]domain.Invoice, error) <span class="cov0" title="0">{
+        if limit &lt;= 0 </span><span class="cov0" title="0">{
+                limit = 20 // default limit
+        }</span>
+        <span class="cov0" title="0">if limit &gt; 100 </span><span class="cov0" title="0">{
+                return nil, errors.New("limit cannot exceed 100")
+        }</span>
+
+        <span class="cov0" title="0">invoices, err := s.invoiceRepo.GetAll(ctx, limit, offset)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to get all invoices", zap.Error(err))
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return invoices, nil</span>
+}
+
+func (s *invoiceService) GetInvoiceItems(ctx context.Context, invoiceID int64) ([]domain.InvoiceItem, error) <span class="cov0" title="0">{
+        items, err := s.invoiceRepo.GetItems(ctx, invoiceID)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("failed to get invoice items", zap.Int64("invoice_id", invoiceID), zap.Error(err))
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return items, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file24" style="display: none">package services
+
+import (
+        "context"
+
+        "app/xonvera-core/internal/core/domain"
+        portRepository "app/xonvera-core/internal/core/ports/repository"
+        portService "app/xonvera-core/internal/core/ports/service"
+)
+
+// PackageService is the concrete implementation of portService.PackageService.
+// It orchestrates package-related operations and encapsulates repository access.
+type PackageService struct {
+        repo portRepository.PackageRepository
+}
+
+// NewPackageService builds a PackageService.
+func NewPackageService(repo portRepository.PackageRepository) portService.PackageService <span class="cov0" title="0">{
+        return &amp;PackageService{repo: repo}
+}</span>
+
+// GetPackages retrieves all packages.
+func (s *PackageService) GetPackages(ctx context.Context) ([]domain.Package, error) <span class="cov0" title="0">{
+        return s.repo.GetAll(ctx)
+}</span>
+
+// GetPackageByID retrieves a package by its ID.
+func (s *PackageService) GetPackageByID(ctx context.Context, id string) (*domain.Package, error) <span class="cov0" title="0">{
+        return s.repo.GetByID(ctx, id)
+}</span>
+</pre>
+		
+		<pre class="file" id="file25" style="display: none">package services
+
+import (
+        "crypto/rand"
+        "encoding/hex"
+        "fmt"
+        "time"
+
+        "app/xonvera-core/internal/core/domain"
+        "app/xonvera-core/internal/core/ports/service"
+        "app/xonvera-core/internal/infrastructure/config"
+
+        "github.com/o1egl/paseto"
+)
+
+type tokenService struct {
+        paseto          *paseto.V2
+        secretKey       []byte
+        expireIn        time.Duration
+        refreshExpireIn time.Duration
+}
+
+const (
+        tokenTypeAccess  = "access"
+        tokenTypeRefresh = "refresh"
+)
+
+type TokenPayload struct {
+        UserID    uint      `json:"user_id"`
+        Type      string    `json:"type"` // "access" or "refresh"
+        IssuedAt  time.Time `json:"issued_at"`
+        ExpiredAt time.Time `json:"expired_at"`
+}
+
+func NewTokenService(cfg *config.TokenConfig) portService.TokenService <span class="cov0" title="0">{
+        return &amp;tokenService{
+                paseto:          paseto.NewV2(),
+                secretKey:       []byte(cfg.SecretKey),
+                expireIn:        cfg.Expired,
+                refreshExpireIn: cfg.RefreshExpired,
+        }
+}</span>
+
+func (s *tokenService) GenerateTokenPair(userID uint) (*domain.TokenPair, error) <span class="cov0" title="0">{
+        now := time.Now()
+        expiresAt := now.Add(s.expireIn)
+
+        // Generate access token
+        accessPayload := TokenPayload{
+                UserID:    userID,
+                Type:      tokenTypeAccess,
+                IssuedAt:  now,
+                ExpiredAt: expiresAt,
+        }
+
+        symmetricKey := make([]byte, 32)
+        copy(symmetricKey, s.secretKey)
+
+        accessToken, err := s.paseto.Encrypt(symmetricKey, accessPayload, nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to generate access token: %w", err)
+        }</span>
+
+        // Generate refresh token (random string + paseto for validation)
+        <span class="cov0" title="0">refreshPayload := TokenPayload{
+                UserID:    userID,
+                Type:      tokenTypeRefresh,
+                IssuedAt:  now,
+                ExpiredAt: now.Add(s.refreshExpireIn),
+        }
+
+        refreshToken, err := s.paseto.Encrypt(symmetricKey, refreshPayload, nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to generate refresh token: %w", err)
+        }</span>
+
+        // Add random suffix to make refresh token unique
+        <span class="cov0" title="0">randomBytes := make([]byte, 16)
+        if _, err := rand.Read(randomBytes); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to generate random bytes: %w", err)
+        }</span>
+        <span class="cov0" title="0">refreshToken = refreshToken + "." + hex.EncodeToString(randomBytes)
+
+        return &amp;domain.TokenPair{
+                AccessToken:  accessToken,
+                RefreshToken: refreshToken,
+                ExpiresAt:    expiresAt.Unix(),
+        }, nil</span>
+}
+
+func (s *tokenService) ValidateToken(token string) (uint, error) <span class="cov0" title="0">{
+        var payload TokenPayload
+
+        symmetricKey := make([]byte, 32)
+        copy(symmetricKey, s.secretKey)
+
+        err := s.paseto.Decrypt(token, symmetricKey, &amp;payload, nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, fmt.Errorf("invalid token: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">if payload.Type != tokenTypeAccess </span><span class="cov0" title="0">{
+                return 0, fmt.Errorf("invalid token type")
+        }</span>
+
+        <span class="cov0" title="0">if time.Now().After(payload.ExpiredAt) </span><span class="cov0" title="0">{
+                return 0, fmt.Errorf("token has expired")
+        }</span>
+
+        <span class="cov0" title="0">return payload.UserID, nil</span>
+}
+
+func (s *tokenService) ValidateRefreshToken(token string) (uint, error) <span class="cov0" title="0">{
+        // Remove random suffix
+        var pasetoToken string
+        for i := len(token) - 1; i &gt;= 0; i-- </span><span class="cov0" title="0">{
+                if token[i] == '.' </span><span class="cov0" title="0">{
+                        pasetoToken = token[:i]
+                        break</span>
+                }
+        }
+        <span class="cov0" title="0">if pasetoToken == "" </span><span class="cov0" title="0">{
+                return 0, fmt.Errorf("invalid refresh token format")
+        }</span>
+
+        <span class="cov0" title="0">var payload TokenPayload
+
+        symmetricKey := make([]byte, 32)
+        copy(symmetricKey, s.secretKey)
+
+        err := s.paseto.Decrypt(pasetoToken, symmetricKey, &amp;payload, nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, fmt.Errorf("invalid refresh token: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">if payload.Type != tokenTypeRefresh </span><span class="cov0" title="0">{
+                return 0, fmt.Errorf("invalid token type")
+        }</span>
+
+        <span class="cov0" title="0">if time.Now().After(payload.ExpiredAt) </span><span class="cov0" title="0">{
+                return 0, fmt.Errorf("refresh token has expired")
+        }</span>
+
+        <span class="cov0" title="0">return payload.UserID, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file26" style="display: none">// Code generated by Wire. DO NOT EDIT.
+
+//go:generate go run -mod=mod github.com/google/wire/cmd/wire
+//go:build !wireinject
+// +build !wireinject
+
+package dependencies
+
+import (
+        "app/xonvera-core/internal/adapters/handler/http"
+        "app/xonvera-core/internal/adapters/middleware"
+        "app/xonvera-core/internal/adapters/repositories/redis"
+        "app/xonvera-core/internal/adapters/repositories/sql"
+        "app/xonvera-core/internal/core/services"
+        "app/xonvera-core/internal/infrastructure/config"
+        "app/xonvera-core/internal/infrastructure/database"
+        "app/xonvera-core/internal/infrastructure/redis"
+        "app/xonvera-core/internal/infrastructure/server"
+        "github.com/gofiber/fiber/v2"
+        "github.com/google/wire"
+        redis2 "github.com/redis/go-redis/v9"
+        "gorm.io/gorm"
+        "time"
+)
+
+// Injectors from wire.go:
+
+// InitializeApplication creates a new Application with all dependencies wired
+func InitializeApplication() (*Application, error) <span class="cov0" title="0">{
+        configConfig := config.LoadConfig()
+        databaseConfig := ProvideDBConfig(configConfig)
+        db, err := database.NewConnection(databaseConfig)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">redisConfig := ProvideRedisConfig(configConfig)
+        client := redis.NewRedisClient(redisConfig)
+        app := server.NewFiberApp(configConfig, client, db)
+        userRepository := repositoriesSql.NewUserRepository(db)
+        tokenRepository := repositoriesRedis.NewTokenRepository(client)
+        tokenConfig := ProvideTokenConfig(configConfig)
+        tokenService := services.NewTokenService(tokenConfig)
+        authService := services.NewAuthService(userRepository, tokenRepository, tokenService, tokenConfig)
+        duration := ProvideRequestTimeout(configConfig)
+        authHandler := http.NewAuthHandler(authService, duration)
+        packageRepository := repositoriesSql.NewPackageRepository(db)
+        packageService := services.NewPackageService(packageRepository)
+        packageHandler := http.NewPackageHandler(packageService)
+        invoiceRepository := repositoriesSql.NewInvoiceRepository(db)
+        invoiceService := services.NewInvoiceService(invoiceRepository)
+        invoiceHandler := http.NewInvoiceHandler(invoiceService, duration)
+        authMiddleware := middleware.NewAuthMiddleware(authService, duration)
+        application := &amp;Application{
+                Config:         configConfig,
+                DB:             db,
+                Redis:          client,
+                FiberApp:       app,
+                AuthHandler:    authHandler,
+                PackageHandler: packageHandler,
+                InvoiceHandler: invoiceHandler,
+                AuthMiddleware: authMiddleware,
+        }
+        return application, nil</span>
+}
+
+// wire.go:
+
+// ProviderSet is the set of all providers
+var ProviderSet = wire.NewSet(config.LoadConfig, ProvideDBConfig,
+        ProvideTokenConfig,
+        ProvideRedisConfig,
+        ProvideRequestTimeout, database.NewConnection, redis.NewRedisClient, server.NewFiberApp, repositoriesSql.NewUserRepository, repositoriesSql.NewPackageRepository, repositoriesSql.NewInvoiceRepository, repositoriesRedis.NewTokenRepository, services.NewTokenService, services.NewAuthService, services.NewPackageService, services.NewInvoiceService, http.NewAuthHandler, http.NewPackageHandler, http.NewInvoiceHandler, middleware.NewAuthMiddleware,
+)
+
+// ProvideDBConfig extracts DatabaseConfig from Config
+func ProvideDBConfig(cfg *config.Config) *config.DatabaseConfig <span class="cov0" title="0">{
+        return &amp;cfg.Database
+}</span>
+
+// ProvideTokenConfig extracts TokenConfig from Config
+func ProvideTokenConfig(cfg *config.Config) *config.TokenConfig <span class="cov0" title="0">{
+        return &amp;cfg.Token
+}</span>
+
+// ProvideRedisConfig extracts RedisConfig from Config
+func ProvideRedisConfig(cfg *config.Config) *config.RedisConfig <span class="cov0" title="0">{
+        return &amp;cfg.Redis
+}</span>
+
+// ProvideRequestTimeout extracts request timeout from Config
+func ProvideRequestTimeout(cfg *config.Config) time.Duration <span class="cov0" title="0">{
+        return cfg.App.RequestTimeout
+}</span>
+
+// Application holds all the dependencies
+type Application struct {
+        Config         *config.Config
+        DB             *gorm.DB
+        Redis          *redis2.Client
+        FiberApp       *fiber.App
+        AuthHandler    *http.AuthHandler
+        PackageHandler *http.PackageHandler
+        InvoiceHandler *http.InvoiceHandler
+        AuthMiddleware *middleware.AuthMiddleware
+}
+</pre>
+		
+		<pre class="file" id="file27" style="display: none">package config
+
+import (
+        "fmt"
+        "time"
+
+        "app/xonvera-core/internal/infrastructure/logger"
+
+        "github.com/spf13/viper"
+        "go.uber.org/zap"
+)
+
+type Config struct {
+        App      AppConfig      `mapstructure:",squash"`
+        Database DatabaseConfig `mapstructure:",squash"`
+        Token    TokenConfig    `mapstructure:",squash"`
+        Redis    RedisConfig    `mapstructure:",squash"`
+}
+
+type AppConfig struct {
+        Name           string `mapstructure:"APP_NAME"`
+        Version        string `mapstructure:"APP_VERSION"`
+        Port           string `mapstructure:"APP_PORT"`
+        Env            string `mapstructure:"APP_ENV"`
+        AllowedOrigins string `mapstructure:"APP_ALLOWED_ORIGINS"`
+        RequestTimeout time.Duration
+        CORSOrigins    string `mapstructure:"CORS_ALLOWED_ORIGINS"`
+}
+
+type DatabaseConfig struct {
+        Host            string `mapstructure:"DB_HOST"`
+        Port            string `mapstructure:"DB_PORT"`
+        User            string `mapstructure:"DB_USER"`
+        Password        string `mapstructure:"DB_PASSWORD"`
+        Name            string `mapstructure:"DB_NAME"`
+        SSLMode         string `mapstructure:"DB_SSLMODE"`
+        MaxIdleConn     int    `mapstructure:"DB_OPT_MAX_IDLE_CONN"`
+        MaxOpenConn     int    `mapstructure:"DB_OPT_MAX_OPEN_CONN"`
+        ConnMaxIdleTime time.Duration
+        ConnMaxLifeTime time.Duration
+}
+
+type TokenConfig struct {
+        SecretKey      string `mapstructure:"TOKEN_SECRET_KEY"`
+        Expired        time.Duration
+        RefreshExpired time.Duration
+}
+
+type RedisConfig struct {
+        Host     string `mapstructure:"REDIS_HOST"`
+        Port     string `mapstructure:"REDIS_PORT"`
+        Password string `mapstructure:"REDIS_PASSWORD"`
+        DB       int    `mapstructure:"REDIS_DB"`
+}
+
+func LoadConfig() *Config <span class="cov0" title="0">{
+        viper.SetConfigFile(".env")
+        viper.AutomaticEnv()
+
+        if err := viper.ReadInConfig(); err != nil </span><span class="cov0" title="0">{
+                logger.Warn("Error reading config file", zap.Error(err))
+        }</span>
+
+        // Set defaults
+        <span class="cov0" title="0">setDefaults()
+
+        var cfg Config
+        if err := viper.Unmarshal(&amp;cfg); err != nil </span><span class="cov0" title="0">{
+                logger.Fatal("Failed to unmarshal config", zap.Error(err))
+        }</span>
+
+        // Validate configuration
+        <span class="cov0" title="0">if err := cfg.Validate(); err != nil </span><span class="cov0" title="0">{
+                logger.Fatal("Invalid configuration", zap.Error(err))
+        }</span>
+
+        // Parse duration configurations
+        <span class="cov0" title="0">parseDurationConfigs(&amp;cfg)
+
+        return &amp;cfg</span>
+}
+
+// parseDurationConfigs parses all duration-based environment variables
+func parseDurationConfigs(cfg *Config) <span class="cov0" title="0">{
+        durationConfigs := []struct {
+                envKey    string
+                target    *time.Duration
+                fieldName string
+        }{
+                {
+                        envKey:    "APP_REQUEST_TIMEOUT",
+                        target:    &amp;cfg.App.RequestTimeout,
+                        fieldName: "APP_REQUEST_TIMEOUT",
+                },
+                {
+                        envKey:    "DB_OPT_CONN_MAX_IDLE_TIME",
+                        target:    &amp;cfg.Database.ConnMaxIdleTime,
+                        fieldName: "DB_OPT_CONN_MAX_IDLE_TIME",
+                },
+                {
+                        envKey:    "DB_OPT_CONN_MAX_LIFE_TIME",
+                        target:    &amp;cfg.Database.ConnMaxLifeTime,
+                        fieldName: "DB_OPT_CONN_MAX_LIFE_TIME",
+                },
+                {
+                        envKey:    "TOKEN_EXPIRE",
+                        target:    &amp;cfg.Token.Expired,
+                        fieldName: "TOKEN_EXPIRE",
+                },
+                {
+                        envKey:    "TOKEN_REFRESH_EXPIRE",
+                        target:    &amp;cfg.Token.RefreshExpired,
+                        fieldName: "TOKEN_REFRESH_EXPIRE",
+                },
+        }
+
+        for _, dc := range durationConfigs </span><span class="cov0" title="0">{
+                if timeoutStr := viper.GetString(dc.envKey); timeoutStr != "" </span><span class="cov0" title="0">{
+                        duration, err := time.ParseDuration(timeoutStr)
+                        if err != nil </span><span class="cov0" title="0">{
+                                logger.Fatal("Failed to parse duration config",
+                                        zap.String("config", dc.fieldName),
+                                        zap.String("value", timeoutStr),
+                                        zap.Error(err),
+                                )
+                        }</span>
+                        <span class="cov0" title="0">*dc.target = duration</span>
+                }
+        }
+}
+
+// Validate checks configuration for production readiness
+func (c *Config) Validate() error <span class="cov0" title="0">{
+        if c.App.Env == "production" </span><span class="cov0" title="0">{
+                // Validate secret key
+                if c.Token.SecretKey == "" || len(c.Token.SecretKey) &lt; 32 </span><span class="cov0" title="0">{
+                        return fmt.Errorf("TOKEN_SECRET_KEY must be at least 32 characters in production, got %d", len(c.Token.SecretKey))
+                }</span>
+                // Don't allow default values in production
+                <span class="cov0" title="0">if c.Token.SecretKey == "your-super-secret-key-min-32-chars!!" </span><span class="cov0" title="0">{
+                        return fmt.Errorf("TOKEN_SECRET_KEY must be changed from default value in production")
+                }</span>
+                // Validate database SSL
+                <span class="cov0" title="0">if c.Database.SSLMode == "disable" </span><span class="cov0" title="0">{
+                        return fmt.Errorf("DB_SSLMODE must not be 'disable' in production")
+                }</span>
+        }
+        <span class="cov0" title="0">return nil</span>
+}
+
+func setDefaults() <span class="cov0" title="0">{
+        // App defaults
+        viper.SetDefault("APP_NAME", "xonvera")
+        viper.SetDefault("APP_PORT", "3000")
+        viper.SetDefault("APP_ENV", "development")
+        viper.SetDefault("APP_REQUEST_TIMEOUT", "30s")
+        viper.SetDefault("APP_ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:8080")
+
+        // Database defaults
+        viper.SetDefault("DB_HOST", "localhost")
+        viper.SetDefault("DB_PORT", "5432")
+        viper.SetDefault("DB_USER", "postgres")
+        viper.SetDefault("DB_PASSWORD", "postgres")
+        viper.SetDefault("DB_NAME", "xonvera_db")
+        viper.SetDefault("DB_SSLMODE", "disable")
+        viper.SetDefault("DB_OPT_MAX_IDLE_CONN", 10)
+        viper.SetDefault("DB_OPT_MAX_OPEN_CONN", 100)
+        viper.SetDefault("DB_OPT_CONN_MAX_IDLE_TIME", "10m")
+        viper.SetDefault("DB_OPT_CONN_MAX_LIFE_TIME", "1h")
+
+        // Token defaults
+        viper.SetDefault("TOKEN_SECRET_KEY", "your-super-secret-key-min-32-chars!!")
+        viper.SetDefault("TOKEN_EXPIRE", "24h")
+        viper.SetDefault("TOKEN_REFRESH_EXPIRE", "168h")
+
+        // Redis defaults
+        viper.SetDefault("REDIS_HOST", "localhost")
+        viper.SetDefault("REDIS_PORT", "6379")
+        viper.SetDefault("REDIS_PASSWORD", "")
+        viper.SetDefault("REDIS_DB", 0) // 7 days
+}</span>
+</pre>
+		
+		<pre class="file" id="file28" style="display: none">package database
+
+import (
+        "context"
+        "fmt"
+        "time"
+
+        "app/xonvera-core/internal/infrastructure/config"
+        "app/xonvera-core/internal/infrastructure/logger"
+
+        "go.uber.org/zap"
+        "gorm.io/driver/postgres"
+        "gorm.io/gorm"
+        gormlogger "gorm.io/gorm/logger"
+)
+
+// zapGormLogger adapts zap logger to gorm logger interface
+type zapGormLogger struct {
+        zap *zap.Logger
+}
+
+func newZapGormLogger() gormlogger.Interface <span class="cov0" title="0">{
+        return &amp;zapGormLogger{zap: logger.Get()}
+}</span>
+
+func (l *zapGormLogger) LogMode(level gormlogger.LogLevel) gormlogger.Interface <span class="cov0" title="0">{
+        return l
+}</span>
+
+func (l *zapGormLogger) Info(ctx context.Context, msg string, data ...interface{}) <span class="cov0" title="0">{
+        l.zap.Sugar().Infof(msg, data...)
+}</span>
+
+func (l *zapGormLogger) Warn(ctx context.Context, msg string, data ...interface{}) <span class="cov0" title="0">{
+        l.zap.Sugar().Warnf(msg, data...)
+}</span>
+
+func (l *zapGormLogger) Error(ctx context.Context, msg string, data ...interface{}) <span class="cov0" title="0">{
+        l.zap.Sugar().Errorf(msg, data...)
+}</span>
+
+func (l *zapGormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) <span class="cov0" title="0">{
+        elapsed := time.Since(begin)
+        sql, rows := fc()
+
+        fields := []zap.Field{
+                zap.Duration("elapsed", elapsed),
+                zap.Int64("rows", rows),
+                zap.String("sql", sql),
+        }
+
+        // Log errors with error level
+        if err != nil </span><span class="cov0" title="0">{
+                fields = append(fields, zap.Error(err))
+                l.zap.Error("database query error", fields...)
+                return
+        }</span>
+
+        // Log slow queries with warning level
+        <span class="cov0" title="0">const slowQueryThreshold = 200 * time.Millisecond
+        if elapsed &gt; slowQueryThreshold </span><span class="cov0" title="0">{
+                l.zap.Warn("slow database query", fields...)
+        }</span> else<span class="cov0" title="0"> {
+                l.zap.Debug("database query", fields...)
+        }</span>
+}
+
+func NewConnection(cfg *config.DatabaseConfig) (*gorm.DB, error) <span class="cov0" title="0">{
+        dsn := fmt.Sprintf(
+                "host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+                cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name, cfg.SSLMode,
+        )
+
+        db, err := gorm.Open(postgres.Open(dsn), &amp;gorm.Config{
+                Logger: newZapGormLogger(),
+        })
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to connect to database: %w", err)
+        }</span>
+
+        // Get underlying sql.DB to configure connection pool
+        <span class="cov0" title="0">sqlDB, err := db.DB()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to get underlying sql.DB: %w", err)
+        }</span>
+
+        // Configure connection pool
+        <span class="cov0" title="0">sqlDB.SetMaxIdleConns(cfg.MaxIdleConn)
+        sqlDB.SetMaxOpenConns(cfg.MaxOpenConn)
+        sqlDB.SetConnMaxIdleTime(cfg.ConnMaxIdleTime)
+        sqlDB.SetConnMaxLifetime(cfg.ConnMaxLifeTime)
+
+        logger.Info("Database connection established",
+                zap.String("host", cfg.Host),
+                zap.String("database", cfg.Name),
+                zap.Int("max_idle_conn", cfg.MaxIdleConn),
+                zap.Int("max_open_conn", cfg.MaxOpenConn),
+                zap.Duration("conn_max_idle_time", cfg.ConnMaxIdleTime),
+                zap.Duration("conn_max_life_time", cfg.ConnMaxLifeTime),
+        )
+
+        return db, nil</span>
+}
+
+// GetDSN returns the database connection string for migrations
+func GetDSN(cfg *config.DatabaseConfig) string <span class="cov0" title="0">{
+        return fmt.Sprintf(
+                "postgres://%s:%s@%s:%s/%s?sslmode=%s",
+                cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Name, cfg.SSLMode,
+        )
+}</span>
+</pre>
+		
+		<pre class="file" id="file29" style="display: none">package database
+
+import (
+        "errors"
+
+        "app/xonvera-core/internal/infrastructure/logger"
+
+        "github.com/golang-migrate/migrate/v4"
+        _ "github.com/golang-migrate/migrate/v4/database/postgres"
+        _ "github.com/golang-migrate/migrate/v4/source/file"
+        "go.uber.org/zap"
+)
+
+type Migrator struct {
+        migrate *migrate.Migrate
+}
+
+func NewMigrator(databaseURL, migrationsPath string) (*Migrator, error) <span class="cov0" title="0">{
+        m, err := migrate.New(migrationsPath, databaseURL)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return &amp;Migrator{migrate: m}, nil</span>
+}
+
+func (m *Migrator) Up() error <span class="cov0" title="0">{
+        logger.Info("Running database migrations up...")
+        err := m.migrate.Up()
+        if err != nil &amp;&amp; !errors.Is(err, migrate.ErrNoChange) </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">if errors.Is(err, migrate.ErrNoChange) </span><span class="cov0" title="0">{
+                logger.Info("No new migrations to apply")
+        }</span> else<span class="cov0" title="0"> {
+                logger.Info("Database migrations applied successfully")
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (m *Migrator) Down() error <span class="cov0" title="0">{
+        logger.Info("Running database migrations down...")
+        err := m.migrate.Down()
+        if err != nil &amp;&amp; !errors.Is(err, migrate.ErrNoChange) </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">logger.Info("Database migrations rolled back successfully")
+        return nil</span>
+}
+
+func (m *Migrator) Steps(n int) error <span class="cov0" title="0">{
+        logger.Info("Running database migration steps", zap.Int("steps", n))
+        return m.migrate.Steps(n)
+}</span>
+
+func (m *Migrator) Version() (uint, bool, error) <span class="cov0" title="0">{
+        return m.migrate.Version()
+}</span>
+
+func (m *Migrator) Close() error <span class="cov0" title="0">{
+        sourceErr, dbErr := m.migrate.Close()
+        if sourceErr != nil </span><span class="cov0" title="0">{
+                return sourceErr
+        }</span>
+        <span class="cov0" title="0">return dbErr</span>
+}
+</pre>
+		
+		<pre class="file" id="file30" style="display: none">package graceful
+
+import (
+        "context"
+        "os"
+        "os/signal"
+        "sync"
+        "syscall"
+        "time"
+
+        "app/xonvera-core/internal/infrastructure/logger"
+
+        "github.com/gofiber/fiber/v2"
+        "github.com/redis/go-redis/v9"
+        "go.uber.org/zap"
+        "gorm.io/gorm"
+)
+
+const (
+        shutdownTimeout = 30 * time.Second
+)
+
+// Shutdown handles graceful shutdown of the application
+func Shutdown(app *fiber.App, db *gorm.DB, redisClient *redis.Client, serverErrors &lt;-chan error) <span class="cov0" title="0">{
+        quit := make(chan os.Signal, 1)
+        signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+        defer signal.Stop(quit)
+
+        // Wait for either a signal or server error
+        select </span>{
+        case sig := &lt;-quit:<span class="cov0" title="0">
+                logger.Info("Received shutdown signal", zap.String("signal", sig.String()))</span>
+        case err := &lt;-serverErrors:<span class="cov0" title="0">
+                logger.Error("Server error, initiating shutdown", zap.Error(err))</span>
+        }
+
+        // Create shutdown context with timeout
+        <span class="cov0" title="0">ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+        defer cancel()
+
+        // Use WaitGroup to coordinate concurrent shutdown operations
+        var wg sync.WaitGroup
+        shutdownComplete := make(chan struct{})
+
+        // Shutdown Fiber server
+        wg.Add(1)
+        go func() </span><span class="cov0" title="0">{
+                defer wg.Done()
+                logger.Info("Shutting down HTTP server...")
+                if err := app.ShutdownWithContext(ctx); err != nil </span><span class="cov0" title="0">{
+                        logger.Error("HTTP server forced shutdown", zap.Error(err))
+                }</span> else<span class="cov0" title="0"> {
+                        logger.Info("HTTP server shutdown complete")
+                }</span>
+        }()
+
+        // Close database connections
+        <span class="cov0" title="0">if db != nil </span><span class="cov0" title="0">{
+                wg.Add(1)
+                go func() </span><span class="cov0" title="0">{
+                        defer wg.Done()
+                        logger.Info("Closing database connections...")
+                        if err := closeDatabase(ctx, db); err != nil </span><span class="cov0" title="0">{
+                                logger.Error("Failed to close database", zap.Error(err))
+                        }</span> else<span class="cov0" title="0"> {
+                                logger.Info("Database connections closed")
+                        }</span>
+                }()
+        }
+
+        // Close Redis connections
+        <span class="cov0" title="0">if redisClient != nil </span><span class="cov0" title="0">{
+                wg.Add(1)
+                go func() </span><span class="cov0" title="0">{
+                        defer wg.Done()
+                        logger.Info("Closing Redis connection...")
+                        if err := redisClient.Close(); err != nil </span><span class="cov0" title="0">{
+                                logger.Error("Failed to close Redis connection", zap.Error(err))
+                        }</span> else<span class="cov0" title="0"> {
+                                logger.Info("Redis connection closed")
+                        }</span>
+                }()
+        }
+
+        // Wait for all shutdown operations to complete
+        <span class="cov0" title="0">go func() </span><span class="cov0" title="0">{
+                wg.Wait()
+                close(shutdownComplete)
+        }</span>()
+
+        // Wait for completion or timeout
+        <span class="cov0" title="0">select </span>{
+        case &lt;-shutdownComplete:<span class="cov0" title="0">
+                logger.Info("Graceful shutdown completed successfully")</span>
+        case &lt;-ctx.Done():<span class="cov0" title="0">
+                logger.Warn("Shutdown timeout exceeded, forcing exit", zap.Duration("timeout", shutdownTimeout))</span>
+        }
+}
+
+// closeDatabase safely closes the database connection
+func closeDatabase(ctx context.Context, db *gorm.DB) error <span class="cov0" title="0">{
+        sqlDB, err := db.DB()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">return sqlDB.Close()</span>
+}
+</pre>
+		
+		<pre class="file" id="file31" style="display: none">package logger
+
+import (
+        "os"
+
+        "go.uber.org/zap"
+        "go.uber.org/zap/zapcore"
+)
+
+var log *zap.Logger
+
+// Init initializes the zap logger
+func Init(env string) <span class="cov0" title="0">{
+        var config zap.Config
+
+        if env == "production" </span><span class="cov0" title="0">{
+                config = zap.NewProductionConfig()
+                config.EncoderConfig.TimeKey = "timestamp"
+                config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+                // config.Level = zap.NewAtomicLevelAt(zap.ErrorLevel)
+        }</span> else<span class="cov0" title="0"> {
+                config = zap.NewDevelopmentConfig()
+                config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+                // config.Level = zap.NewAtomicLevelAt(zap.InfoLevel)
+        }</span>
+
+        <span class="cov0" title="0">config.OutputPaths = []string{"stdout"}
+        config.ErrorOutputPaths = []string{"stderr"}
+
+        var err error
+        log, err = config.Build(zap.AddCallerSkip(1))
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+}
+
+// Get returns the global logger instance
+func Get() *zap.Logger <span class="cov0" title="0">{
+        if log == nil </span><span class="cov0" title="0">{
+                Init("development")
+        }</span>
+        <span class="cov0" title="0">return log</span>
+}
+
+// Sync flushes any buffered log entries
+func Sync() <span class="cov0" title="0">{
+        if log != nil </span><span class="cov0" title="0">{
+                _ = log.Sync()
+        }</span>
+}
+
+// Debug logs a debug message
+func Debug(msg string, fields ...zap.Field) <span class="cov0" title="0">{
+        Get().Debug(msg, fields...)
+}</span>
+
+// Info logs an info message
+func Info(msg string, fields ...zap.Field) <span class="cov0" title="0">{
+        Get().Info(msg, fields...)
+}</span>
+
+// Warn logs a warning message
+func Warn(msg string, fields ...zap.Field) <span class="cov0" title="0">{
+        Get().Warn(msg, fields...)
+}</span>
+
+// Error logs an error message
+func Error(msg string, fields ...zap.Field) <span class="cov0" title="0">{
+        Get().Error(msg, fields...)
+}</span>
+
+// Fatal logs a fatal message and exits
+func Fatal(msg string, fields ...zap.Field) <span class="cov0" title="0">{
+        Get().Fatal(msg, fields...)
+        os.Exit(1)
+}</span>
+
+// With creates a child logger with additional fields
+func With(fields ...zap.Field) *zap.Logger <span class="cov0" title="0">{
+        return Get().With(fields...)
+}</span>
+</pre>
+		
+		<pre class="file" id="file32" style="display: none">package redis
+
+import (
+        "context"
+        "fmt"
+        "time"
+
+        "app/xonvera-core/internal/infrastructure/config"
+        "app/xonvera-core/internal/infrastructure/logger"
+
+        "github.com/redis/go-redis/v9"
+        "go.uber.org/zap"
+)
+
+// NewRedisClient creates a new Redis client with connection verification
+func NewRedisClient(cfg *config.RedisConfig) *redis.Client <span class="cov0" title="0">{
+        client := redis.NewClient(&amp;redis.Options{
+                Addr:     fmt.Sprintf("%s:%s", cfg.Host, cfg.Port),
+                Password: cfg.Password,
+                DB:       cfg.DB,
+        })
+
+        // Test connection with timeout
+        ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+        defer cancel()
+
+        if err := client.Ping(ctx).Err(); err != nil </span><span class="cov0" title="0">{
+                logger.Fatal("Failed to connect to Redis",
+                        zap.String("host", cfg.Host),
+                        zap.String("port", cfg.Port),
+                        zap.Error(err),
+                )
+        }</span>
+
+        <span class="cov0" title="0">logger.Info("Connected to Redis",
+                zap.String("host", cfg.Host),
+                zap.String("port", cfg.Port),
+                zap.Int("db", cfg.DB),
+        )
+
+        return client</span>
+}
+
+// CloseRedis closes the Redis connection
+func CloseRedis(client *redis.Client) error <span class="cov0" title="0">{
+        if client == nil </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+        <span class="cov0" title="0">return client.Close()</span>
+}
+</pre>
+		
+		<pre class="file" id="file33" style="display: none">package server
+
+import (
+        "time"
+
+        "app/xonvera-core/internal/adapters/middleware"
+        "app/xonvera-core/internal/infrastructure/config"
+
+        "github.com/gofiber/fiber/v2"
+        "github.com/gofiber/fiber/v2/middleware/cors"
+        fiberlogger "github.com/gofiber/fiber/v2/middleware/logger"
+        "github.com/gofiber/fiber/v2/middleware/recover"
+        "github.com/redis/go-redis/v9"
+        "gorm.io/gorm"
+)
+
+// NewFiberApp creates and configures a new Fiber application with middleware
+func NewFiberApp(cfg *config.Config, redisClient *redis.Client, db *gorm.DB) *fiber.App <span class="cov0" title="0">{
+        startTime := time.Now()
+
+        app := fiber.New(fiber.Config{
+                AppName:       cfg.App.Name,
+                BodyLimit:     4 * 1024 * 1024, // 4MB max body size
+                ReadTimeout:   10 * time.Second,
+                WriteTimeout:  10 * time.Second,
+                StrictRouting: true,
+                CaseSensitive: true,
+        })
+
+        // Global middleware
+        app.Use(middleware.RequestID())
+        app.Use(recover.New())
+        app.Use(middleware.BodyLogger(cfg.App.Env))
+        app.Use(fiberlogger.New(fiberlogger.Config{
+                Format: "${time} | ${status} | ${latency} | ${locals:requestID} | ${method} ${path}\n",
+        }))
+        app.Use(middleware.APIRateLimiter(redisClient))
+        app.Use(cors.New(cors.Config{
+                AllowOrigins:     cfg.App.AllowedOrigins,
+                AllowMethods:     "GET,POST,PUT,DELETE,PATCH,OPTIONS",
+                AllowHeaders:     "Origin,Content-Type,Accept,Authorization",
+                AllowCredentials: true,
+        }))
+
+        // Health check endpoint
+        app.Get("/health", createHealthCheckHandler(startTime, db, redisClient, cfg))
+
+        return app
+}</span>
+
+// createHealthCheckHandler returns a health check handler
+func createHealthCheckHandler(startTime time.Time, db *gorm.DB, redisClient *redis.Client, cfg *config.Config) fiber.Handler <span class="cov0" title="0">{
+        return func(c *fiber.Ctx) error </span><span class="cov0" title="0">{
+                uptime := time.Since(startTime)
+
+                // Check database connectivity
+                dbHealth := checkDatabaseHealth(db)
+
+                // Check Redis connectivity
+                redisHealth := checkRedisHealth(c, redisClient)
+
+                // Determine overall status
+                overallStatus := "healthy"
+                statusCode := fiber.StatusOK
+
+                if dbHealth != "healthy" || redisHealth != "healthy" </span><span class="cov0" title="0">{
+                        overallStatus = "degraded"
+                        statusCode = fiber.StatusServiceUnavailable
+                }</span>
+
+                <span class="cov0" title="0">response := fiber.Map{
+                        "status":  overallStatus,
+                        "app":     cfg.App.Name,
+                        "version": cfg.App.Version,
+                        "uptime":  uptime.String(),
+                        "checks": fiber.Map{
+                                "database": dbHealth,
+                                "redis":    redisHealth,
+                        },
+                }
+
+                return c.Status(statusCode).JSON(response)</span>
+        }
+}
+
+// checkDatabaseHealth verifies database connectivity
+func checkDatabaseHealth(db *gorm.DB) string <span class="cov0" title="0">{
+        if db == nil </span><span class="cov0" title="0">{
+                return "unavailable"
+        }</span>
+
+        <span class="cov0" title="0">sqlDB, err := db.DB()
+        if err != nil || sqlDB.Ping() != nil </span><span class="cov0" title="0">{
+                return "unhealthy"
+        }</span>
+
+        <span class="cov0" title="0">return "healthy"</span>
+}
+
+// checkRedisHealth verifies Redis connectivity
+func checkRedisHealth(c *fiber.Ctx, redisClient *redis.Client) string <span class="cov0" title="0">{
+        if redisClient == nil </span><span class="cov0" title="0">{
+                return "unavailable"
+        }</span>
+
+        <span class="cov0" title="0">if err := redisClient.Ping(c.Context()).Err(); err != nil </span><span class="cov0" title="0">{
+                return "unhealthy"
+        }</span>
+
+        <span class="cov0" title="0">return "healthy"</span>
+}
+</pre>
+		
+		<pre class="file" id="file34" style="display: none">package testutil
+
+import (
+        "context"
+
+        "app/xonvera-core/internal/core/domain"
+)
+
+// MockUserRepository is a mock implementation of ports.UserRepository for testing
+type MockUserRepository struct {
+        CreateFunc             func(ctx context.Context, user *domain.User) error
+        FindByEmailFunc        func(ctx context.Context, email string) (*domain.User, error)
+        FindByPhoneFunc        func(ctx context.Context, phone string) (*domain.User, error)
+        FindByEmailOrPhoneFunc func(ctx context.Context, username string) (*domain.User, error)
+        FindByIDFunc           func(ctx context.Context, id uint) (*domain.User, error)
+        ExistsByEmailFunc      func(ctx context.Context, email string) (bool, error)
+        ExistsByPhoneFunc      func(ctx context.Context, phone string) (bool, error)
+}
+
+func (m *MockUserRepository) Create(ctx context.Context, user *domain.User) error <span class="cov0" title="0">{
+        if m.CreateFunc != nil </span><span class="cov0" title="0">{
+                return m.CreateFunc(ctx, user)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (m *MockUserRepository) FindByEmail(ctx context.Context, email string) (*domain.User, error) <span class="cov0" title="0">{
+        if m.FindByEmailFunc != nil </span><span class="cov0" title="0">{
+                return m.FindByEmailFunc(ctx, email)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockUserRepository) FindByPhone(ctx context.Context, phone string) (*domain.User, error) <span class="cov0" title="0">{
+        if m.FindByPhoneFunc != nil </span><span class="cov0" title="0">{
+                return m.FindByPhoneFunc(ctx, phone)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockUserRepository) FindByEmailOrPhone(ctx context.Context, username string) (*domain.User, error) <span class="cov0" title="0">{
+        if m.FindByEmailOrPhoneFunc != nil </span><span class="cov0" title="0">{
+                return m.FindByEmailOrPhoneFunc(ctx, username)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockUserRepository) FindByID(ctx context.Context, id uint) (*domain.User, error) <span class="cov0" title="0">{
+        if m.FindByIDFunc != nil </span><span class="cov0" title="0">{
+                return m.FindByIDFunc(ctx, id)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockUserRepository) ExistsByEmail(ctx context.Context, email string) (bool, error) <span class="cov0" title="0">{
+        if m.ExistsByEmailFunc != nil </span><span class="cov0" title="0">{
+                return m.ExistsByEmailFunc(ctx, email)
+        }</span>
+        <span class="cov0" title="0">return false, nil</span>
+}
+
+func (m *MockUserRepository) ExistsByPhone(ctx context.Context, phone string) (bool, error) <span class="cov0" title="0">{
+        if m.ExistsByPhoneFunc != nil </span><span class="cov0" title="0">{
+                return m.ExistsByPhoneFunc(ctx, phone)
+        }</span>
+        <span class="cov0" title="0">return false, nil</span>
+}
+
+// MockTokenRepository is a mock implementation of ports.TokenRepository for testing
+type MockTokenRepository struct {
+        CreateFunc              func(ctx context.Context, token *domain.Token) error
+        FindByAccessTokenFunc   func(ctx context.Context, accessToken string) (*domain.Token, error)
+        FindByRefreshTokenFunc  func(ctx context.Context, refreshToken string) (*domain.Token, error)
+        UpdateFunc              func(ctx context.Context, token *domain.Token) error
+        DeleteFunc              func(ctx context.Context, id uint) error
+        DeleteByUserIDFunc      func(ctx context.Context, userID uint) error
+        DeleteExpiredTokensFunc func(ctx context.Context) error
+}
+
+func (m *MockTokenRepository) Create(ctx context.Context, token *domain.Token) error <span class="cov0" title="0">{
+        if m.CreateFunc != nil </span><span class="cov0" title="0">{
+                return m.CreateFunc(ctx, token)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (m *MockTokenRepository) FindByAccessToken(ctx context.Context, accessToken string) (*domain.Token, error) <span class="cov0" title="0">{
+        if m.FindByAccessTokenFunc != nil </span><span class="cov0" title="0">{
+                return m.FindByAccessTokenFunc(ctx, accessToken)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockTokenRepository) FindByRefreshToken(ctx context.Context, refreshToken string) (*domain.Token, error) <span class="cov0" title="0">{
+        if m.FindByRefreshTokenFunc != nil </span><span class="cov0" title="0">{
+                return m.FindByRefreshTokenFunc(ctx, refreshToken)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockTokenRepository) Update(ctx context.Context, token *domain.Token) error <span class="cov0" title="0">{
+        if m.UpdateFunc != nil </span><span class="cov0" title="0">{
+                return m.UpdateFunc(ctx, token)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (m *MockTokenRepository) Delete(ctx context.Context, id uint) error <span class="cov0" title="0">{
+        if m.DeleteFunc != nil </span><span class="cov0" title="0">{
+                return m.DeleteFunc(ctx, id)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (m *MockTokenRepository) DeleteByUserID(ctx context.Context, userID uint) error <span class="cov0" title="0">{
+        if m.DeleteByUserIDFunc != nil </span><span class="cov0" title="0">{
+                return m.DeleteByUserIDFunc(ctx, userID)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (m *MockTokenRepository) DeleteExpiredTokens(ctx context.Context) error <span class="cov0" title="0">{
+        if m.DeleteExpiredTokensFunc != nil </span><span class="cov0" title="0">{
+                return m.DeleteExpiredTokensFunc(ctx)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+// MockTokenService is a mock implementation of ports.TokenService for testing
+type MockTokenService struct {
+        GenerateTokenPairFunc    func(userID uint) (*domain.TokenPair, error)
+        ValidateTokenFunc        func(token string) (uint, error)
+        ValidateRefreshTokenFunc func(token string) (uint, error)
+}
+
+func (m *MockTokenService) GenerateTokenPair(userID uint) (*domain.TokenPair, error) <span class="cov0" title="0">{
+        if m.GenerateTokenPairFunc != nil </span><span class="cov0" title="0">{
+                return m.GenerateTokenPairFunc(userID)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockTokenService) ValidateToken(token string) (uint, error) <span class="cov0" title="0">{
+        if m.ValidateTokenFunc != nil </span><span class="cov0" title="0">{
+                return m.ValidateTokenFunc(token)
+        }</span>
+        <span class="cov0" title="0">return 0, nil</span>
+}
+
+func (m *MockTokenService) ValidateRefreshToken(token string) (uint, error) <span class="cov0" title="0">{
+        if m.ValidateRefreshTokenFunc != nil </span><span class="cov0" title="0">{
+                return m.ValidateRefreshTokenFunc(token)
+        }</span>
+        <span class="cov0" title="0">return 0, nil</span>
+}
+
+// MockAuthService is a mock implementation of ports.AuthService for testing
+type MockAuthService struct {
+        RegisterFunc            func(ctx context.Context, req *domain.RegisterRequest) (*domain.AuthResponse, error)
+        LoginFunc               func(ctx context.Context, req *domain.LoginRequest) (*domain.AuthResponse, error)
+        RefreshTokenFunc        func(ctx context.Context, req *domain.RefreshTokenRequest) (*domain.AuthResponse, error)
+        LogoutFunc              func(ctx context.Context, accessToken string) error
+        ValidateAccessTokenFunc func(ctx context.Context, accessToken string) (uint, error)
+}
+
+func (m *MockAuthService) Register(ctx context.Context, req *domain.RegisterRequest) (*domain.AuthResponse, error) <span class="cov0" title="0">{
+        if m.RegisterFunc != nil </span><span class="cov0" title="0">{
+                return m.RegisterFunc(ctx, req)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockAuthService) Login(ctx context.Context, req *domain.LoginRequest) (*domain.AuthResponse, error) <span class="cov0" title="0">{
+        if m.LoginFunc != nil </span><span class="cov0" title="0">{
+                return m.LoginFunc(ctx, req)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockAuthService) RefreshToken(ctx context.Context, req *domain.RefreshTokenRequest) (*domain.AuthResponse, error) <span class="cov0" title="0">{
+        if m.RefreshTokenFunc != nil </span><span class="cov0" title="0">{
+                return m.RefreshTokenFunc(ctx, req)
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (m *MockAuthService) Logout(ctx context.Context, accessToken string) error <span class="cov0" title="0">{
+        if m.LogoutFunc != nil </span><span class="cov0" title="0">{
+                return m.LogoutFunc(ctx, accessToken)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (m *MockAuthService) ValidateAccessToken(ctx context.Context, accessToken string) (uint, error) <span class="cov0" title="0">{
+        if m.ValidateAccessTokenFunc != nil </span><span class="cov0" title="0">{
+                return m.ValidateAccessTokenFunc(ctx, accessToken)
+        }</span>
+        <span class="cov0" title="0">return 0, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file35" style="display: none">package utils
+
+import (
+        "crypto/sha256"
+        "encoding/hex"
+        "golang.org/x/text/language"
+        "golang.org/x/text/message"
+        "regexp"
+        "time"
+)
+
+var (
+        emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&amp;'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+)
+
+func Ternary[T any](condition bool, trueValue, falseValue T) T <span class="cov8" title="1">{
+        if condition </span><span class="cov8" title="1">{
+                return trueValue
+        }</span>
+        <span class="cov8" title="1">return falseValue</span>
+}
+
+func GetTimeDuration(durationType string, duration int) time.Duration <span class="cov8" title="1">{
+        switch durationType </span>{
+        case "minute":<span class="cov8" title="1">
+                return time.Minute * time.Duration(duration)</span>
+        case "hour":<span class="cov8" title="1">
+                return time.Hour * time.Duration(duration)</span>
+        case "day":<span class="cov8" title="1">
+                return time.Hour * 24 * time.Duration(duration)</span>
+        default:<span class="cov8" title="1">
+                return 0</span>
+        }
+}
+
+func HashSha256(plaintext string) string <span class="cov8" title="1">{
+        hash := sha256.New()
+        hash.Write([]byte(plaintext))
+        return hex.EncodeToString(hash.Sum(nil))
+}</span>
+
+func VerifyHashSha256(plaintext string, hash string) bool <span class="cov8" title="1">{
+        return HashSha256(plaintext) == hash
+}</span>
+
+func ValidateEmail(email string) bool <span class="cov8" title="1">{
+        return emailRegex.MatchString(email)
+}</span>
+
+func PhoneNumberFormat(phoneNumber string) string <span class="cov8" title="1">{
+        reg := regexp.MustCompile("[^0-9]+")
+        //just show number only
+        phoneNumber = reg.ReplaceAllString(phoneNumber, "")
+        //if number starts with 08 or 8, it will replace 628
+        reg = regexp.MustCompile("^(08|8)")
+        phoneNumber = reg.ReplaceAllString(phoneNumber, "628")
+        return phoneNumber
+}</span>
+
+func InArray[T comparable](slice []T, item T) bool <span class="cov8" title="1">{
+        for _, v := range slice </span><span class="cov8" title="1">{
+                if v == item </span><span class="cov8" title="1">{
+                        return true
+                }</span>
+        }
+        <span class="cov8" title="1">return false</span>
+}
+
+func DecimalSeparator(i int) string <span class="cov8" title="1">{
+        p := message.NewPrinter(language.English)
+        return p.Sprintf("%d", i)
+}</span>
+</pre>
+		
+		<pre class="file" id="file36" style="display: none">package validator
+
+import "github.com/go-playground/validator/v10"
+
+const (
+        HandlerQuery = "query"
+        HandlerBody  = "body"
+)
+
+func Init(v *validator.Validate) <span class="cov8" title="1">{
+        _ = v.RegisterValidation("stringNumberOnly", StringNumberOnly)
+        _ = v.RegisterValidation("stringNumberRequired", StringNumberRequired)
+}</span>
+</pre>
+		
+		<pre class="file" id="file37" style="display: none">package validator
+
+import (
+        "regexp"
+
+        "github.com/go-playground/validator/v10"
+)
+
+func StringNumberOnly(fl validator.FieldLevel) bool <span class="cov8" title="1">{
+        plaintext := fl.Field().String()
+        return regexp.MustCompile(`^[a-zA-Z0-9\s]+$`).MatchString(plaintext)
+}</span>
+
+func StringNumberRequired(fl validator.FieldLevel) bool <span class="cov8" title="1">{
+        plaintext := fl.Field().String()
+        if plaintext == "" </span><span class="cov8" title="1">{
+                return true
+        }</span>
+        <span class="cov8" title="1">return regexp.MustCompile(`^[a-zA-Z0-9_-]+$`).MatchString(plaintext)</span>
+}
+</pre>
+		
+		<pre class="file" id="file38" style="display: none">package validator
+
+import (
+        "app/xonvera-core/internal/utils"
+        "errors"
+        "fmt"
+        "maps"
+        "reflect"
+        "strconv"
+        "strings"
+
+        "github.com/go-playground/validator/v10"
+        "github.com/gofiber/fiber/v2"
+)
+
+func HandlerBindingError(c *fiber.Ctx, obj any, shouldType string, skips ...string) (res []string) <span class="cov0" title="0">{
+        var err error
+        switch shouldType </span>{
+        case HandlerQuery:<span class="cov0" title="0">
+                err = c.QueryParser(obj)</span>
+        case HandlerBody:<span class="cov0" title="0">
+                err = c.BodyParser(obj)</span>
+        }
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return []string{fmt.Sprintf("payload: %s", err.Error())}
+        }</span>
+
+        <span class="cov0" title="0">return Validation(obj, skips...)</span>
+}
+
+func Validation(obj interface{}, skips ...string) []string <span class="cov8" title="1">{
+        v := validator.New()
+        Init(v)
+        err := v.Struct(obj)
+        return ErrorHandle(obj, err, skips...)
+}</span>
+
+// Map field names to their JSON tags.
+func getJSONFieldName(obj interface{}) map[string]string <span class="cov8" title="1">{
+        objValue := reflect.ValueOf(obj)
+        objType := objValue.Type()
+
+        // Handle a pointer to struct if necessary
+        if objType.Kind() == reflect.Ptr </span><span class="cov0" title="0">{
+                objType = objType.Elem()
+        }</span>
+
+        <span class="cov8" title="1">if objValue.Kind() == reflect.Ptr </span><span class="cov0" title="0">{
+                objValue = objValue.Elem()
+        }</span>
+
+        <span class="cov8" title="1">var resp = make(map[string]string, objType.NumField())
+
+        // Iterate over struct fields
+        for i := 0; i &lt; objType.NumField(); i++ </span><span class="cov8" title="1">{
+                structField := objType.Field(i)
+                var field string
+                jsonTag := structField.Tag.Get("json")
+                queryTag := structField.Tag.Get("query")
+                formTag := structField.Tag.Get("form")
+                if jsonTag != "" &amp;&amp; jsonTag != "-" </span><span class="cov8" title="1">{
+                        field = strings.Split(jsonTag, ",")[0] // Handle response like `json:"field,omitempty"`
+                }</span> else<span class="cov8" title="1"> if queryTag != "" &amp;&amp; queryTag != "-" </span><span class="cov8" title="1">{
+                        field = strings.Split(queryTag, ",")[0]
+                }</span> else<span class="cov8" title="1"> if formTag != "" &amp;&amp; formTag != "-" </span><span class="cov8" title="1">{
+                        field = strings.Split(formTag, ",")[0]
+                }</span> else<span class="cov8" title="1"> {
+                        field = structField.Name
+                }</span>
+
+                // Handle embedded (anonymous) structs
+                <span class="cov8" title="1">if structField.Anonymous </span><span class="cov8" title="1">{
+                        embeddedField := objValue.Field(i)
+                        if embeddedField.IsValid() </span><span class="cov8" title="1">{
+                                embeddedResp := getJSONFieldName(embeddedField.Interface())
+                                maps.Copy(resp, embeddedResp)
+
+                        }</span>
+                }
+
+                <span class="cov8" title="1">resp[structField.Name] = field</span>
+
+        }
+        <span class="cov8" title="1">return resp</span> // Return the original field name by default
+}
+
+func ErrorHandle(obj interface{}, err error, skips ...string) []string <span class="cov8" title="1">{
+        var errs validator.ValidationErrors
+        if errors.As(err, &amp;errs) </span><span class="cov8" title="1">{
+                var required []string
+                var errorsNew []string
+                var fieldNames = getJSONFieldName(obj)
+                for _, f := range errs </span><span class="cov8" title="1">{
+                        fieldName := fieldNames[f.Field()]
+                        if utils.InArray(skips, fieldName) </span><span class="cov8" title="1">{
+                                continue</span>
+                        }
+                        <span class="cov8" title="1">var str string
+                        switch f.Tag() </span>{
+                        case "required":<span class="cov8" title="1">
+                                required = append(required, fieldName)</span>
+                        case "min":<span class="cov8" title="1">
+                                i, _ := strconv.Atoi(f.Param())
+                                str = fmt.Sprintf("minimum field '%s' is %s", fieldName, utils.DecimalSeparator(i))</span>
+                        case "max":<span class="cov8" title="1">
+                                i, _ := strconv.Atoi(f.Param())
+                                str = fmt.Sprintf("maximum field '%s' is %s", fieldName, utils.DecimalSeparator(i))</span>
+                        case "stringNumberOnly":<span class="cov8" title="1">
+                                str = fmt.Sprintf("'%s' just support letter and number", fieldName)</span>
+                        case "oneof":<span class="cov8" title="1">
+                                value := strings.Join(strings.Split(f.Param(), " "), " or ")
+                                str = fmt.Sprintf("field '%s' value must be one of character '%s'", fieldName, value)</span>
+                        case "email":<span class="cov8" title="1">
+                                str = fmt.Sprintf("'%s' invalid email format", fieldName)</span>
+                        default:<span class="cov0" title="0">
+                                str = fmt.Sprintf("error '%s' is '%s'", fieldName, f.Value())</span>
+                        }
+
+                        <span class="cov8" title="1">if str != "" </span><span class="cov8" title="1">{
+                                errorsNew = append(errorsNew, str)
+                        }</span>
+                }
+
+                <span class="cov8" title="1">for _, v := range required </span><span class="cov8" title="1">{
+                        errorsNew = append(errorsNew, fmt.Sprintf("'%s' is required", v))
+                }</span>
+
+                <span class="cov8" title="1">return errorsNew</span>
+        }
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
