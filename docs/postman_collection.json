@@ -1,0 +1,372 @@
+{
+  "info": {
+    "_postman_id": "xonvera-api",
+    "name": "Xonvera API",
+    "description": "Xonvera Service API - Cashflow and Invoice Management\n\nBase URL: {{base_url}}/api/v1\nAuthentication: Bearer token",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"name\": \"John Doe\",\n  \"password\": \"securePassword123\",\n  \"phone\": \"+1234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "register"]
+            },
+            "description": "Register a new user with name, email, phone, and password"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"user@example.com\",\n  \"name\": \"John Doe\",\n  \"password\": \"securePassword123\",\n  \"phone\": \"+1234567890\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/auth/register",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "auth", "register"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"request_id\": \"uuid-string\",\n  \"data\": {\n    \"user_id\": 1,\n    \"email\": \"user@example.com\",\n    \"name\": \"John Doe\"\n  },\n  \"errors\": null,\n  \"meta\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"user@example.com\",\n  \"password\": \"securePassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Login with email or phone and password"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"user@example.com\",\n  \"password\": \"securePassword123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/auth/login",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "auth", "login"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"request_id\": \"uuid-string\",\n  \"data\": {\n    \"access_token\": \"token-string\",\n    \"refresh_token\": \"refresh-token-string\",\n    \"user_id\": 1\n  },\n  \"errors\": null,\n  \"meta\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "refresh"]
+            },
+            "description": "Get new access token using refresh token"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"refresh_token\": \"refresh-token-string\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/auth/refresh",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "auth", "refresh"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"request_id\": \"uuid-string\",\n  \"data\": {\n    \"access_token\": \"new-token-string\"\n  },\n  \"errors\": null,\n  \"meta\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "logout"]
+            },
+            "description": "Invalidate current access token"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer token-string"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/auth/logout",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "auth", "logout"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"request_id\": \"uuid-string\",\n  \"data\": null,\n  \"errors\": null,\n  \"meta\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Invoice",
+      "description": "Invoice management endpoints",
+      "item": [
+        {
+          "name": "Create Invoice",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"issuer\": \"Acme Corp\",\n  \"customer\": \"John Doe\",\n  \"issue_date\": \"2026-01-31\",\n  \"items\": [\n    {\n      \"description\": \"Professional Services\",\n      \"qty\": 5,\n      \"price\": 100\n    },\n    {\n      \"description\": \"Software License\",\n      \"qty\": 1,\n      \"price\": 500\n    }\n  ],\n  \"note\": \"Payment due within 30 days\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/invoices",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "invoices"]
+            },
+            "description": "Create a new invoice with items"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"issuer\": \"Acme Corp\",\n  \"customer\": \"John Doe\",\n  \"issue_date\": \"2026-01-31\",\n  \"items\": [\n    {\n      \"description\": \"Professional Services\",\n      \"qty\": 5,\n      \"price\": 100\n    }\n  ],\n  \"note\": \"Payment due within 30 days\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/invoices",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "invoices"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"request_id\": \"uuid-string\",\n  \"data\": {\n    \"id\": 1,\n    \"issuer\": \"Acme Corp\",\n    \"customer\": \"John Doe\",\n    \"issue_date\": \"2026-01-31\",\n    \"items\": [\n      {\n        \"description\": \"Professional Services\",\n        \"qty\": 5,\n        \"price\": 100\n      }\n    ],\n    \"note\": \"Payment due within 30 days\"\n  },\n  \"errors\": null,\n  \"meta\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get All Invoices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/invoices?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "invoices"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            },
+            "description": "Get all invoices with pagination"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer token-string"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/invoices?limit=20&offset=0",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "invoices"],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"request_id\": \"uuid-string\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"issuer\": \"Acme Corp\",\n      \"customer\": \"John Doe\",\n      \"issue_date\": \"2026-01-31\"\n    }\n  ],\n  \"errors\": null,\n  \"meta\": {\n    \"limit\": 20,\n    \"offset\": 0,\n    \"total\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Invoice by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/invoices/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "invoices", "1"]
+            },
+            "description": "Get invoice details by ID"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer token-string"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/invoices/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "invoices", "1"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"request_id\": \"uuid-string\",\n  \"data\": {\n    \"id\": 1,\n    \"issuer\": \"Acme Corp\",\n    \"customer\": \"John Doe\",\n    \"issue_date\": \"2026-01-31\",\n    \"items\": [\n      {\n        \"description\": \"Professional Services\",\n        \"qty\": 5,\n        \"price\": 100\n      }\n    ],\n    \"note\": \"Payment due within 30 days\"\n  },\n  \"errors\": null,\n  \"meta\": null\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  }
+}
