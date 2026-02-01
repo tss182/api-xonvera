@@ -75,6 +75,9 @@ func (r *invoiceRepository) GenerateInvoiceID(ctx context.Context, tx portReposi
 	dateStr := date.Format("20060102") // YYYYMMDD
 	dateOnly := date.Format("2006-01-02")
 
+	// lock the row for this user and date to prevent race condition
+	txDb(tx, r.db).Raw("select id from app.invoice_user_daily_seq where user_id = ? and day = ? for update", userID, dateOnly).Scan(nil) // dummy query to ensure tx is used
+
 	// Get per-user daily sequence value atomically with row lock
 	var suffix int64
 	err := txDb(tx, r.db).WithContext(ctx).Raw(
@@ -82,8 +85,7 @@ func (r *invoiceRepository) GenerateInvoiceID(ctx context.Context, tx portReposi
 		 VALUES (?, ?::date, 1)
 		 ON CONFLICT (user_id, day)
 		 DO UPDATE SET counter = app.invoice_user_daily_seq.counter + 1
-		 RETURNING counter
-		 FOR UPDATE`,
+		 RETURNING counter`,
 		userID, dateOnly,
 	).Scan(&suffix).Error
 	if err != nil {
