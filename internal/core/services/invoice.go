@@ -171,9 +171,10 @@ func (s *invoiceService) Update(ctx context.Context, req *dto.InvoiceRequest) er
 	}
 
 	items := make([]domain.InvoiceItem, 0, len(req.Items))
-	for _, v := range req.Items {
+	for i, v := range req.Items {
 		total := v.Qty * v.Price
 		item := domain.InvoiceItem{
+			ID:          uint(i + 1),
 			InvoiceID:   req.ID,
 			Description: v.Description,
 			Qty:         v.Qty,
