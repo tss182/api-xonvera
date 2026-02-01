@@ -40,8 +40,6 @@ func HandlerBindingError(c *fiber.Ctx, obj any, shouldType string, skips ...stri
 		paginationReq.Offset = uint64((paginationReq.Page - 1) * paginationReq.Limit)
 	}
 
-	fmt.Println("skip 1", skips)
-
 	return Validation(obj, skips...)
 }
 
@@ -107,10 +105,8 @@ func ErrorHandle(obj interface{}, err error, skips ...string) []string {
 		var required []string
 		var errorsNew []string
 		var fieldNames = getJSONFieldName(obj)
-		fmt.Println("skip", skips)
 		for _, f := range errs {
 			fieldName := fieldNames[f.Field()]
-			fmt.Printf("field", fieldName)
 			if utils.InArray(skips, fieldName) {
 				continue
 			}
