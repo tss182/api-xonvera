@@ -75,7 +75,7 @@ func (s *invoiceService) Create(ctx context.Context, req *dto.InvoiceRequest) er
 		DueDate:   dueDate,
 		Note:      req.Note,
 		AuthorID:  req.UserID,
-		Status:    "pending",
+		Status:    "unpaid",
 		Timestamp: domain.Timestamp{CreatedAt: t, UpdatedAt: t},
 	}
 
@@ -88,9 +88,10 @@ func (s *invoiceService) Create(ctx context.Context, req *dto.InvoiceRequest) er
 
 	// Create invoice items
 	items := make([]domain.InvoiceItem, 0, len(req.Items))
-	for _, v := range req.Items {
+	for i, v := range req.Items {
 		total := v.Qty * v.Price
 		item := domain.InvoiceItem{
+			ID:          uint(i + 1),
 			InvoiceID:   invoiceID,
 			Description: v.Description,
 			Qty:         v.Qty,

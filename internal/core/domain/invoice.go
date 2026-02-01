@@ -7,12 +7,12 @@ import (
 
 type Invoice struct {
 	ID        int64
+	AuthorID  uint
 	Issuer    string
 	Customer  string
 	IssueDate string
 	DueDate   time.Time
 	Note      string
-	AuthorID  uint
 	Status    string
 	Timestamp
 }

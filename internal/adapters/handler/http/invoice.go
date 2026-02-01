@@ -84,7 +84,7 @@ func (h *InvoiceHandler) Create(c *fiber.Ctx) error {
 	}
 
 	// Validate request
-	if err := validator.HandlerBindingError(c, &req, validator.HandlerBody); err != nil {
+	if err := validator.HandlerBindingError(c, &req, validator.HandlerBody, "id"); err != nil {
 		logger.Error("error when binding request in invoice service", zap.Strings("error validation body", err))
 		return BadRequest(c, err)
 	}
