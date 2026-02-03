@@ -11,16 +11,16 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
-func HandlerBindingError(c *fiber.Ctx, obj any, shouldType string, skips ...string) (res []string) {
+func HandlerBindingError(c fiber.Ctx, obj any, shouldType string, skips ...string) (res []string) {
 	var err error
 	switch shouldType {
 	case HandlerQuery:
-		err = c.QueryParser(obj)
+		err = c.Bind().Query(obj)
 	case HandlerBody:
-		err = c.BodyParser(obj)
+		err = c.Bind().Body(obj)
 	}
 	if err != nil {
 		return []string{fmt.Sprintf("payload: %s", err.Error())}

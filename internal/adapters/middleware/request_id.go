@@ -4,14 +4,14 @@ import (
 	"app/xonvera-core/internal/infrastructure/logger"
 	"context"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
 
 // RequestID middleware adds a unique request ID to each request
 func RequestID() fiber.Handler {
-	return func(c *fiber.Ctx) error {
+	return func(c fiber.Ctx) error {
 		// Check if request ID already exists in header
 		requestID := c.Get("X-Request-ID")
 		if requestID == "" {
@@ -29,8 +29,8 @@ func RequestID() fiber.Handler {
 		c.Locals("request_id", requestID)
 
 		// Store in standard context for service layer access
-		ctx := context.WithValue(c.UserContext(), "request_id", requestID)
-		c.SetUserContext(ctx)
+		ctx := context.WithValue(c.Context(), "request_id", requestID)
+		c.SetContext(ctx)
 
 		// Set response header
 		c.Set("X-Request-ID", requestID)
@@ -40,9 +40,11 @@ func RequestID() fiber.Handler {
 }
 
 // GetRequestID retrieves the request ID from the context
-func GetRequestID(c *fiber.Ctx) string {
+func GetRequestID(c fiber.Ctx) string {
 	if id, ok := c.Locals("request_id").(string); ok {
 		return id
 	}
 	return ""
 }
+
+// fiber:context-methods migrated

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
 )
 
@@ -33,7 +33,7 @@ func NewAuthMiddleware(authService portService.AuthService, requestTimeout time.
 
 // Authenticate validates the access token from the Authorization header
 func (m *AuthMiddleware) Authenticate() fiber.Handler {
-	return func(c *fiber.Ctx) error {
+	return func(c fiber.Ctx) error {
 		authHeader := c.Get(authorizationHeader)
 		if authHeader == "" {
 			logger.ContextDebug(c, "Missing authorization header")
@@ -48,7 +48,7 @@ func (m *AuthMiddleware) Authenticate() fiber.Handler {
 		}
 
 		// Validate token with timeout
-		ctx, cancel := context.WithTimeout(c.UserContext(), m.requestTimeout)
+		ctx, cancel := context.WithTimeout(c.Context(), m.requestTimeout)
 		defer cancel()
 
 		userID, err := m.authService.ValidateAccessToken(ctx, token)
@@ -80,3 +80,5 @@ func extractBearerToken(authHeader string) (string, error) {
 
 	return parts[1], nil
 }
+
+// fiber:context-methods migrated

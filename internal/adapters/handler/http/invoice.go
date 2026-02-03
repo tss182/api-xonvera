@@ -9,7 +9,7 @@ import (
 	"app/xonvera-core/internal/infrastructure/logger"
 	"app/xonvera-core/internal/utils/validator"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
 )
 
@@ -36,8 +36,8 @@ func NewInvoiceHandler(service portService.InvoiceService, rto time.Duration) *I
 // @Success 200 {object} Resp
 // @Failure 400 {object} Resp
 // @Router /api/v1/invoices [get]
-func (h *InvoiceHandler) Get(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+func (h *InvoiceHandler) Get(c fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
 
 	var req dto.PaginationRequest
@@ -70,8 +70,8 @@ func (h *InvoiceHandler) Get(c *fiber.Ctx) error {
 // @Success 200 {object} Resp
 // @Failure 400 {object} Resp
 // @Router /api/v1/invoices [post]
-func (h *InvoiceHandler) Create(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+func (h *InvoiceHandler) Create(c fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
 
 	var req dto.InvoiceRequest
@@ -109,8 +109,8 @@ func (h *InvoiceHandler) Create(c *fiber.Ctx) error {
 // @Failure 400 {object} Resp
 // @Failure 404 {object} Resp
 // @Router /api/v1/invoices/{id} [put]
-func (h *InvoiceHandler) Update(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+func (h *InvoiceHandler) Update(c fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
 
 	var req dto.InvoiceRequest
@@ -133,3 +133,5 @@ func (h *InvoiceHandler) Update(c *fiber.Ctx) error {
 
 	return OK(c, nil)
 }
+
+// fiber:context-methods migrated

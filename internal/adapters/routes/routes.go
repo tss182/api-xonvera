@@ -4,7 +4,7 @@ import (
 	"app/xonvera-core/internal/adapters/middleware"
 	"app/xonvera-core/internal/dependencies"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 func SetupRoutes(

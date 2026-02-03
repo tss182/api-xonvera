@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )
@@ -32,7 +32,7 @@ const rateLimitLuaScript = `
 
 // NewRateLimiter creates a rate limiting middleware with Redis storage
 func NewRateLimiter(max int, duration time.Duration, redisClient *redis.Client) fiber.Handler {
-	return func(c *fiber.Ctx) error {
+	return func(c fiber.Ctx) error {
 		// Resolve rate limit key from userID or IP
 		keyID := resolveRateLimitKey(c)
 		key := fmt.Sprintf("ratelimit:%s", keyID)
@@ -76,7 +76,7 @@ func APIRateLimiter(redisClient *redis.Client) fiber.Handler {
 }
 
 // resolveRateLimitKey builds the rate-limit key based on userID or IP
-func resolveRateLimitKey(c *fiber.Ctx) string {
+func resolveRateLimitKey(c fiber.Ctx) string {
 	if userID := c.Locals("userID"); userID != nil {
 		if v := fmt.Sprint(userID); v != "" {
 			return v

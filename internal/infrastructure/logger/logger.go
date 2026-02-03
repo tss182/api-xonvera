@@ -4,7 +4,7 @@ import (
 	"context"
 	"os"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -85,7 +85,7 @@ func With(fields ...zap.Field) *zap.Logger {
 }
 
 // FromContext extracts request ID from Fiber context and returns logger with request ID field
-func FromContext(c *fiber.Ctx) *zap.Logger {
+func FromContext(c fiber.Ctx) *zap.Logger {
 	if c == nil {
 		return Get()
 	}
@@ -113,7 +113,7 @@ func FromStdContext(ctx context.Context) *zap.Logger {
 }
 
 // extractRequestID safely extracts request ID from Fiber context
-func extractRequestID(c *fiber.Ctx) string {
+func extractRequestID(c fiber.Ctx) string {
 	if id, ok := c.Locals(requestIDKey).(string); ok {
 		return id
 	}
@@ -121,22 +121,22 @@ func extractRequestID(c *fiber.Ctx) string {
 }
 
 // ContextDebug logs a debug message with request ID from context
-func ContextDebug(c *fiber.Ctx, msg string, fields ...zap.Field) {
+func ContextDebug(c fiber.Ctx, msg string, fields ...zap.Field) {
 	FromContext(c).Debug(msg, fields...)
 }
 
 // ContextInfo logs an info message with request ID from context
-func ContextInfo(c *fiber.Ctx, msg string, fields ...zap.Field) {
+func ContextInfo(c fiber.Ctx, msg string, fields ...zap.Field) {
 	FromContext(c).Info(msg, fields...)
 }
 
 // ContextWarn logs a warning message with request ID from context
-func ContextWarn(c *fiber.Ctx, msg string, fields ...zap.Field) {
+func ContextWarn(c fiber.Ctx, msg string, fields ...zap.Field) {
 	FromContext(c).Warn(msg, fields...)
 }
 
 // ContextError logs an error message with request ID from context
-func ContextError(c *fiber.Ctx, msg string, fields ...zap.Field) {
+func ContextError(c fiber.Ctx, msg string, fields ...zap.Field) {
 	FromContext(c).Error(msg, fields...)
 }
 

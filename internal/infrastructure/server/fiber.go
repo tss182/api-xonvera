@@ -6,10 +6,10 @@ import (
 	"app/xonvera-core/internal/adapters/middleware"
 	"app/xonvera-core/internal/infrastructure/config"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	fiberlogger "github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
+	fiberlogger "github.com/gofiber/fiber/v3/middleware/logger"
+	"github.com/gofiber/fiber/v3/middleware/recover"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
@@ -37,8 +37,8 @@ func NewFiberApp(cfg *config.Config, redisClient *redis.Client, db *gorm.DB) *fi
 	app.Use(middleware.APIRateLimiter(redisClient))
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     cfg.App.AllowedOrigins,
-		AllowMethods:     "GET,POST,PUT,DELETE,PATCH,OPTIONS",
-		AllowHeaders:     "Origin,Content-Type,Accept,Authorization",
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		AllowCredentials: true,
 	}))
 
@@ -50,7 +50,7 @@ func NewFiberApp(cfg *config.Config, redisClient *redis.Client, db *gorm.DB) *fi
 
 // createHealthCheckHandler returns a health check handler
 func createHealthCheckHandler(startTime time.Time, db *gorm.DB, redisClient *redis.Client, cfg *config.Config) fiber.Handler {
-	return func(c *fiber.Ctx) error {
+	return func(c fiber.Ctx) error {
 		uptime := time.Since(startTime)
 
 		// Check database connectivity
@@ -98,7 +98,7 @@ func checkDatabaseHealth(db *gorm.DB) string {
 }
 
 // checkRedisHealth verifies Redis connectivity
-func checkRedisHealth(c *fiber.Ctx, redisClient *redis.Client) string {
+func checkRedisHealth(c fiber.Ctx, redisClient *redis.Client) string {
 	if redisClient == nil {
 		return "unavailable"
 	}
@@ -109,3 +109,5 @@ func checkRedisHealth(c *fiber.Ctx, redisClient *redis.Client) string {
 
 	return "healthy"
 }
+
+// fiber:context-methods migrated

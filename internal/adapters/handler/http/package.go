@@ -4,7 +4,7 @@ import (
 	portService "app/xonvera-core/internal/core/ports/service"
 	"fmt"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 type PackageHandler struct {
@@ -17,7 +17,7 @@ func NewPackageHandler(service portService.PackageService) *PackageHandler {
 	}
 }
 
-func (h *PackageHandler) GetPackages(c *fiber.Ctx) error {
+func (h *PackageHandler) GetPackages(c fiber.Ctx) error {
 	resp, err := h.service.GetPackages(c.Context())
 	if err != nil {
 		return HandlerErrorGlobal(c, err)
@@ -26,7 +26,7 @@ func (h *PackageHandler) GetPackages(c *fiber.Ctx) error {
 	return OK(c, resp)
 }
 
-func (h *PackageHandler) GetPackageByID(c *fiber.Ctx) error {
+func (h *PackageHandler) GetPackageByID(c fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
 		return HandlerErrorGlobal(c, fmt.Errorf("400:invalid package"))
@@ -39,3 +39,5 @@ func (h *PackageHandler) GetPackageByID(c *fiber.Ctx) error {
 
 	return OK(c, pkg)
 }
+
+// fiber:context-methods migrated

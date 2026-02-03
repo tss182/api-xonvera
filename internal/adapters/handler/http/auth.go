@@ -9,7 +9,7 @@ import (
 	"app/xonvera-core/internal/infrastructure/logger"
 	"app/xonvera-core/internal/utils/validator"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
 )
 
@@ -35,15 +35,15 @@ func NewAuthHandler(service portService.AuthService, rto time.Duration) *AuthHan
 // @Success 200 {object} Resp
 // @Failure 400 {object} Resp
 // @Router /api/v1/auth/register [post]
-func (h *AuthHandler) Register(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+func (h *AuthHandler) Register(c fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
 
 	var req dto.RegisterRequest
 
 	// Validate request
 	if err := validator.HandlerBindingError(c, &req, validator.HandlerBody); err != nil {
-		logger.Error("error when binding request in auth service", zap.Strings("error validation query", err))
+		logger.Error("error when binding request in register", zap.Strings("error validation query register", err))
 		return BadRequest(c, err)
 	}
 
@@ -66,15 +66,15 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 // @Failure 400 {object} Resp
 // @Failure 401 {object} Resp
 // @Router /api/v1/auth/login [post]
-func (h *AuthHandler) Login(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+func (h *AuthHandler) Login(c fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
 
 	var req dto.LoginRequest
 
 	// Validate request
 	if err := validator.HandlerBindingError(c, &req, validator.HandlerBody); err != nil {
-		logger.Error("error when binding request in auth service", zap.Strings("error validation query", err))
+		logger.Error("error when binding request in login", zap.Strings("error validation query login", err))
 		return BadRequest(c, err)
 	}
 
@@ -97,15 +97,15 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 // @Failure 400 {object} Resp
 // @Failure 401 {object} Resp
 // @Router /api/v1/auth/refresh [post]
-func (h *AuthHandler) RefreshToken(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+func (h *AuthHandler) RefreshToken(c fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
 
 	var req dto.RefreshTokenRequest
 
 	// Validate request
 	if err := validator.HandlerBindingError(c, &req, validator.HandlerBody); err != nil {
-		logger.Error("error when binding request in auth service", zap.Strings("error validation query", err))
+		logger.Error("error when binding request in refresh token", zap.Strings("error validation query refresh token", err))
 		return BadRequest(c, err)
 	}
 
@@ -127,8 +127,8 @@ func (h *AuthHandler) RefreshToken(c *fiber.Ctx) error {
 // @Success 200 {object} Resp
 // @Failure 401 {object} Resp
 // @Router /api/v1/auth/logout [post]
-func (h *AuthHandler) Logout(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(c.UserContext(), h.rto)
+func (h *AuthHandler) Logout(c fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
 
 	// Get access token from context (set by auth middleware)
@@ -144,3 +144,5 @@ func (h *AuthHandler) Logout(c *fiber.Ctx) error {
 
 	return OK(c, nil)
 }
+
+// fiber:context-methods migrated

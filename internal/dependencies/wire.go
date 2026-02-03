@@ -16,7 +16,7 @@ import (
 	"app/xonvera-core/internal/infrastructure/redis"
 	"app/xonvera-core/internal/infrastructure/server"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/wire"
 	goredis "github.com/redis/go-redis/v9"
 	"gorm.io/gorm"

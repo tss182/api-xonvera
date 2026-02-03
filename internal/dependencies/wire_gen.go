@@ -10,17 +10,19 @@ import (
 	"app/xonvera-core/internal/adapters/handler/http"
 	"app/xonvera-core/internal/adapters/middleware"
 	"app/xonvera-core/internal/adapters/repositories/redis"
-	"app/xonvera-core/internal/adapters/repositories/sql"
+	repositoriesRedis "app/xonvera-core/internal/adapters/repositories/redis"
+	repositoriesSql "app/xonvera-core/internal/adapters/repositories/sql"
 	"app/xonvera-core/internal/core/services"
 	"app/xonvera-core/internal/infrastructure/config"
 	"app/xonvera-core/internal/infrastructure/database"
 	"app/xonvera-core/internal/infrastructure/redis"
 	"app/xonvera-core/internal/infrastructure/server"
-	"github.com/gofiber/fiber/v2"
+	"time"
+
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/wire"
 	redis2 "github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
-	"time"
 )
 
 // Injectors from wire.go:

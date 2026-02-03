@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"gorm.io/gorm"
 )
 
@@ -25,7 +25,7 @@ type (
 )
 
 // JSON sends a JSON response with the given status code
-func JSON(c *fiber.Ctx, httpStatus int, errs []string, data, meta interface{}) error {
+func JSON(c fiber.Ctx, httpStatus int, errs []string, data, meta interface{}) error {
 	// Validate HTTP status code
 	if httpStatus < 100 || httpStatus > 599 {
 		httpStatus = http.StatusInternalServerError
@@ -50,7 +50,7 @@ func JSON(c *fiber.Ctx, httpStatus int, errs []string, data, meta interface{}) e
 }
 
 // extractRequestID safely extracts request ID from context
-func extractRequestID(c *fiber.Ctx) string {
+func extractRequestID(c fiber.Ctx) string {
 	if req, ok := c.Locals("request_id").(string); ok {
 		return req
 	}
@@ -58,12 +58,12 @@ func extractRequestID(c *fiber.Ctx) string {
 }
 
 // OK sends a 200 OK response with data
-func OK(c *fiber.Ctx, resp interface{}) error {
+func OK(c fiber.Ctx, resp interface{}) error {
 	return JSON(c, http.StatusOK, nil, resp, nil)
 }
 
 // OK sends a 200 OK response with data
-func Page(c *fiber.Ctx, resp *dto.PaginationResponse) error {
+func Page(c fiber.Ctx, resp *dto.PaginationResponse) error {
 	if resp.Data == nil {
 		resp.Data = []any{}
 	}
@@ -71,27 +71,27 @@ func Page(c *fiber.Ctx, resp *dto.PaginationResponse) error {
 }
 
 // NoAuth sends a 401 Unauthorized response
-func NoAuth(c *fiber.Ctx) error {
+func NoAuth(c fiber.Ctx) error {
 	return JSON(c, http.StatusUnauthorized, []string{"unauthorized"}, nil, nil)
 }
 
 // BadRequest sends a 400 Bad Request response
-func BadRequest(c *fiber.Ctx, errs []string) error {
+func BadRequest(c fiber.Ctx, errs []string) error {
 	return JSON(c, http.StatusBadRequest, errs, nil, nil)
 }
 
 // NotFound sends a 404 Not Found response
-func NotFound(c *fiber.Ctx, errs []string) error {
+func NotFound(c fiber.Ctx, errs []string) error {
 	return JSON(c, http.StatusNotFound, errs, nil, nil)
 }
 
 // Conflict sends a 409 Conflict response
-func Conflict(c *fiber.Ctx, errs []string) error {
+func Conflict(c fiber.Ctx, errs []string) error {
 	return JSON(c, http.StatusConflict, errs, nil, nil)
 }
 
 // InternalServerError sends a 500 Internal Server Error response
-func InternalServerError(c *fiber.Ctx, errs []string, debugError bool) error {
+func InternalServerError(c fiber.Ctx, errs []string, debugError bool) error {
 	if errs == nil || !debugError {
 		errs = []string{"internal server error"}
 	}
@@ -99,12 +99,12 @@ func InternalServerError(c *fiber.Ctx, errs []string, debugError bool) error {
 }
 
 // ErrorLimited sends a 429 Too Many Requests response
-func ErrorLimited(c *fiber.Ctx, errs []string) error {
+func ErrorLimited(c fiber.Ctx, errs []string) error {
 	return JSON(c, http.StatusTooManyRequests, errs, nil, nil)
 }
 
 // HandlerErrorGlobal is the global error handler for the application
-func HandlerErrorGlobal(c *fiber.Ctx, err error) error {
+func HandlerErrorGlobal(c fiber.Ctx, err error) error {
 	// Handle record not found errors
 	if errors.Is(err, sql.ErrNoRows) || errors.Is(err, gorm.ErrRecordNotFound) {
 		return NotFound(c, []string{"data not found"})
@@ -138,7 +138,7 @@ func HandlerErrorGlobal(c *fiber.Ctx, err error) error {
 }
 
 // isDebugMode checks if debug mode is enabled in context
-func isDebugMode(c *fiber.Ctx) bool {
+func isDebugMode(c fiber.Ctx) bool {
 	if val, ok := c.Locals("debug").(bool); ok {
 		return val
 	}
@@ -146,7 +146,7 @@ func isDebugMode(c *fiber.Ctx) bool {
 }
 
 // RecoveryError handles panic recovery
-func RecoveryError(c *fiber.Ctx, r any) error {
+func RecoveryError(c fiber.Ctx, r any) error {
 	var err error
 	switch v := r.(type) {
 	case error:

@@ -6,7 +6,7 @@ import (
 
 	"app/xonvera-core/internal/infrastructure/logger"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
 )
 
@@ -41,7 +41,7 @@ const (
 
 // BodyLogger logs request and response bodies with sensitive field masking
 func BodyLogger(env string) fiber.Handler {
-	return func(c *fiber.Ctx) error {
+	return func(c fiber.Ctx) error {
 
 		// Log request
 		logRequest(c)
@@ -61,7 +61,7 @@ func BodyLogger(env string) fiber.Handler {
 }
 
 // logRequest logs incoming request details
-func logRequest(c *fiber.Ctx) {
+func logRequest(c fiber.Ctx) {
 	method := c.Method()
 	path := c.Path()
 	query := c.Query("*")
@@ -89,7 +89,7 @@ func logRequest(c *fiber.Ctx) {
 }
 
 // logResponse logs outgoing response details
-func logResponse(c *fiber.Ctx) {
+func logResponse(c fiber.Ctx) {
 	status := c.Response().StatusCode()
 	contentType := c.Get("Content-Type")
 
@@ -109,7 +109,7 @@ func logResponse(c *fiber.Ctx) {
 }
 
 // logBodyData logs body data with masking
-func logBodyData(c *fiber.Ctx, body []byte, bodyType string) {
+func logBodyData(c fiber.Ctx, body []byte, bodyType string) {
 	if len(body) > maxBodyLogSize {
 		body = body[:maxBodyLogSize]
 	}
