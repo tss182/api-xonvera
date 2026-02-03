@@ -1,7 +1,9 @@
 package http
 
 import (
+	"bytes"
 	"context"
+	"fmt"
 	"time"
 
 	"app/xonvera-core/internal/adapters/dto"
@@ -14,14 +16,16 @@ import (
 )
 
 type InvoiceHandler struct {
-	service portService.InvoiceService
-	rto     time.Duration
+	service    portService.InvoiceService
+	pdfService portService.PDFService
+	rto        time.Duration
 }
 
-func NewInvoiceHandler(service portService.InvoiceService, rto time.Duration) *InvoiceHandler {
+func NewInvoiceHandler(service portService.InvoiceService, pdfService portService.PDFService, rto time.Duration) *InvoiceHandler {
 	return &InvoiceHandler{
-		service: service,
-		rto:     rto,
+		service:    service,
+		pdfService: pdfService,
+		rto:        rto,
 	}
 }
 
@@ -132,6 +136,102 @@ func (h *InvoiceHandler) Update(c fiber.Ctx) error {
 	}
 
 	return OK(c, nil)
+}
+
+// GetInvoicePDF handles retrieving or generating invoice PDF
+// @Summary Get invoice PDF
+// @Description Retrieve existing invoice PDF or generate new one based on invoice data
+// @Tags Invoice
+// @Accept json
+// @Produce application/pdf
+// @Param id path int true "Invoice ID"
+// @Success 200 {file} application/pdf
+// @Failure 400 {object} Resp
+// @Failure 404 {object} Resp
+// @Router /api/v1/invoice/{id}/pdf [get]
+func (h *InvoiceHandler) GetInvoicePDF(c fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
+	defer cancel()
+
+	// Extract invoice ID from route parameter
+	invoiceIDStr := c.Params("id")
+	if invoiceIDStr == "" {
+		return BadRequest(c, []string{"invoice ID is required"})
+	}
+
+	var invoiceID int64
+	_, err := fmt.Sscanf(invoiceIDStr, "%d", &invoiceID)
+	if err != nil || invoiceID <= 0 {
+		return BadRequest(c, []string{"invalid invoice ID format"})
+	}
+
+	// Get user ID from context
+	userIDVal := c.Locals("userID")
+	userID, ok := userIDVal.(uint)
+	if !ok || userID == 0 {
+		return NoAuth(c)
+	}
+
+	// Step 1: Check if PDF already exists
+	if h.pdfService.PDFExists(ctx, invoiceID) {
+		logger.StdContextInfo(ctx, "retrieving existing invoice PDF", zap.Int64("invoice_id", invoiceID))
+		pdfData, err := h.pdfService.GetInvoicePDF(ctx, invoiceID)
+		if err == nil {
+			c.Set("Content-Type", "application/pdf")
+			c.Set("Content-Disposition", fmt.Sprintf("inline; filename=invoice_%d.pdf", invoiceID))
+			return c.SendStream(bytes.NewReader(pdfData))
+		}
+		// Log error but continue to regenerate
+		logger.StdContextWarn(ctx, "failed to retrieve existing PDF, will regenerate", zap.Error(err))
+	}
+
+	// Step 2: If PDF doesn't exist, fetch invoice data
+	logger.StdContextInfo(ctx, "generating new invoice PDF", zap.Int64("invoice_id", invoiceID))
+
+	invoiceData, err := h.service.GetByID(ctx, invoiceID, userID)
+	if err != nil {
+		logger.StdContextError(ctx, "failed to fetch invoice data", zap.Error(err), zap.Int64("invoice_id", invoiceID))
+		return HandlerErrorGlobal(c, err)
+	}
+
+	if invoiceData == nil {
+		return NotFound(c, []string{"invoice not found"})
+	}
+
+	// Step 3: Convert invoice items for PDF generation
+	pdfItems := make([]dto.InvoiceItemDTO, len(invoiceData.Items))
+	for i, item := range invoiceData.Items {
+		pdfItems[i] = dto.InvoiceItemDTO{
+			ID:          item.ID,
+			InvoiceID:   item.InvoiceID,
+			Description: item.Description,
+			Qty:         item.Qty,
+			Price:       item.Price,
+			Total:       item.Total,
+		}
+	}
+
+	// Step 4: Generate PDF
+	pdfData, err := h.pdfService.GenerateInvoicePDF(ctx, invoiceData, pdfItems)
+	if err != nil {
+		logger.StdContextError(ctx, "failed to generate invoice PDF", zap.Error(err), zap.Int64("invoice_id", invoiceID))
+		return InternalServerError(c, []string{"failed to generate PDF"}, false)
+	}
+
+	// Step 5: Save PDF to filesystem
+	pdfPath, err := h.pdfService.SaveInvoicePDF(ctx, invoiceID, pdfData)
+	if err != nil {
+		logger.StdContextError(ctx, "failed to save invoice PDF", zap.Error(err), zap.Int64("invoice_id", invoiceID))
+		// Don't fail here - still return the PDF content even if save fails
+		logger.StdContextWarn(ctx, "proceeding to return PDF despite save failure", zap.String("path", pdfPath))
+	} else {
+		logger.StdContextInfo(ctx, "invoice PDF saved successfully", zap.String("path", pdfPath))
+	}
+
+	// Step 6: Return PDF content for preview
+	c.Set("Content-Type", "application/pdf")
+	c.Set("Content-Disposition", fmt.Sprintf("inline; filename=invoice_%d.pdf", invoiceID))
+	return c.SendStream(bytes.NewReader(pdfData))
 }
 
 // fiber:context-methods migrated

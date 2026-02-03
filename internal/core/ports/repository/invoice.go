@@ -13,6 +13,7 @@ type InvoiceRepository interface {
 	GenerateInvoiceID(ctx context.Context, tx Transaction, userID uint, date time.Time) (int64, error)
 	GetByID(ctx context.Context, id int64) (*domain.Invoice, error)
 	GetItems(ctx context.Context, invoiceID []int64) ([]domain.InvoiceItem, error)
+	GetItemsByInvoiceID(ctx context.Context, invoiceID int64) ([]domain.InvoiceItem, error)
 	Create(ctx context.Context, tx Transaction, data *domain.Invoice) error
 	CreateItem(ctx context.Context, tx Transaction, data []domain.InvoiceItem) error
 	Update(ctx context.Context, tx Transaction, data *domain.Invoice) error

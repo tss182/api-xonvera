@@ -35,6 +35,57 @@ func (s *invoiceService) Get(ctx context.Context, req *dto.PaginationRequest) (*
 	return res, nil
 }
 
+// GetByID retrieves a single invoice with its items by invoice ID
+func (s *invoiceService) GetByID(ctx context.Context, invoiceID int64, userID uint) (*dto.InvoiceResponse, error) {
+	invoice, err := s.repo.GetByID(ctx, invoiceID)
+	if err != nil {
+		logger.StdContextError(ctx, "failed to get invoice by ID", zap.Error(err), zap.Int64("invoice_id", invoiceID))
+		return nil, err
+	}
+
+	// Verify invoice belongs to user
+	if invoice.AuthorID != userID {
+		logger.StdContextWarn(ctx, "unauthorized invoice access", zap.Int64("invoice_id", invoiceID), zap.Uint("user_id", userID))
+		return nil, fmt.Errorf("404:not found invoice")
+	}
+
+	// Fetch invoice items
+	items, err := s.repo.GetItemsByInvoiceID(ctx, invoiceID)
+	if err != nil {
+		logger.StdContextError(ctx, "failed to get invoice items", zap.Error(err), zap.Int64("invoice_id", invoiceID))
+		return nil, err
+	}
+
+	// Convert to response DTOs
+	itemDTOs := make([]dto.InvoiceItemResponse, len(items))
+	for i, item := range items {
+		itemDTOs[i] = dto.InvoiceItemResponse{
+			ID:          item.ID,
+			InvoiceID:   item.InvoiceID,
+			Description: item.Description,
+			Qty:         item.Qty,
+			Price:       item.Price,
+			Total:       item.Total,
+			CreatedAt:   item.CreatedAt.Format(time.DateTime),
+		}
+	}
+
+	response := &dto.InvoiceResponse{
+		ID:        invoice.ID,
+		Customer:  invoice.Customer,
+		Issuer:    invoice.Issuer,
+		IssueDate: invoice.IssueDate,
+		DueDate:   invoice.DueDate,
+		Note:      invoice.Note,
+		Status:    invoice.Status,
+		Items:     itemDTOs,
+		CreatedAt: invoice.CreatedAt,
+		UpdatedAt: invoice.UpdatedAt,
+	}
+
+	return response, nil
+}
+
 func (s *invoiceService) Create(ctx context.Context, req *dto.InvoiceRequest) error {
 	tx, err := s.tx.Begin()
 	if err != nil {
@@ -71,7 +122,7 @@ func (s *invoiceService) Create(ctx context.Context, req *dto.InvoiceRequest) er
 		ID:        invoiceID,
 		Issuer:    req.Issuer,
 		Customer:  req.Customer,
-		IssueDate: issueDate.Format("2006-01-02"),
+		IssueDate: issueDate.Format(time.DateOnly),
 		DueDate:   dueDate,
 		Note:      req.Note,
 		AuthorID:  req.UserID,
@@ -135,7 +186,7 @@ func (s *invoiceService) Update(ctx context.Context, req *dto.InvoiceRequest) er
 		return fmt.Errorf("404:not found invoice")
 	}
 
-	issueDate, err := time.Parse("2006-01-02", req.IssueDate)
+	issueDate, err := time.Parse(time.DateOnly, req.IssueDate)
 	if err != nil {
 		logger.StdContextError(ctx, "failed to parse issue date", zap.Error(err))
 		return err

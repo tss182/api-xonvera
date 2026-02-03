@@ -40,7 +40,7 @@ func TestValidationErrors(t *testing.T) {
 	payload := validationPayload{
 		Name:     "ab",
 		Title:    "abcd",
-		Code:     "abc-123",
+		Code:     "abc-123-code",
 		Optional: "abc-123",
 		Choice:   "large",
 		Email:    "invalid",
@@ -63,7 +63,7 @@ func TestValidationSkips(t *testing.T) {
 	payload := validationPayload{
 		Name:     "ab",
 		Title:    "abcd",
-		Code:     "abc-123",
+		Code:     "abc-123-code",
 		Optional: "abc-123",
 		Choice:   "large",
 		Email:    "invalid",

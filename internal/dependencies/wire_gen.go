@@ -11,6 +11,7 @@ import (
 	"app/xonvera-core/internal/adapters/middleware"
 	"app/xonvera-core/internal/adapters/repositories/redis"
 	"app/xonvera-core/internal/adapters/repositories/sql"
+	"app/xonvera-core/internal/core/ports/service"
 	"app/xonvera-core/internal/core/services"
 	"app/xonvera-core/internal/infrastructure/config"
 	"app/xonvera-core/internal/infrastructure/database"
@@ -49,7 +50,11 @@ func InitializeApplication() (*Application, error) {
 	invoiceRepository := repositoriesSql.NewInvoiceRepository(db)
 	txRepository := repositoriesSql.NewTxRepository(db)
 	invoiceService := services.NewInvoiceService(invoiceRepository, txRepository)
-	invoiceHandler := http.NewInvoiceHandler(invoiceService, duration)
+	pdfService, err := ProvidePDFService(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	invoiceHandler := http.NewInvoiceHandler(invoiceService, pdfService, duration)
 	authMiddleware := middleware.NewAuthMiddleware(authService, duration)
 	application := &Application{
 		Config:         configConfig,
@@ -70,7 +75,7 @@ func InitializeApplication() (*Application, error) {
 var ProviderSet = wire.NewSet(config.LoadConfig, ProvideDBConfig,
 	ProvideTokenConfig,
 	ProvideRedisConfig,
-	ProvideRequestTimeout, database.NewConnection, redis.NewRedisClient, server.NewFiberApp, repositoriesSql.NewUserRepository, repositoriesSql.NewPackageRepository, repositoriesSql.NewInvoiceRepository, repositoriesSql.NewTxRepository, repositoriesRedis.NewTokenRepository, services.NewTokenService, services.NewAuthService, services.NewPackageService, services.NewInvoiceService, http.NewAuthHandler, http.NewPackageHandler, http.NewInvoiceHandler, middleware.NewAuthMiddleware,
+	ProvideRequestTimeout, database.NewConnection, redis.NewRedisClient, server.NewFiberApp, repositoriesSql.NewUserRepository, repositoriesSql.NewPackageRepository, repositoriesSql.NewInvoiceRepository, repositoriesSql.NewTxRepository, repositoriesRedis.NewTokenRepository, services.NewTokenService, services.NewAuthService, services.NewPackageService, services.NewInvoiceService, ProvidePDFService, http.NewAuthHandler, http.NewPackageHandler, http.NewInvoiceHandler, middleware.NewAuthMiddleware,
 )
 
 // ProvideDBConfig extracts DatabaseConfig from Config
@@ -91,6 +96,13 @@ func ProvideRedisConfig(cfg *config.Config) *config.RedisConfig {
 // ProvideRequestTimeout extracts request timeout from Config
 func ProvideRequestTimeout(cfg *config.Config) time.Duration {
 	return cfg.App.RequestTimeout
+}
+
+// ProvidePDFService creates a new PDF service instance
+// The PDF files are stored in the assets/pdf directory
+func ProvidePDFService(cfg *config.Config) (portService.PDFService, error) {
+	pdfDir := "assets/pdf"
+	return services.NewPDFService(pdfDir)
 }
 
 // Application holds all the dependencies

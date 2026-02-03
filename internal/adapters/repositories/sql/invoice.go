@@ -127,6 +127,16 @@ func (r *invoiceRepository) GetItems(ctx context.Context, invoiceID []int64) ([]
 	return items, nil
 }
 
+// GetItemsByInvoiceID retrieves all items for a specific invoice
+func (r *invoiceRepository) GetItemsByInvoiceID(ctx context.Context, invoiceID int64) ([]domain.InvoiceItem, error) {
+	var items []domain.InvoiceItem
+	err := r.db.WithContext(ctx).Where("invoice_id = ?", invoiceID).Find(&items).Error
+	if err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 func (r *invoiceRepository) Create(ctx context.Context, tx portRepository.Transaction, data *domain.Invoice) error {
 	return txDb(tx, r.db).WithContext(ctx).Create(data).Error
 }

@@ -13,6 +13,16 @@ type InvoiceItemRequest struct {
 	Price       int    `json:"price" validate:"required,min=0"`
 }
 
+// InvoiceItemDTO represents invoice item data for PDF generation
+type InvoiceItemDTO struct {
+	ID          uint   `json:"id"`
+	InvoiceID   int64  `json:"invoice_id"`
+	Description string `json:"description"`
+	Qty         int    `json:"qty"`
+	Price       int    `json:"price"`
+	Total       int    `json:"total"`
+}
+
 // CreateInvoiceRequest represents invoice creation input
 type InvoiceRequest struct {
 	ID        int64                `json:"id" validate:"required"`

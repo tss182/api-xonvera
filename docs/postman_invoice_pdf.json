@@ -1,0 +1,324 @@
+{
+  "info": {
+    "_postman_id": "invoice-pdf-api-collection",
+    "name": "Invoice PDF API - Testing",
+    "description": "Collection for testing the Invoice PDF generation and retrieval endpoint",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"your_password\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login to get access token. Save the token to an environment variable."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Invoice Management",
+      "item": [
+        {
+          "name": "Create Invoice",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 2025010001,\n  \"issuer\": \"Company Name\",\n  \"customer\": \"Customer Name\",\n  \"issue_date\": \"2025-01-15\",\n  \"due_date\": \"2025-02-15 23:59:59\",\n  \"note\": \"Payment terms: Net 30\",\n  \"items\": [\n    {\n      \"description\": \"Web Development Services\",\n      \"qty\": 10,\n      \"price\": 5000\n    },\n    {\n      \"description\": \"Consulting\",\n      \"qty\": 5,\n      \"price\": 2000\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/invoice",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "invoice"
+              ]
+            },
+            "description": "Create a new invoice with items. Note the invoice ID (2025010001) for PDF generation."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Invoices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/invoice?page=1&limit=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "invoice"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Get all invoices with pagination"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "PDF Endpoints",
+      "item": [
+        {
+          "name": "Get Invoice PDF - First Time (Generate)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/invoice/2025010001/pdf",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "invoice",
+                "2025010001",
+                "pdf"
+              ]
+            },
+            "description": "Retrieve invoice PDF. First time will generate and save the PDF. Click 'Preview' tab to view PDF."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Invoice PDF - Cached (Retrieve)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/invoice/2025010001/pdf",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "invoice",
+                "2025010001",
+                "pdf"
+              ]
+            },
+            "description": "Get the same PDF again - this time it will be retrieved from cache (faster response)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Invoice PDF - Different Invoice",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/invoice/2025010002/pdf",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "invoice",
+                "2025010002",
+                "pdf"
+              ]
+            },
+            "description": "Get PDF for a different invoice (adjust invoice ID as needed)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Testing",
+      "item": [
+        {
+          "name": "Invalid Invoice ID Format",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/invoice/invalid-id/pdf",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "invoice",
+                "invalid-id",
+                "pdf"
+              ]
+            },
+            "description": "Expected: 400 Bad Request - Invalid invoice ID format"
+          },
+          "response": []
+        },
+        {
+          "name": "Non-existent Invoice",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/invoice/9999999999/pdf",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "invoice",
+                "9999999999",
+                "pdf"
+              ]
+            },
+            "description": "Expected: 404 Not Found - Invoice doesn't exist"
+          },
+          "response": []
+        },
+        {
+          "name": "No Authorization",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/invoice/2025010001/pdf",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "invoice",
+                "2025010001",
+                "pdf"
+              ]
+            },
+            "description": "Expected: 401 Unauthorized - Missing bearer token"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Save access token from login response\n",
+          "if (pm.response.code === 200) {\n",
+          "  var jsonData = pm.response.json();\n",
+          "  if (jsonData.data && jsonData.data.access_token) {\n",
+          "    pm.environment.set('access_token', jsonData.data.access_token);\n",
+          "    pm.test('Token saved to environment', function () {\n",
+          "      pm.expect(jsonData.data.access_token).to.be.a('string');\n",
+          "    });\n",
+          "  }\n",
+          "}\n"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

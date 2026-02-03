@@ -28,11 +28,12 @@ func SetupRoutes(
 	// Protected routes example
 	appLogged := app.Use("/", r.AuthMiddleware.Authenticate())
 
-	//invoice
+	// invoice
 	invoice := appLogged.Group("/invoice")
 	{
 		invoice.Post("", r.InvoiceHandler.Create)
 		invoice.Get("", r.InvoiceHandler.Get)
 		invoice.Put("", r.InvoiceHandler.Update)
+		invoice.Get("/:id/pdf", r.InvoiceHandler.GetInvoicePDF)
 	}
 }
