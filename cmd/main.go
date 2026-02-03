@@ -21,15 +21,13 @@ import (
 	"app/xonvera-core/internal/infrastructure/logger"
 	"app/xonvera-core/internal/utils/validator"
 
+	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
 )
 
 func main() {
 	// Parse command line flags
-	runMigrations := flag.Bool("migrate", false, "Run database migrations")
-	migrateDown := flag.Bool("migrate-down", false, "Rollback database migrations by one step")
-	migrateReset := flag.Bool("migrate-reset", false, "Reset database migrations")
-	flag.Parse()
+	migrationFlags := parseMigrationFlags()
 
 	// Initialize application using Wire
 	app, err := dependencies.InitializeApplication()
@@ -45,27 +43,7 @@ func main() {
 	validator.SetPaginationDefaults(app.Config.Pagination.DefaultLimit, app.Config.Pagination.MaxLimit)
 
 	// Handle migrations if requested
-	if *runMigrations || *migrateDown || *migrateReset {
-		dsn := database.GetDSN(&app.Config.Database)
-		migrator, err := database.NewMigrator(dsn, "file://migrations")
-		if err != nil {
-			logger.Fatal("Failed to create migrator", zap.Error(err))
-		}
-		defer migrator.Close()
-
-		if *migrateDown {
-			if err := migrator.Steps(-1); err != nil {
-				logger.Fatal("Failed to rollback migrations", zap.Error(err))
-			}
-		} else if *migrateReset {
-			if err := migrator.Down(); err != nil {
-				logger.Fatal("Failed to reset migrations", zap.Error(err))
-			}
-		} else {
-			if err := migrator.Up(); err != nil {
-				logger.Fatal("Failed to run migrations", zap.Error(err))
-			}
-		}
+	if handled := handleMigrations(app, migrationFlags); handled {
 		return
 	}
 
@@ -75,6 +53,62 @@ func main() {
 	// Setup routes
 	routes.SetupRoutes(fiberApp, app)
 
+	startServer(app, fiberApp)
+}
+
+type migrationFlags struct {
+	run   bool
+	down  bool
+	reset bool
+}
+
+func parseMigrationFlags() migrationFlags {
+	runMigrations := flag.Bool("migrate", false, "Run database migrations")
+	migrateDown := flag.Bool("migrate-down", false, "Rollback database migrations by one step")
+	migrateReset := flag.Bool("migrate-reset", false, "Reset database migrations")
+	flag.Parse()
+
+	return migrationFlags{
+		run:   *runMigrations,
+		down:  *migrateDown,
+		reset: *migrateReset,
+	}
+}
+
+func handleMigrations(app *dependencies.Application, flags migrationFlags) bool {
+	if !flags.run && !flags.down && !flags.reset {
+		return false
+	}
+
+	dsn := database.GetDSN(&app.Config.Database)
+	migrator, err := database.NewMigrator(dsn, "file://migrations")
+	if err != nil {
+		logger.Fatal("Failed to create migrator", zap.Error(err))
+	}
+	defer migrator.Close()
+
+	if flags.down {
+		if err := migrator.Steps(-1); err != nil {
+			logger.Fatal("Failed to rollback migrations", zap.Error(err))
+		}
+		return true
+	}
+
+	if flags.reset {
+		if err := migrator.Down(); err != nil {
+			logger.Fatal("Failed to reset migrations", zap.Error(err))
+		}
+		return true
+	}
+
+	if err := migrator.Up(); err != nil {
+		logger.Fatal("Failed to run migrations", zap.Error(err))
+	}
+
+	return true
+}
+
+func startServer(app *dependencies.Application, fiberApp *fiber.App) {
 	addr := ":" + app.Config.App.Port
 	logger.Info("Starting server",
 		zap.String("app", app.Config.App.Name),
