@@ -16,6 +16,17 @@ import (
 	"go.uber.org/zap"
 )
 
+// PDF command constants for text positioning and formatting
+const (
+	pdfBeginText      = "BT\n"
+	pdfEndText        = "ET\n"
+	pdfFontFormat     = "/F1 %d Tf\n"
+	pdfPositionFormat = "50 %.0f Td\n"
+	pdfTextFormat     = "(%s) Tj\n"
+	pdfFixedPosition  = "50 20 Td\n"
+	pdfEndObject      = "endobj\n"
+)
+
 type pdfService struct {
 	pdfDir string
 }
@@ -66,11 +77,11 @@ func (s *pdfService) generateSimplePDF(invoice *dto.InvoiceResponse, items []dto
 	// PDF Objects
 	buffer.WriteString("1 0 obj\n")
 	buffer.WriteString("<< /Type /Catalog /Pages 2 0 R >>\n")
-	buffer.WriteString("endobj\n")
+	buffer.WriteString(pdfEndObject)
 
 	buffer.WriteString("2 0 obj\n")
 	buffer.WriteString("<< /Type /Pages /Kids [3 0 R] /Count 1 >>\n")
-	buffer.WriteString("endobj\n")
+	buffer.WriteString(pdfEndObject)
 
 	// Content stream
 	contentStream := s.buildContentStream(invoice, items)
@@ -78,18 +89,18 @@ func (s *pdfService) generateSimplePDF(invoice *dto.InvoiceResponse, items []dto
 
 	buffer.WriteString("3 0 obj\n")
 	buffer.WriteString("<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 4 0 R >> >> /MediaBox [0 0 612 792] /Contents 5 0 R >>\n")
-	buffer.WriteString("endobj\n")
+	buffer.WriteString(pdfEndObject)
 
 	buffer.WriteString("4 0 obj\n")
 	buffer.WriteString("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\n")
-	buffer.WriteString("endobj\n")
+	buffer.WriteString(pdfEndObject)
 
 	buffer.WriteString("5 0 obj\n")
 	buffer.WriteString(fmt.Sprintf("<< /Length %d >>\n", contentLength))
 	buffer.WriteString("stream\n")
 	buffer.WriteString(contentStream)
 	buffer.WriteString("\nendstream\n")
-	buffer.WriteString("endobj\n")
+	buffer.WriteString(pdfEndObject)
 
 	// xref table
 	xrefOffset := buffer.Len()
@@ -117,11 +128,11 @@ func (s *pdfService) buildContentStream(invoice *dto.InvoiceResponse, items []dt
 	var content bytes.Buffer
 
 	// PDF text positioning commands
-	content.WriteString("BT\n")
-	content.WriteString("/F1 14 Tf\n")
+	content.WriteString(pdfBeginText)
+	content.WriteString(fmt.Sprintf(pdfFontFormat, 14))
 	content.WriteString("50 750 Td\n")
 	content.WriteString("(INVOICE) Tj\n")
-	content.WriteString("ET\n")
+	content.WriteString(pdfEndText)
 
 	// Invoice details
 	yPos := 700.0
@@ -136,32 +147,32 @@ func (s *pdfService) buildContentStream(invoice *dto.InvoiceResponse, items []dt
 	}
 
 	for _, detail := range details {
-		content.WriteString("BT\n")
-		content.WriteString("/F1 10 Tf\n")
-		content.WriteString(fmt.Sprintf("50 %.0f Td\n", yPos))
-		content.WriteString(fmt.Sprintf("(%s) Tj\n", detail))
-		content.WriteString("ET\n")
+		content.WriteString(pdfBeginText)
+		content.WriteString(fmt.Sprintf(pdfFontFormat, 10))
+		content.WriteString(fmt.Sprintf(pdfPositionFormat, yPos))
+		content.WriteString(fmt.Sprintf(pdfTextFormat, detail))
+		content.WriteString(pdfEndText)
 		yPos -= lineHeight
 	}
 
 	// Items table header
 	yPos -= 20
-	content.WriteString("BT\n")
-	content.WriteString("/F1 10 Tf\n")
-	content.WriteString(fmt.Sprintf("50 %.0f Td\n", yPos))
+	content.WriteString(pdfBeginText)
+	content.WriteString(fmt.Sprintf(pdfFontFormat, 10))
+	content.WriteString(fmt.Sprintf(pdfPositionFormat, yPos))
 	content.WriteString("(Description | Qty | Price | Total) Tj\n")
-	content.WriteString("ET\n")
+	content.WriteString(pdfEndText)
 
 	// Items
 	yPos -= lineHeight
 	totalAmount := 0
 	for _, item := range items {
 		itemLine := fmt.Sprintf("%s | %d | %d | %d", item.Description, item.Qty, item.Price, item.Total)
-		content.WriteString("BT\n")
-		content.WriteString("/F1 9 Tf\n")
-		content.WriteString(fmt.Sprintf("50 %.0f Td\n", yPos))
-		content.WriteString(fmt.Sprintf("(%s) Tj\n", itemLine))
-		content.WriteString("ET\n")
+		content.WriteString(pdfBeginText)
+		content.WriteString(fmt.Sprintf(pdfFontFormat, 9))
+		content.WriteString(fmt.Sprintf(pdfPositionFormat, yPos))
+		content.WriteString(fmt.Sprintf(pdfTextFormat, itemLine))
+		content.WriteString(pdfEndText)
 		yPos -= lineHeight
 		totalAmount += item.Total
 	}
@@ -169,28 +180,28 @@ func (s *pdfService) buildContentStream(invoice *dto.InvoiceResponse, items []dt
 	// Total
 	yPos -= 10
 	totalLine := fmt.Sprintf("Total Amount: %d", totalAmount)
-	content.WriteString("BT\n")
-	content.WriteString("/F1 12 Tf\n")
-	content.WriteString(fmt.Sprintf("50 %.0f Td\n", yPos))
-	content.WriteString(fmt.Sprintf("(%s) Tj\n", totalLine))
-	content.WriteString("ET\n")
+	content.WriteString(pdfBeginText)
+	content.WriteString(fmt.Sprintf(pdfFontFormat, 12))
+	content.WriteString(fmt.Sprintf(pdfPositionFormat, yPos))
+	content.WriteString(fmt.Sprintf(pdfTextFormat, totalLine))
+	content.WriteString(pdfEndText)
 
 	// Note
 	if invoice.Note != "" {
 		yPos -= 20
-		content.WriteString("BT\n")
-		content.WriteString("/F1 9 Tf\n")
-		content.WriteString(fmt.Sprintf("50 %.0f Td\n", yPos))
-		content.WriteString(fmt.Sprintf("(Note: %s) Tj\n", invoice.Note))
-		content.WriteString("ET\n")
+		content.WriteString(pdfBeginText)
+		content.WriteString(fmt.Sprintf(pdfFontFormat, 9))
+		content.WriteString(fmt.Sprintf(pdfPositionFormat, yPos))
+		content.WriteString(fmt.Sprintf(pdfTextFormat, fmt.Sprintf("Note: %s", invoice.Note)))
+		content.WriteString(pdfEndText)
 	}
 
 	// Generated timestamp
-	content.WriteString("BT\n")
-	content.WriteString("/F1 8 Tf\n")
-	content.WriteString("50 20 Td\n")
-	content.WriteString(fmt.Sprintf("(Generated: %s) Tj\n", time.Now().Format(time.DateTime)))
-	content.WriteString("ET\n")
+	content.WriteString(pdfBeginText)
+	content.WriteString(fmt.Sprintf(pdfFontFormat, 8))
+	content.WriteString(pdfFixedPosition)
+	content.WriteString(fmt.Sprintf(pdfTextFormat, fmt.Sprintf("Generated: %s", time.Now().Format(time.DateTime))))
+	content.WriteString(pdfEndText)
 
 	return content.String()
 }
