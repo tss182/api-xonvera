@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"app/xonvera-core/internal/infrastructure/logger"
@@ -20,13 +21,12 @@ type (
 	}
 
 	AppConfig struct {
-		Name           string `mapstructure:"APP_NAME"`
-		Version        string `mapstructure:"APP_VERSION"`
-		Port           string `mapstructure:"APP_PORT"`
-		Env            string `mapstructure:"APP_ENV"`
-		AllowedOrigins string `mapstructure:"APP_ALLOWED_ORIGINS"`
+		Name           string   `mapstructure:"APP_NAME"`
+		Version        string   `mapstructure:"APP_VERSION"`
+		Port           string   `mapstructure:"APP_PORT"`
+		Env            string   `mapstructure:"APP_ENV"`
+		AllowedOrigins []string `mapstructure:"APP_ALLOWED_ORIGINS"`
 		RequestTimeout time.Duration
-		CORSOrigins    string `mapstructure:"CORS_ALLOWED_ORIGINS"`
 	}
 
 	DatabaseConfig struct {
@@ -85,7 +85,31 @@ func LoadConfig() *Config {
 	// Parse duration configurations
 	parseDurationConfigs(&cfg)
 
+	// Parse allowed origins from comma-separated env value
+	parseAllowedOrigins(&cfg)
+
 	return &cfg
+}
+
+// parseAllowedOrigins parses APP_ALLOWED_ORIGINS into []string
+func parseAllowedOrigins(cfg *Config) {
+	raw := viper.GetString("APP_ALLOWED_ORIGINS")
+	if raw == "" {
+		return
+	}
+
+	parts := strings.Split(raw, ",")
+	origins := make([]string, 0, len(parts))
+	for _, part := range parts {
+		trimmed := strings.TrimSpace(part)
+		if trimmed != "" {
+			origins = append(origins, trimmed)
+		}
+	}
+
+	if len(origins) > 0 {
+		cfg.App.AllowedOrigins = origins
+	}
 }
 
 // parseDurationConfigs parses all duration-based environment variables
