@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"app/xonvera-core/internal/adapters/dto"
@@ -11,6 +12,13 @@ import (
 	portService "app/xonvera-core/internal/core/ports/service"
 	"app/xonvera-core/internal/infrastructure/logger"
 
+	"github.com/johnfercher/maroto/v2"
+	"github.com/johnfercher/maroto/v2/pkg/components/code"
+	"github.com/johnfercher/maroto/v2/pkg/components/image"
+	"github.com/johnfercher/maroto/v2/pkg/components/text"
+	"github.com/johnfercher/maroto/v2/pkg/config"
+	"github.com/johnfercher/maroto/v2/pkg/core"
+	"github.com/johnfercher/maroto/v2/pkg/props"
 	"go.uber.org/zap"
 )
 
@@ -246,6 +254,17 @@ func (s *invoiceService) Update(ctx context.Context, req *dto.InvoiceRequest) er
 		return err
 	}
 
+	//remove pdf file if exists, so it will be regenerated on next request
+	filePdf := fmt.Sprintf("assets/pdf/invoice_%d.pdf", req.ID)
+	if _, err := os.Stat(filePdf); err == nil {
+		err = os.Remove(filePdf)
+		if err != nil {
+			logger.StdContextError(ctx, "failed to remove existing pdf file", zap.Error(err), zap.Int64("invoice_id", req.ID))
+		} else {
+			logger.StdContextInfo(ctx, "existing pdf file removed", zap.Int64("invoice_id", req.ID))
+		}
+	}
+
 	logger.StdContextInfo(ctx, "invoice updated successfully", zap.Int64("invoice_id", req.ID))
 	return nil
 }
@@ -260,6 +279,20 @@ func (s *invoiceService) GetPDF(ctx context.Context, invoiceID int64, userID uin
 		return nil, fmt.Errorf("404:not found invoice")
 	}
 
+	filePdf := fmt.Sprintf("assets/pdf/invoice_%d.pdf", invoiceID)
+
+	// Check if PDF already exists
+	if _, err := os.Stat(filePdf); err == nil {
+		// PDF exists, read it and return
+		pdfBytes, err := os.ReadFile(filePdf)
+		if err != nil {
+			logger.StdContextError(ctx, "failed to read existing pdf", zap.Error(err), zap.Int64("invoice_id", invoiceID))
+			return nil, err
+		}
+		return pdfBytes, nil
+	}
+
+	// PDF doesn't exist, generate it
 	// Fetch invoice items
 	items, err := s.repo.GetItemsByInvoiceID(ctx, invoiceID)
 	if err != nil {
@@ -269,8 +302,72 @@ func (s *invoiceService) GetPDF(ctx context.Context, invoiceID int64, userID uin
 
 	fmt.Println("items", items)
 
-	// Here you would generate the PDF using a PDF library and return the byte slice
-	// For brevity, we'll return an empty byte slice
+	m := s.generatePDF()
+	doc, err := m.Generate()
+	if err != nil {
+		logger.StdContextError(ctx, "failed to generate pdf", zap.Error(err), zap.Int64("invoice_id", invoiceID))
+		return nil, err
+	}
 
-	return []byte{}, nil
+	// Get PDF as binary data
+	pdfBytes := doc.GetBytes()
+
+	// Save pdf to file for future use
+	err = doc.Save(filePdf)
+	if err != nil {
+		logger.StdContextError(ctx, "failed to save pdf to file", zap.Error(err), zap.Int64("invoice_id", invoiceID))
+		return nil, err
+	}
+
+	logger.StdContextInfo(ctx, "pdf generated successfully", zap.Int64("invoice_id", invoiceID), zap.Int("size_bytes", len(pdfBytes)))
+	return pdfBytes, nil
+}
+
+func (s *invoiceService) generatePDF() core.Maroto {
+	var intro = "This is an example of how to create a PDF using Maroto in Go. " +
+		"Maroto is a simple and powerful library that allows you to create PDF documents " +
+		"with ease. You can add text, images, tables, and more to your PDF files."
+	cfg := config.NewBuilder().
+		WithDebug(true).
+		Build()
+
+	m := maroto.New(cfg)
+
+	m.AddAutoRow(
+		image.NewFromFileCol(5, "docs/assets/images/biplane.jpg"),
+		text.NewCol(7, intro),
+	)
+
+	m.AddAutoRow(
+		image.NewFromFileCol(5, "docs/assets/images/biplane.jpg"),
+		text.NewCol(7, intro, props.Text{
+			Size: 13,
+		}),
+	)
+
+	m.AddAutoRow(
+		image.NewFromFileCol(5, "docs/assets/images/biplane.jpg"),
+		text.NewCol(7, intro, props.Text{
+			Size:   13,
+			Top:    8,
+			Bottom: 9,
+		}),
+	)
+
+	m.AddAutoRow(
+		code.NewBarCol(4, "code"),
+		text.NewCol(8, intro),
+	)
+
+	m.AddAutoRow(
+		code.NewMatrixCol(3, "code"),
+		text.NewCol(9, intro),
+	)
+
+	m.AddAutoRow(
+		code.NewQrCol(2, "code"),
+		text.NewCol(10, intro),
+	)
+
+	return m
 }

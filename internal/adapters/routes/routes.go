@@ -34,5 +34,6 @@ func SetupRoutes(
 		invoice.Post("", r.InvoiceHandler.Create)
 		invoice.Get("", r.InvoiceHandler.Get)
 		invoice.Put("", r.InvoiceHandler.Update)
+		invoice.Get("/:id/pdf", r.InvoiceHandler.GetInvoicePDF)
 	}
 }
