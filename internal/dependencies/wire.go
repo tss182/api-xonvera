@@ -10,7 +10,6 @@ import (
 	"app/xonvera-core/internal/adapters/middleware"
 	repositoriesRedis "app/xonvera-core/internal/adapters/repositories/redis"
 	repositoriesSql "app/xonvera-core/internal/adapters/repositories/sql"
-	portService "app/xonvera-core/internal/core/ports/service"
 	"app/xonvera-core/internal/core/services"
 	"app/xonvera-core/internal/infrastructure/config"
 	"app/xonvera-core/internal/infrastructure/database"
@@ -53,7 +52,6 @@ var ProviderSet = wire.NewSet(
 	services.NewAuthService,
 	services.NewPackageService,
 	services.NewInvoiceService,
-	ProvidePDFService,
 
 	// Handlers
 	http.NewAuthHandler,
@@ -82,13 +80,6 @@ func ProvideRedisConfig(cfg *config.Config) *config.RedisConfig {
 // ProvideRequestTimeout extracts request timeout from Config
 func ProvideRequestTimeout(cfg *config.Config) time.Duration {
 	return cfg.App.RequestTimeout
-}
-
-// ProvidePDFService creates a new PDF service instance
-// The PDF files are stored in the assets/pdf directory
-func ProvidePDFService(cfg *config.Config) (portService.PDFService, error) {
-	pdfDir := "assets/pdf"
-	return services.NewPDFService(pdfDir)
 }
 
 // Application holds all the dependencies

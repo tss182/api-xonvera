@@ -11,4 +11,5 @@ type InvoiceService interface {
 	GetByID(ctx context.Context, invoiceID int64, userID uint) (*dto.InvoiceResponse, error)
 	Create(ctx context.Context, req *dto.InvoiceRequest) error
 	Update(ctx context.Context, req *dto.InvoiceRequest) error
+	GetPDF(ctx context.Context, invoiceID int64, userID uint) ([]byte, error)
 }

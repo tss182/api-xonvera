@@ -25,7 +25,7 @@
               "raw": "{\n  \"email\": \"user@example.com\",\n  \"name\": \"John Doe\",\n  \"password\": \"securePassword123\",\n  \"phone\": \"+1234567890\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/auth/register",
+              "raw": "{{base_url}}/auth/register",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "auth", "register"]
             },
@@ -42,7 +42,7 @@
                   "raw": "{\n  \"email\": \"user@example.com\",\n  \"name\": \"John Doe\",\n  \"password\": \"securePassword123\",\n  \"phone\": \"+1234567890\"\n}"
                 },
                 "url": {
-                  "raw": "{{base_url}}/api/v1/auth/register",
+                  "raw": "{{base_url}}/auth/register",
                   "host": ["{{base_url}}"],
                   "path": ["api", "v1", "auth", "register"]
                 }
@@ -69,7 +69,7 @@
               "raw": "{\n  \"username\": \"user@example.com\",\n  \"password\": \"securePassword123\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/auth/login",
+              "raw": "{{base_url}}/auth/login",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "auth", "login"]
             },
@@ -86,7 +86,7 @@
                   "raw": "{\n  \"username\": \"user@example.com\",\n  \"password\": \"securePassword123\"\n}"
                 },
                 "url": {
-                  "raw": "{{base_url}}/api/v1/auth/login",
+                  "raw": "{{base_url}}/auth/login",
                   "host": ["{{base_url}}"],
                   "path": ["api", "v1", "auth", "login"]
                 }
@@ -113,7 +113,7 @@
               "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/auth/refresh",
+              "raw": "{{base_url}}/auth/refresh",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "auth", "refresh"]
             },
@@ -130,7 +130,7 @@
                   "raw": "{\n  \"refresh_token\": \"refresh-token-string\"\n}"
                 },
                 "url": {
-                  "raw": "{{base_url}}/api/v1/auth/refresh",
+                  "raw": "{{base_url}}/auth/refresh",
                   "host": ["{{base_url}}"],
                   "path": ["api", "v1", "auth", "refresh"]
                 }
@@ -153,7 +153,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/auth/logout",
+              "raw": "{{base_url}}/auth/logout",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "auth", "logout"]
             },
@@ -171,7 +171,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{base_url}}/api/v1/auth/logout",
+                  "raw": "{{base_url}}/auth/logout",
                   "host": ["{{base_url}}"],
                   "path": ["api", "v1", "auth", "logout"]
                 }
@@ -208,7 +208,7 @@
               "raw": "{\n  \"issuer\": \"Acme Corp\",\n  \"customer\": \"John Doe\",\n  \"issue_date\": \"2026-01-31\",\n  \"items\": [\n    {\n      \"description\": \"Professional Services\",\n      \"qty\": 5,\n      \"price\": 100\n    },\n    {\n      \"description\": \"Software License\",\n      \"qty\": 1,\n      \"price\": 500\n    }\n  ],\n  \"note\": \"Payment due within 30 days\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/invoices",
+              "raw": "{{base_url}}/invoices",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "invoices"]
             },
@@ -225,7 +225,7 @@
                   "raw": "{\n  \"issuer\": \"Acme Corp\",\n  \"customer\": \"John Doe\",\n  \"issue_date\": \"2026-01-31\",\n  \"items\": [\n    {\n      \"description\": \"Professional Services\",\n      \"qty\": 5,\n      \"price\": 100\n    }\n  ],\n  \"note\": \"Payment due within 30 days\"\n}"
                 },
                 "url": {
-                  "raw": "{{base_url}}/api/v1/invoices",
+                  "raw": "{{base_url}}/invoices",
                   "host": ["{{base_url}}"],
                   "path": ["api", "v1", "invoices"]
                 }
@@ -248,7 +248,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/invoices?limit=20&offset=0",
+              "raw": "{{base_url}}/invoices?limit=20&offset=0",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "invoices"],
               "query": [
@@ -276,7 +276,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{base_url}}/api/v1/invoices?limit=20&offset=0",
+                  "raw": "{{base_url}}/invoices?limit=20&offset=0",
                   "host": ["{{base_url}}"],
                   "path": ["api", "v1", "invoices"],
                   "query": [
@@ -309,7 +309,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/invoices/1",
+              "raw": "{{base_url}}/invoices/1",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "invoices", "1"]
             },
@@ -327,7 +327,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{base_url}}/api/v1/invoices/1",
+                  "raw": "{{base_url}}/invoices/1",
                   "host": ["{{base_url}}"],
                   "path": ["api", "v1", "invoices", "1"]
                 }

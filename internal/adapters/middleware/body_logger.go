@@ -40,7 +40,13 @@ const (
 )
 
 // BodyLogger logs request and response bodies with sensitive field masking
-func BodyLogger(env string) fiber.Handler {
+func BodyLogger(env string, enabled bool) fiber.Handler {
+	if !enabled {
+		return func(c fiber.Ctx) error {
+			return c.Next()
+		}
+	}
+
 	return func(c fiber.Ctx) error {
 
 		// Log request

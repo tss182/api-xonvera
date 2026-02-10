@@ -34,7 +34,7 @@ func NewAuthHandler(service portService.AuthService, rto time.Duration) *AuthHan
 // @Param request body dto.RegisterRequest true "Register Request"
 // @Success 200 {object} Resp
 // @Failure 400 {object} Resp
-// @Router /api/v1/auth/register [post]
+// @Router /auth/register [post]
 func (h *AuthHandler) Register(c fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
@@ -65,7 +65,7 @@ func (h *AuthHandler) Register(c fiber.Ctx) error {
 // @Success 200 {object} Resp
 // @Failure 400 {object} Resp
 // @Failure 401 {object} Resp
-// @Router /api/v1/auth/login [post]
+// @Router /auth/login [post]
 func (h *AuthHandler) Login(c fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
@@ -96,7 +96,7 @@ func (h *AuthHandler) Login(c fiber.Ctx) error {
 // @Success 200 {object} Resp
 // @Failure 400 {object} Resp
 // @Failure 401 {object} Resp
-// @Router /api/v1/auth/refresh [post]
+// @Router /auth/refresh [post]
 func (h *AuthHandler) RefreshToken(c fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
@@ -126,7 +126,7 @@ func (h *AuthHandler) RefreshToken(c fiber.Ctx) error {
 // @Security BearerAuth
 // @Success 200 {object} Resp
 // @Failure 401 {object} Resp
-// @Router /api/v1/auth/logout [post]
+// @Router /auth/logout [post]
 func (h *AuthHandler) Logout(c fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()

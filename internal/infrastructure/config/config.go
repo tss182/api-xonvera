@@ -25,6 +25,7 @@ type (
 		Version        string   `mapstructure:"APP_VERSION"`
 		Port           string   `mapstructure:"APP_PORT"`
 		Env            string   `mapstructure:"APP_ENV"`
+		DebugBody      bool     `mapstructure:"APP_DEBUG_BODY"`
 		AllowedOrigins []string `mapstructure:"APP_ALLOWED_ORIGINS"`
 		RequestTimeout time.Duration
 	}
@@ -186,6 +187,7 @@ func setDefaults() {
 	viper.SetDefault("APP_PORT", "3000")
 	viper.SetDefault("APP_ENV", "development")
 	viper.SetDefault("APP_REQUEST_TIMEOUT", "30s")
+	viper.SetDefault("APP_DEBUG_BODY", false)
 	viper.SetDefault("APP_ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:8080")
 
 	// Database defaults

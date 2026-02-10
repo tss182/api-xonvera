@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/auth/login": {
+        "/auth/login": {
             "post": {
                 "description": "Login with email or phone and password",
                 "consumes": [
@@ -61,7 +61,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/auth/logout": {
+        "/auth/logout": {
             "post": {
                 "security": [
                     {
@@ -95,7 +95,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/auth/refresh": {
+        "/auth/refresh": {
             "post": {
                 "description": "Get new access token using refresh token",
                 "consumes": [
@@ -141,7 +141,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/auth/register": {
+        "/auth/register": {
             "post": {
                 "description": "Register a new user with name, email, phone, and password",
                 "consumes": [
@@ -181,7 +181,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/invoices": {
+        "/invoices": {
             "get": {
                 "description": "Get all invoices with pagination",
                 "consumes": [
@@ -264,7 +264,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/invoices/{id}": {
+        "/invoices/{id}": {
             "get": {
                 "description": "Get invoice details by ID",
                 "consumes": [

@@ -249,3 +249,28 @@ func (s *invoiceService) Update(ctx context.Context, req *dto.InvoiceRequest) er
 	logger.StdContextInfo(ctx, "invoice updated successfully", zap.Int64("invoice_id", req.ID))
 	return nil
 }
+
+func (s *invoiceService) GetPDF(ctx context.Context, invoiceID int64, userID uint) ([]byte, error) {
+	// Ensure invoice exists and belongs to user
+	inv, err := s.repo.GetByID(ctx, invoiceID)
+	if err != nil {
+		return nil, err
+	}
+	if inv.AuthorID != userID {
+		return nil, fmt.Errorf("404:not found invoice")
+	}
+
+	// Fetch invoice items
+	items, err := s.repo.GetItemsByInvoiceID(ctx, invoiceID)
+	if err != nil {
+		logger.StdContextError(ctx, "failed to get invoice items", zap.Error(err), zap.Int64("invoice_id", invoiceID))
+		return nil, err
+	}
+
+	fmt.Println("items", items)
+
+	// Here you would generate the PDF using a PDF library and return the byte slice
+	// For brevity, we'll return an empty byte slice
+
+	return []byte{}, nil
+}
