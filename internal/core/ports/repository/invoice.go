@@ -4,12 +4,11 @@ import (
 	"context"
 	"time"
 
-	"app/xonvera-core/internal/adapters/dto"
 	"app/xonvera-core/internal/core/domain"
 )
 
 type InvoiceRepository interface {
-	Get(ctx context.Context, req *dto.PaginationRequest) (*dto.PaginationResponse, error)
+	Get(ctx context.Context, req *domain.PaginationRequest) (*domain.PaginationResponse, error)
 	GenerateInvoiceID(ctx context.Context, tx Transaction, userID uint, date time.Time) (int64, error)
 	GetByID(ctx context.Context, id int64) (*domain.Invoice, error)
 	GetItems(ctx context.Context, invoiceID []int64) ([]domain.InvoiceItem, error)

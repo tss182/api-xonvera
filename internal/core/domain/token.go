@@ -28,5 +28,5 @@ type TokenPair struct {
 }
 
 type RefreshTokenRequest struct {
-	RefreshToken string
+	RefreshToken string `json:"refresh_token" validate:"required"`
 }

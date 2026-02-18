@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"app/xonvera-core/internal/adapters/dto"
 	"app/xonvera-core/internal/core/domain"
 	portRepository "app/xonvera-core/internal/core/ports/repository"
 
@@ -20,7 +19,7 @@ func NewInvoiceRepository(db *gorm.DB) portRepository.InvoiceRepository {
 	return &invoiceRepository{db: db}
 }
 
-func (r *invoiceRepository) Get(ctx context.Context, req *dto.PaginationRequest) (*dto.PaginationResponse, error) {
+func (r *invoiceRepository) Get(ctx context.Context, req *domain.PaginationRequest) (*domain.PaginationResponse, error) {
 	query := r.db.WithContext(ctx).Order("created_at DESC")
 
 	if req.Limit > 0 {
@@ -39,8 +38,8 @@ func (r *invoiceRepository) Get(ctx context.Context, req *dto.PaginationRequest)
 		return nil, err
 	}
 
-	var resp dto.PaginationResponse
-	resp.Meta = dto.PaginationMetaResponse{
+	var resp domain.PaginationResponse
+	resp.Meta = domain.PaginationMetaResponse{
 		Page:      req.Page,
 		Limit:     req.Limit,
 		TotalData: uint64(count),
@@ -57,7 +56,7 @@ func (r *invoiceRepository) Get(ctx context.Context, req *dto.PaginationRequest)
 
 	resp.Data = make([]any, len(data))
 	for i, v := range data {
-		resp.Data[i] = v.Response()
+		resp.Data[i] = v.Response([]domain.InvoiceItem{})
 	}
 
 	return &resp, nil

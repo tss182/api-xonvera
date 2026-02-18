@@ -1,4 +1,4 @@
-package dto
+package domain
 
 type (
 	RegisterRequest struct {
@@ -10,10 +10,6 @@ type (
 	LoginRequest struct {
 		Username string `json:"username" validate:"required"` // email or phone
 		Password string `json:"password" validate:"required"`
-	}
-
-	RefreshTokenRequest struct {
-		RefreshToken string `json:"refresh_token" validate:"required"`
 	}
 
 	UserResponse struct {

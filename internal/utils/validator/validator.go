@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"app/xonvera-core/internal/adapters/dto"
+	"app/xonvera-core/internal/core/domain"
 	"app/xonvera-core/internal/utils"
 	"errors"
 	"fmt"
@@ -27,7 +27,7 @@ func HandlerBindingError(c fiber.Ctx, obj any, shouldType string, skips ...strin
 	}
 
 	// Handle PaginationRequest offset calculation
-	if paginationReq, ok := obj.(*dto.PaginationRequest); ok {
+	if paginationReq, ok := obj.(*domain.PaginationRequest); ok {
 		if paginationReq.Page < 1 {
 			paginationReq.Page = 1
 		}

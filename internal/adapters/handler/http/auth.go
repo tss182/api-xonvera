@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"app/xonvera-core/internal/adapters/dto"
+	"app/xonvera-core/internal/core/domain"
 	portService "app/xonvera-core/internal/core/ports/service"
 	"app/xonvera-core/internal/infrastructure/logger"
 	"app/xonvera-core/internal/utils/validator"
@@ -39,7 +39,7 @@ func (h *AuthHandler) Register(c fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
 
-	var req dto.RegisterRequest
+	var req domain.RegisterRequest
 
 	// Validate request
 	if err := validator.HandlerBindingError(c, &req, validator.HandlerBody); err != nil {
@@ -70,7 +70,7 @@ func (h *AuthHandler) Login(c fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
 
-	var req dto.LoginRequest
+	var req domain.LoginRequest
 
 	// Validate request
 	if err := validator.HandlerBindingError(c, &req, validator.HandlerBody); err != nil {
@@ -101,7 +101,7 @@ func (h *AuthHandler) RefreshToken(c fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
 
-	var req dto.RefreshTokenRequest
+	var req domain.RefreshTokenRequest
 
 	// Validate request
 	if err := validator.HandlerBindingError(c, &req, validator.HandlerBody); err != nil {

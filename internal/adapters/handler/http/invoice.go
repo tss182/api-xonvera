@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"app/xonvera-core/internal/adapters/dto"
+	"app/xonvera-core/internal/core/domain"
 	portService "app/xonvera-core/internal/core/ports/service"
 	"app/xonvera-core/internal/infrastructure/logger"
 	"app/xonvera-core/internal/utils/validator"
@@ -43,7 +43,7 @@ func (h *InvoiceHandler) Get(c fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
 
-	var req dto.PaginationRequest
+	var req domain.PaginationRequest
 	if err := validator.HandlerBindingError(c, &req, validator.HandlerQuery); err != nil {
 		return BadRequest(c, []string{"invalid pagination parameters"})
 	}
@@ -77,7 +77,7 @@ func (h *InvoiceHandler) Create(c fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
 
-	var req dto.InvoiceRequest
+	var req domain.InvoiceRequest
 	var ok bool
 
 	userIDVal := c.Locals("userID")
@@ -116,7 +116,7 @@ func (h *InvoiceHandler) Update(c fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), h.rto)
 	defer cancel()
 
-	var req dto.InvoiceRequest
+	var req domain.InvoiceRequest
 	var ok bool
 
 	userIDVal := c.Locals("userID")

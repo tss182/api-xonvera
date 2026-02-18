@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"app/xonvera-core/internal/adapters/dto"
 	"app/xonvera-core/internal/core/domain"
 	portRepository "app/xonvera-core/internal/core/ports/repository"
 	portService "app/xonvera-core/internal/core/ports/service"
@@ -39,7 +38,7 @@ func NewAuthService(
 	}
 }
 
-func (s *authService) Register(ctx context.Context, req *dto.RegisterRequest) (*dto.AuthResponse, error) {
+func (s *authService) Register(ctx context.Context, req *domain.RegisterRequest) (*domain.AuthResponse, error) {
 	// Check if phone already exists
 	exists, err := s.userRepo.ExistsByPhone(ctx, req.Phone)
 	if err != nil {
@@ -87,14 +86,14 @@ func (s *authService) Register(ctx context.Context, req *dto.RegisterRequest) (*
 		zap.String("phone", user.Phone),
 	)
 
-	return &dto.AuthResponse{
+	return &domain.AuthResponse{
 		AccessToken:  tokenPair.AccessToken,
 		RefreshToken: tokenPair.RefreshToken,
 		ExpiresAt:    tokenPair.ExpiresAt,
 	}, nil
 }
 
-func (s *authService) Login(ctx context.Context, req *dto.LoginRequest) (*dto.AuthResponse, error) {
+func (s *authService) Login(ctx context.Context, req *domain.LoginRequest) (*domain.AuthResponse, error) {
 	// Find user by email or phone
 	user, err := s.userRepo.FindByEmailOrPhone(ctx, req.Username)
 	if err != nil {
@@ -130,14 +129,14 @@ func (s *authService) Login(ctx context.Context, req *dto.LoginRequest) (*dto.Au
 		zap.String("phone", user.Phone),
 	)
 
-	return &dto.AuthResponse{
+	return &domain.AuthResponse{
 		AccessToken:  tokenPair.AccessToken,
 		RefreshToken: tokenPair.RefreshToken,
 		ExpiresAt:    tokenPair.ExpiresAt,
 	}, nil
 }
 
-func (s *authService) RefreshToken(ctx context.Context, req *dto.RefreshTokenRequest) (*dto.AuthResponse, error) {
+func (s *authService) RefreshToken(ctx context.Context, req *domain.RefreshTokenRequest) (*domain.AuthResponse, error) {
 	// Validate refresh token format
 	userID, err := s.tokenService.ValidateRefreshToken(req.RefreshToken)
 	if err != nil {
@@ -179,7 +178,7 @@ func (s *authService) RefreshToken(ctx context.Context, req *dto.RefreshTokenReq
 
 	logger.StdContextInfo(ctx, "token refreshed successfully", zap.Uint("user_id", userID))
 
-	return &dto.AuthResponse{
+	return &domain.AuthResponse{
 		AccessToken:  tokenPair.AccessToken,
 		RefreshToken: tokenPair.RefreshToken,
 		ExpiresAt:    tokenPair.ExpiresAt,

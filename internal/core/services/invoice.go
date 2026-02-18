@@ -6,35 +6,38 @@ import (
 	"os"
 	"time"
 
-	"app/xonvera-core/internal/adapters/dto"
 	"app/xonvera-core/internal/core/domain"
 	portRepository "app/xonvera-core/internal/core/ports/repository"
 	portService "app/xonvera-core/internal/core/ports/service"
+	"app/xonvera-core/internal/infrastructure/config"
 	"app/xonvera-core/internal/infrastructure/logger"
 
 	"github.com/johnfercher/maroto/v2"
-	"github.com/johnfercher/maroto/v2/pkg/components/code"
-	"github.com/johnfercher/maroto/v2/pkg/components/image"
 	"github.com/johnfercher/maroto/v2/pkg/components/text"
-	"github.com/johnfercher/maroto/v2/pkg/config"
+	cfgPdf "github.com/johnfercher/maroto/v2/pkg/config"
+	"github.com/johnfercher/maroto/v2/pkg/consts/align"
+	"github.com/johnfercher/maroto/v2/pkg/consts/fontstyle"
+	"github.com/johnfercher/maroto/v2/pkg/consts/pagesize"
 	"github.com/johnfercher/maroto/v2/pkg/core"
 	"github.com/johnfercher/maroto/v2/pkg/props"
 	"go.uber.org/zap"
 )
 
 type invoiceService struct {
+	cfg  *config.AppConfig
 	repo portRepository.InvoiceRepository
 	tx   portRepository.TxRepository
 }
 
-func NewInvoiceService(invoiceRepo portRepository.InvoiceRepository, tx portRepository.TxRepository) portService.InvoiceService {
+func NewInvoiceService(cfg *config.AppConfig, invoiceRepo portRepository.InvoiceRepository, tx portRepository.TxRepository) portService.InvoiceService {
 	return &invoiceService{
+		cfg:  cfg,
 		repo: invoiceRepo,
 		tx:   tx,
 	}
 }
 
-func (s *invoiceService) Get(ctx context.Context, req *dto.PaginationRequest) (*dto.PaginationResponse, error) {
+func (s *invoiceService) Get(ctx context.Context, req *domain.PaginationRequest) (*domain.PaginationResponse, error) {
 	res, err := s.repo.Get(ctx, req)
 	if err != nil {
 		logger.StdContextError(ctx, "failed to get all invoices", zap.Error(err))
@@ -44,7 +47,7 @@ func (s *invoiceService) Get(ctx context.Context, req *dto.PaginationRequest) (*
 }
 
 // GetByID retrieves a single invoice with its items by invoice ID
-func (s *invoiceService) GetByID(ctx context.Context, invoiceID int64, userID uint) (*dto.InvoiceResponse, error) {
+func (s *invoiceService) GetByID(ctx context.Context, invoiceID int64, userID uint) (*domain.InvoiceResponse, error) {
 	invoice, err := s.repo.GetByID(ctx, invoiceID)
 	if err != nil {
 		logger.StdContextError(ctx, "failed to get invoice by ID", zap.Error(err), zap.Int64("invoice_id", invoiceID))
@@ -64,37 +67,12 @@ func (s *invoiceService) GetByID(ctx context.Context, invoiceID int64, userID ui
 		return nil, err
 	}
 
-	// Convert to response DTOs
-	itemDTOs := make([]dto.InvoiceItemResponse, len(items))
-	for i, item := range items {
-		itemDTOs[i] = dto.InvoiceItemResponse{
-			ID:          item.ID,
-			InvoiceID:   item.InvoiceID,
-			Description: item.Description,
-			Qty:         item.Qty,
-			Price:       item.Price,
-			Total:       item.Total,
-			CreatedAt:   item.CreatedAt.Format(time.DateTime),
-		}
-	}
+	response := invoice.Response(items)
 
-	response := &dto.InvoiceResponse{
-		ID:        invoice.ID,
-		Customer:  invoice.Customer,
-		Issuer:    invoice.Issuer,
-		IssueDate: invoice.IssueDate,
-		DueDate:   invoice.DueDate,
-		Note:      invoice.Note,
-		Status:    invoice.Status,
-		Items:     itemDTOs,
-		CreatedAt: invoice.CreatedAt,
-		UpdatedAt: invoice.UpdatedAt,
-	}
-
-	return response, nil
+	return &response, nil
 }
 
-func (s *invoiceService) Create(ctx context.Context, req *dto.InvoiceRequest) error {
+func (s *invoiceService) Create(ctx context.Context, req *domain.InvoiceRequest) error {
 	tx, err := s.tx.Begin()
 	if err != nil {
 		logger.StdContextError(ctx, "failed to begin transaction", zap.Error(err))
@@ -177,7 +155,7 @@ func (s *invoiceService) Create(ctx context.Context, req *dto.InvoiceRequest) er
 	return nil
 }
 
-func (s *invoiceService) Update(ctx context.Context, req *dto.InvoiceRequest) error {
+func (s *invoiceService) Update(ctx context.Context, req *domain.InvoiceRequest) error {
 	tx, err := s.tx.Begin()
 	if err != nil {
 		logger.StdContextError(ctx, "failed to begin transaction", zap.Error(err))
@@ -271,11 +249,11 @@ func (s *invoiceService) Update(ctx context.Context, req *dto.InvoiceRequest) er
 
 func (s *invoiceService) GetPDF(ctx context.Context, invoiceID int64, userID uint) ([]byte, error) {
 	// Ensure invoice exists and belongs to user
-	inv, err := s.repo.GetByID(ctx, invoiceID)
+	data, err := s.repo.GetByID(ctx, invoiceID)
 	if err != nil {
 		return nil, err
 	}
-	if inv.AuthorID != userID {
+	if data.AuthorID != userID {
 		return nil, fmt.Errorf("404:not found invoice")
 	}
 
@@ -294,15 +272,13 @@ func (s *invoiceService) GetPDF(ctx context.Context, invoiceID int64, userID uin
 
 	// PDF doesn't exist, generate it
 	// Fetch invoice items
-	items, err := s.repo.GetItemsByInvoiceID(ctx, invoiceID)
+	dataItems, err := s.repo.GetItemsByInvoiceID(ctx, invoiceID)
 	if err != nil {
 		logger.StdContextError(ctx, "failed to get invoice items", zap.Error(err), zap.Int64("invoice_id", invoiceID))
 		return nil, err
 	}
 
-	fmt.Println("items", items)
-
-	m := s.generatePDF()
+	m := s.generatePDF(data.Response(dataItems))
 	doc, err := m.Generate()
 	if err != nil {
 		logger.StdContextError(ctx, "failed to generate pdf", zap.Error(err), zap.Int64("invoice_id", invoiceID))
@@ -323,51 +299,60 @@ func (s *invoiceService) GetPDF(ctx context.Context, invoiceID int64, userID uin
 	return pdfBytes, nil
 }
 
-func (s *invoiceService) generatePDF() core.Maroto {
-	var intro = "This is an example of how to create a PDF using Maroto in Go. " +
-		"Maroto is a simple and powerful library that allows you to create PDF documents " +
-		"with ease. You can add text, images, tables, and more to your PDF files."
-	cfg := config.NewBuilder().
-		WithDebug(true).
+func (s *invoiceService) generatePDF(data domain.InvoiceResponse) core.Maroto {
+	cfg := cfgPdf.NewBuilder().
+		WithPageSize(pagesize.A4).
+		WithDebug(s.cfg.Env == "development").
 		Build()
 
 	m := maroto.New(cfg)
 
 	m.AddAutoRow(
-		image.NewFromFileCol(5, "docs/assets/images/biplane.jpg"),
-		text.NewCol(7, intro),
-	)
-
-	m.AddAutoRow(
-		image.NewFromFileCol(5, "docs/assets/images/biplane.jpg"),
-		text.NewCol(7, intro, props.Text{
-			Size: 13,
+		text.NewCol(8, ""),
+		text.NewCol(4, fmt.Sprintf("%d", data.ID), props.Text{
+			Size:  12,
+			Style: fontstyle.Bold,
+			Align: align.Right,
 		}),
 	)
 
 	m.AddAutoRow(
-		image.NewFromFileCol(5, "docs/assets/images/biplane.jpg"),
-		text.NewCol(7, intro, props.Text{
-			Size:   13,
-			Top:    8,
-			Bottom: 9,
+		text.NewCol(12, "INVOICE", props.Text{
+			Size:  30,
+			Style: fontstyle.Bold,
 		}),
 	)
 
 	m.AddAutoRow(
-		code.NewBarCol(4, "code"),
-		text.NewCol(8, intro),
+		text.NewCol(12, data.IssueDate, props.Text{
+			Size: 12,
+		}),
 	)
 
+	m.AddAutoRow(text.NewCol(6, "Kepada"))
+	m.AddAutoRow(text.NewCol(6, data.Customer), text.NewCol(6, data.Issuer))
+
+	m.AddAutoRow(text.NewCol(12, ""))
+
+	// Add table header
 	m.AddAutoRow(
-		code.NewMatrixCol(3, "code"),
-		text.NewCol(9, intro),
+		text.NewCol(2, "No", props.Text{Size: 11, Style: fontstyle.Bold, Align: align.Center}),
+		text.NewCol(3, "Item", props.Text{Size: 11, Style: fontstyle.Bold, Align: align.Center}),
+		text.NewCol(2, "Qty", props.Text{Size: 11, Style: fontstyle.Bold, Align: align.Center}),
+		text.NewCol(2, "Price", props.Text{Size: 11, Style: fontstyle.Bold, Align: align.Center}),
+		text.NewCol(3, "Total", props.Text{Size: 11, Style: fontstyle.Bold, Align: align.Center}),
 	)
 
-	m.AddAutoRow(
-		code.NewQrCol(2, "code"),
-		text.NewCol(10, intro),
-	)
+	// Add table rows for items
+	for i, item := range data.Items {
+		m.AddAutoRow(
+			text.NewCol(2, fmt.Sprintf("%d", i+1), props.Text{Align: align.Center}),
+			text.NewCol(3, item.Description),
+			text.NewCol(2, fmt.Sprintf("%d", item.Qty), props.Text{Align: align.Center}),
+			text.NewCol(2, fmt.Sprintf("%d", item.Price), props.Text{Align: align.Right}),
+			text.NewCol(3, fmt.Sprintf("%d", item.Total), props.Text{Align: align.Right}),
+		)
+	}
 
 	return m
 }

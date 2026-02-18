@@ -26,6 +26,7 @@ import (
 var ProviderSet = wire.NewSet(
 	// Config
 	config.LoadConfig,
+	ProvideAppConfig,
 	ProvideDBConfig,
 	ProvideTokenConfig,
 	ProvideRedisConfig,
@@ -61,6 +62,11 @@ var ProviderSet = wire.NewSet(
 	// Middleware
 	middleware.NewAuthMiddleware,
 )
+
+// ProvideAppConfig extracts App from Config
+func ProvideAppConfig(cfg *config.Config) *config.AppConfig {
+	return &cfg.App
+}
 
 // ProvideDBConfig extracts DatabaseConfig from Config
 func ProvideDBConfig(cfg *config.Config) *config.DatabaseConfig {

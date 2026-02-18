@@ -1,7 +1,7 @@
 package http
 
 import (
-	"app/xonvera-core/internal/adapters/dto"
+	"app/xonvera-core/internal/core/domain"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -63,7 +63,7 @@ func OK(c fiber.Ctx, resp interface{}) error {
 }
 
 // OK sends a 200 OK response with data
-func Page(c fiber.Ctx, resp *dto.PaginationResponse) error {
+func Page(c fiber.Ctx, resp *domain.PaginationResponse) error {
 	if resp.Data == nil {
 		resp.Data = []any{}
 	}

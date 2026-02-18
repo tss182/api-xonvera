@@ -1,4 +1,4 @@
-package dto
+package domain
 
 import "time"
 
@@ -27,13 +27,13 @@ type InvoiceRequest struct {
 
 // InvoiceItemResponse represents invoice item output
 type InvoiceItemResponse struct {
-	ID          uint   `json:"id"`
-	InvoiceID   int64  `json:"invoice_id"`
-	Description string `json:"description"`
-	Qty         int    `json:"qty"`
-	Price       int    `json:"price"`
-	Total       int    `json:"total"`
-	CreatedAt   string `json:"created_at"`
+	ID          uint      `json:"id"`
+	InvoiceID   int64     `json:"invoice_id"`
+	Description string    `json:"description"`
+	Qty         int       `json:"qty"`
+	Price       int       `json:"price"`
+	Total       int       `json:"total"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 // InvoiceResponse represents invoice output
