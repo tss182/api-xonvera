@@ -99,6 +99,10 @@ func NewConnection(cfg *config.DatabaseConfig) (*gorm.DB, error) {
 				zap.Int("open_connections", stats.OpenConnections),
 				zap.Int("in_use", stats.InUse),
 				zap.Int("idle", stats.Idle),
+				zap.Int64("wait_count", stats.WaitCount),
+				zap.Int64("wait_duration", int64(stats.WaitDuration)),
+				zap.Int64("max_idle_closed", stats.MaxIdleClosed),
+				zap.Int64("max_open_exceeded", int64(stats.MaxOpenConnections)),
 			)
 		}
 	}()

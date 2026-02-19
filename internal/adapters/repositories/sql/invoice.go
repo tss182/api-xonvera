@@ -21,20 +21,31 @@ func NewInvoiceRepository(db *gorm.DB) portRepository.InvoiceRepository {
 
 func (r *invoiceRepository) Get(ctx context.Context, req *domain.PaginationRequest) (*domain.PaginationResponse, error) {
 	query := r.db.WithContext(ctx).Model(&domain.Invoice{}).
-		Where("author_id = ?", req.UserID)
+		Select("invoice.*, COUNT(*) OVER() as total_count").
+		Where("author_id = ?", req.UserID).Order("created_at DESC")
 
-	//get count
-	var count int64
-	err := query.Count(&count).Error
-	if err != nil {
-		return nil, err
-	}
-
+	// apply pagination
 	if req.Limit > 0 {
 		query = query.Limit(int(req.Limit))
 	}
 	if req.Offset > 0 {
 		query = query.Offset(int(req.Offset))
+	}
+
+	type InvoiceWithCount struct {
+		domain.Invoice
+		TotalCount uint64 `gorm:"column:total_count"`
+	}
+
+	var data []InvoiceWithCount
+	err := query.Scan(&data).Error
+	if err != nil {
+		return nil, err
+	}
+
+	var count uint64
+	if len(data) > 0 {
+		count = data[0].TotalCount
 	}
 
 	var resp domain.PaginationResponse
@@ -43,12 +54,6 @@ func (r *invoiceRepository) Get(ctx context.Context, req *domain.PaginationReque
 		Limit:     req.Limit,
 		TotalData: uint64(count),
 		TotalPage: GetTotalPage(count, req.Limit),
-	}
-
-	var data []domain.Invoice
-	err = query.Order("created_at DESC").Scan(&data).Error
-	if err != nil {
-		return nil, err
 	}
 
 	resp.Data = make([]any, len(data))
