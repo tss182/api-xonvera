@@ -46,14 +46,14 @@ func (s *authService) Register(ctx context.Context, req *domain.RegisterRequest)
 		return nil, err
 	}
 	if exists {
-		return nil, fmt.Errorf("400:phone number already registered")
+		return nil, fmt.Errorf(domain.ErrPhoneAlreadyRegistered)
 	}
 
 	// Hash password with secure cost factor
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		logger.StdContextError(ctx, "failed to hash password", zap.Error(err))
-		return nil, fmt.Errorf("400:invalid register request")
+		return nil, fmt.Errorf(domain.ErrInvalidRegisterRequest)
 	}
 
 	// Create new user
@@ -65,13 +65,13 @@ func (s *authService) Register(ctx context.Context, req *domain.RegisterRequest)
 
 	if err := s.userRepo.Create(ctx, user); err != nil {
 		logger.StdContextError(ctx, "failed to create user", zap.Error(err), zap.String("phone", req.Phone))
-		return nil, fmt.Errorf("400:invalid register request")
+		return nil, fmt.Errorf(domain.ErrInvalidRegisterRequest)
 	}
 
 	// Generate token pair
 	tokenPair, err := s.tokenService.GenerateTokenPair(user.ID)
 	if err != nil {
-		logger.Error("failed to generate token pair", zap.Error(err), zap.Uint("user_id", user.ID))
+		logger.Error("failed to generate token", zap.Error(err), zap.Uint("user_id", user.ID))
 		return nil, err
 	}
 
@@ -99,7 +99,7 @@ func (s *authService) Login(ctx context.Context, req *domain.LoginRequest) (*dom
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			logger.StdContextDebug(ctx, "login failed: invalid credentials", zap.String("username", req.Username))
-			return nil, fmt.Errorf("400:invalid credentials")
+			return nil, fmt.Errorf(domain.ErrInvalidCredentials)
 		}
 		logger.StdContextError(ctx, "failed to find user", zap.Error(err), zap.String("username", req.Username))
 		return nil, err
@@ -108,7 +108,7 @@ func (s *authService) Login(ctx context.Context, req *domain.LoginRequest) (*dom
 	// Verify password
 	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 		logger.StdContextDebug(ctx, "login failed: password mismatch", zap.Uint("user_id", user.ID))
-		return nil, fmt.Errorf("400:invalid credentials")
+		return nil, fmt.Errorf(domain.ErrInvalidCredentials)
 	}
 
 	// Generate token pair
@@ -140,14 +140,14 @@ func (s *authService) RefreshToken(ctx context.Context, req *domain.RefreshToken
 	// Validate refresh token format
 	userID, err := s.tokenService.ValidateRefreshToken(req.RefreshToken)
 	if err != nil {
-		return nil, fmt.Errorf("400:invalid refresh token")
+		return nil, fmt.Errorf(domain.ErrInvalidRefreshToken)
 	}
 
 	// Find token in database
 	storedToken, err := s.tokenRepo.FindByRefreshToken(ctx, req.RefreshToken)
 	if err != nil {
-		if errors.Is(err, fmt.Errorf("404:not found token")) {
-			return nil, fmt.Errorf("400:invalid refresh token")
+		if errors.Is(err, fmt.Errorf(domain.ErrNotFoundToken)) {
+			return nil, fmt.Errorf(domain.ErrInvalidRefreshToken)
 		}
 		logger.StdContextError(ctx, "failed to find refresh token", zap.Error(err))
 		return nil, err
@@ -155,7 +155,7 @@ func (s *authService) RefreshToken(ctx context.Context, req *domain.RefreshToken
 
 	// Check if token is expired
 	if time.Now().After(storedToken.RefreshExpiresAt) {
-		return nil, fmt.Errorf("400:refresh token has expired")
+		return nil, fmt.Errorf(domain.ErrRefreshTokenExpired)
 	}
 
 	// Generate new token pair

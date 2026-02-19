@@ -20,22 +20,21 @@ func NewInvoiceRepository(db *gorm.DB) portRepository.InvoiceRepository {
 }
 
 func (r *invoiceRepository) Get(ctx context.Context, req *domain.PaginationRequest) (*domain.PaginationResponse, error) {
-	query := r.db.WithContext(ctx).Order("created_at DESC")
-
-	if req.Limit > 0 {
-		query = query.Limit(int(req.Limit))
-	}
-	if req.Offset > 0 {
-		query = query.Offset(int(req.Offset))
-	}
-
-	query = query.Model(&domain.Invoice{}).Where("author_id = ?", req.UserID)
+	query := r.db.WithContext(ctx).Model(&domain.Invoice{}).
+		Where("author_id = ?", req.UserID)
 
 	//get count
 	var count int64
 	err := query.Count(&count).Error
 	if err != nil {
 		return nil, err
+	}
+
+	if req.Limit > 0 {
+		query = query.Limit(int(req.Limit))
+	}
+	if req.Offset > 0 {
+		query = query.Offset(int(req.Offset))
 	}
 
 	var resp domain.PaginationResponse
@@ -46,17 +45,15 @@ func (r *invoiceRepository) Get(ctx context.Context, req *domain.PaginationReque
 		TotalPage: GetTotalPage(count, req.Limit),
 	}
 
-	query = query.Limit(int(req.Limit)).Offset(int(req.Offset))
-
 	var data []domain.Invoice
-	err = query.Scan(&data).Error
+	err = query.Order("created_at DESC").Scan(&data).Error
 	if err != nil {
 		return nil, err
 	}
 
 	resp.Data = make([]any, len(data))
 	for i, v := range data {
-		resp.Data[i] = v.Response([]domain.InvoiceItem{})
+		resp.Data[i] = v.Response(nil)
 	}
 
 	return &resp, nil
@@ -110,7 +107,7 @@ func (r *invoiceRepository) GetByID(ctx context.Context, id int64) (*domain.Invo
 	err := r.db.WithContext(ctx).Where("id = ?", id).First(&invoice).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, fmt.Errorf("404:not found invoice")
+			return nil, fmt.Errorf(domain.ErrNotFoundInvoice)
 		}
 		return nil, err
 	}

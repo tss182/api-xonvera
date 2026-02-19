@@ -57,7 +57,7 @@ func (s *invoiceService) GetByID(ctx context.Context, invoiceID int64, userID ui
 	// Verify invoice belongs to user
 	if invoice.AuthorID != userID {
 		logger.StdContextWarn(ctx, "unauthorized invoice access", zap.Int64("invoice_id", invoiceID), zap.Uint("user_id", userID))
-		return nil, fmt.Errorf("404:not found invoice")
+		return nil, fmt.Errorf(domain.ErrNotFoundInvoice)
 	}
 
 	// Fetch invoice items
@@ -97,7 +97,6 @@ func (s *invoiceService) Create(ctx context.Context, req *domain.InvoiceRequest)
 	// Generate invoice ID
 	invoiceID, err := s.repo.GenerateInvoiceID(ctx, tx, req.UserID, issueDate)
 	if err != nil {
-		tx.Rollback()
 		logger.StdContextError(ctx, "failed to generate invoice ID", zap.Error(err))
 		return err
 	}
@@ -118,7 +117,6 @@ func (s *invoiceService) Create(ctx context.Context, req *domain.InvoiceRequest)
 
 	// Create invoice
 	if err = s.repo.Create(ctx, tx, &data); err != nil {
-		tx.Rollback()
 		logger.StdContextError(ctx, "failed to create invoice", zap.Error(err))
 		return err
 	}
@@ -140,7 +138,6 @@ func (s *invoiceService) Create(ctx context.Context, req *domain.InvoiceRequest)
 	}
 
 	if err = s.repo.CreateItem(ctx, tx, items); err != nil {
-		tx.Rollback()
 		logger.StdContextError(ctx, "failed to create invoice items", zap.Error(err))
 		return err
 	}
@@ -163,22 +160,26 @@ func (s *invoiceService) Update(ctx context.Context, req *domain.InvoiceRequest)
 	}
 	defer tx.Rollback()
 
+	if req.ID <= 0 {
+		return fmt.Errorf(domain.ErrInvoiceIDRequired)
+	}
+
 	// Ensure invoice exists and belongs to user
 	inv, err := s.repo.GetByID(ctx, req.ID)
 	if err != nil {
 		return err
 	}
 	if inv.AuthorID != req.UserID {
-		return fmt.Errorf("404:not found invoice")
+		return fmt.Errorf(domain.ErrNotFoundInvoice)
 	}
 
-	issueDate, err := time.Parse(time.DateOnly, req.IssueDate)
+	issueDate, err := time.ParseInLocation(time.DateOnly, req.IssueDate, time.Local)
 	if err != nil {
 		logger.StdContextError(ctx, "failed to parse issue date", zap.Error(err))
 		return err
 	}
 
-	dueDate, err := time.Parse("2006-01-02 15:04:05", req.DueDate)
+	dueDate, err := time.ParseInLocation("2006-01-02 15:04:05", req.DueDate, time.Local)
 	if err != nil {
 		logger.StdContextError(ctx, "failed to parse due date", zap.Error(err))
 		return err
@@ -254,7 +255,7 @@ func (s *invoiceService) GetPDF(ctx context.Context, invoiceID int64, userID uin
 		return nil, err
 	}
 	if data.AuthorID != userID {
-		return nil, fmt.Errorf("404:not found invoice")
+		return nil, fmt.Errorf(domain.ErrNotFoundInvoice)
 	}
 
 	filePdf := fmt.Sprintf("assets/pdf/invoice_%d.pdf", invoiceID)

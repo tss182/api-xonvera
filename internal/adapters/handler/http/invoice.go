@@ -69,7 +69,7 @@ func (h *InvoiceHandler) Get(c fiber.Ctx) error {
 // @Tags Invoice
 // @Accept json
 // @Produce json
-// @Param request body dto.CreateInvoiceRequest true "Create Invoice Request"
+// @Param request body domain.InvoiceRequest true "Create Invoice Request"
 // @Success 200 {object} Resp
 // @Failure 400 {object} Resp
 // @Router /invoice [post]
@@ -92,6 +92,10 @@ func (h *InvoiceHandler) Create(c fiber.Ctx) error {
 		return BadRequest(c, err)
 	}
 
+	if len(req.Items) == 0 {
+		return BadRequest(c, []string{"at least one invoice item is required"})
+	}
+
 	err := h.service.Create(ctx, &req)
 	if err != nil {
 		return HandlerErrorGlobal(c, err)
@@ -107,7 +111,7 @@ func (h *InvoiceHandler) Create(c fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path int true "Invoice ID"
-// @Param request body dto.InvoiceRequest true "Update Invoice Request"
+// @Param request body domain.InvoiceRequest true "Update Invoice Request"
 // @Success 200 {object} Resp
 // @Failure 400 {object} Resp
 // @Failure 404 {object} Resp

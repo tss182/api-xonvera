@@ -1,6 +1,7 @@
 package http
 
 import (
+	"app/xonvera-core/internal/core/domain"
 	portService "app/xonvera-core/internal/core/ports/service"
 	"fmt"
 
@@ -29,7 +30,7 @@ func (h *PackageHandler) GetPackages(c fiber.Ctx) error {
 func (h *PackageHandler) GetPackageByID(c fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
-		return HandlerErrorGlobal(c, fmt.Errorf("400:invalid package"))
+		return HandlerErrorGlobal(c, fmt.Errorf(domain.ErrInvalidPackage))
 	}
 
 	pkg, err := h.service.GetPackageByID(c.Context(), id)

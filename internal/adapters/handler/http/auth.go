@@ -31,7 +31,7 @@ func NewAuthHandler(service portService.AuthService, rto time.Duration) *AuthHan
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param request body dto.RegisterRequest true "Register Request"
+// @Param request body domain.RegisterRequest true "Register Request"
 // @Success 200 {object} Resp
 // @Failure 400 {object} Resp
 // @Router /auth/register [post]
@@ -61,7 +61,7 @@ func (h *AuthHandler) Register(c fiber.Ctx) error {
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param request body dto.LoginRequest true "Login Request"
+// @Param request body domain.LoginRequest true "Login Request"
 // @Success 200 {object} Resp
 // @Failure 400 {object} Resp
 // @Failure 401 {object} Resp
@@ -92,7 +92,7 @@ func (h *AuthHandler) Login(c fiber.Ctx) error {
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param request body dto.RefreshTokenRequest true "Refresh Token Request"
+// @Param request body domain.RefreshTokenRequest true "Refresh Token Request"
 // @Success 200 {object} Resp
 // @Failure 400 {object} Resp
 // @Failure 401 {object} Resp

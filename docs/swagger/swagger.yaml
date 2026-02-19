@@ -1,79 +1,6 @@
 basePath: /api/v1
 definitions:
-  domain.LoginRequest:
-    properties:
-      password:
-        maxLength: 100
-        minLength: 6
-        type: string
-      username:
-        description: can be email or phone
-        maxLength: 255
-        minLength: 3
-        type: string
-    required:
-    - password
-    - username
-    type: object
-  domain.RefreshTokenRequest:
-    properties:
-      refresh_token:
-        type: string
-    required:
-    - refresh_token
-    type: object
-  domain.RegisterRequest:
-    properties:
-      email:
-        maxLength: 255
-        type: string
-      name:
-        maxLength: 100
-        minLength: 2
-        type: string
-      password:
-        description: Stronger minimum
-        maxLength: 100
-        minLength: 8
-        type: string
-      phone:
-        description: E.164 format
-        maxLength: 15
-        minLength: 10
-        type: string
-    required:
-    - email
-    - name
-    - password
-    - phone
-    type: object
-  dto.CreateInvoiceRequest:
-    properties:
-      customer:
-        maxLength: 200
-        minLength: 1
-        type: string
-      issue_date:
-        type: string
-      issuer:
-        maxLength: 200
-        minLength: 1
-        type: string
-      items:
-        items:
-          $ref: '#/definitions/dto.InvoiceItemRequest'
-        minItems: 1
-        type: array
-      note:
-        maxLength: 1000
-        type: string
-    required:
-    - customer
-    - issue_date
-    - issuer
-    - items
-    type: object
-  dto.InvoiceItemRequest:
+  domain.InvoiceItemRequest:
     properties:
       description:
         maxLength: 500
@@ -90,6 +17,75 @@ definitions:
     - price
     - qty
     type: object
+  domain.InvoiceRequest:
+    properties:
+      customer:
+        maxLength: 200
+        minLength: 1
+        type: string
+      due_date:
+        type: string
+      id:
+        type: integer
+      issue_date:
+        type: string
+      issuer:
+        maxLength: 200
+        minLength: 1
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/domain.InvoiceItemRequest'
+        minItems: 1
+        type: array
+      note:
+        maxLength: 1000
+        type: string
+    required:
+    - customer
+    - due_date
+    - id
+    - issue_date
+    - issuer
+    - items
+    type: object
+  domain.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        description: email or phone
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  domain.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  domain.RegisterRequest:
+    properties:
+      name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      password:
+        maxLength: 100
+        minLength: 6
+        type: string
+      phone:
+        maxLength: 15
+        minLength: 10
+        type: string
+    required:
+    - name
+    - password
+    - phone
+    type: object
   http.Resp:
     properties:
       data: {}
@@ -99,10 +95,6 @@ definitions:
         type: array
       meta: {}
       request_id:
-        type: string
-      title:
-        type: string
-      version:
         type: string
     type: object
 host: localhost:8080
@@ -219,21 +211,21 @@ paths:
       summary: Register a new user
       tags:
       - Auth
-  /invoices:
+  /invoice:
     get:
       consumes:
       - application/json
-      description: Get all invoices with pagination
+      description: Get all invoice with pagination
       parameters:
+      - default: 1
+        description: Page
+        in: query
+        name: page
+        type: integer
       - default: 20
         description: Limit
         in: query
         name: limit
-        type: integer
-      - default: 0
-        description: Offset
-        in: query
-        name: offset
         type: integer
       produces:
       - application/json
@@ -246,7 +238,7 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.Resp'
-      summary: Get all invoices
+      summary: Get all invoice
       tags:
       - Invoice
     post:
@@ -259,7 +251,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateInvoiceRequest'
+          $ref: '#/definitions/domain.InvoiceRequest'
       produces:
       - application/json
       responses:
@@ -274,17 +266,23 @@ paths:
       summary: Create a new invoice
       tags:
       - Invoice
-  /invoices/{id}:
-    get:
+  /invoice/{id}:
+    put:
       consumes:
       - application/json
-      description: Get invoice details by ID
+      description: Update invoice details with items
       parameters:
       - description: Invoice ID
         in: path
         name: id
         required: true
         type: integer
+      - description: Update Invoice Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.InvoiceRequest'
       produces:
       - application/json
       responses:
@@ -300,7 +298,37 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/http.Resp'
-      summary: Get invoice by ID
+      summary: Update invoice
+      tags:
+      - Invoice
+  /invoice/{id}/pdf:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve existing invoice PDF or generate new one based on invoice
+        data
+      parameters:
+      - description: Invoice ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/pdf
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Resp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Resp'
+      summary: Get invoice PDF
       tags:
       - Invoice
 schemes:

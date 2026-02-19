@@ -75,7 +75,7 @@ func (r *TokenRepository) FindByAccessToken(ctx context.Context, accessToken str
 	key := fmt.Sprintf(tokenAccessKeyPrefix, accessToken)
 	data, err := r.client.Get(ctx, key).Result()
 	if err == redis.Nil {
-		return nil, fmt.Errorf("404:not found token")
+		return nil, fmt.Errorf(domain.ErrNotFoundToken)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("500:failed to get token: %w", err)
@@ -94,7 +94,7 @@ func (r *TokenRepository) FindByRefreshToken(ctx context.Context, refreshToken s
 	key := fmt.Sprintf(tokenRefreshKeyPrefix, refreshToken)
 	data, err := r.client.Get(ctx, key).Result()
 	if err == redis.Nil {
-		return nil, fmt.Errorf("404:not found token")
+		return nil, fmt.Errorf(domain.ErrNotFoundToken)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("500:failed to get token: %w", err)

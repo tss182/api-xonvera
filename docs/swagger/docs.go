@@ -181,9 +181,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/invoices": {
+        "/invoice": {
             "get": {
-                "description": "Get all invoices with pagination",
+                "description": "Get all invoice with pagination",
                 "consumes": [
                     "application/json"
                 ],
@@ -193,20 +193,20 @@ const docTemplate = `{
                 "tags": [
                     "Invoice"
                 ],
-                "summary": "Get all invoices",
+                "summary": "Get all invoice",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
                     {
                         "type": "integer",
                         "default": 20,
                         "description": "Limit",
                         "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 0,
-                        "description": "Offset",
-                        "name": "offset",
                         "in": "query"
                     }
                 ],
@@ -244,7 +244,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateInvoiceRequest"
+                            "$ref": "#/definitions/domain.InvoiceRequest"
                         }
                     }
                 ],
@@ -264,9 +264,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/invoices/{id}": {
-            "get": {
-                "description": "Get invoice details by ID",
+        "/invoice/{id}": {
+            "put": {
+                "description": "Update invoice details with items",
                 "consumes": [
                     "application/json"
                 ],
@@ -276,7 +276,7 @@ const docTemplate = `{
                 "tags": [
                     "Invoice"
                 ],
-                "summary": "Get invoice by ID",
+                "summary": "Update invoice",
                 "parameters": [
                     {
                         "type": "integer",
@@ -284,6 +284,15 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Update Invoice Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.InvoiceRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -307,108 +316,54 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/invoice/{id}/pdf": {
+            "get": {
+                "description": "Retrieve existing invoice PDF or generate new one based on invoice data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/pdf"
+                ],
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "Get invoice PDF",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Invoice ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/http.Resp"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/http.Resp"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "domain.LoginRequest": {
-            "type": "object",
-            "required": [
-                "password",
-                "username"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 6
-                },
-                "username": {
-                    "description": "can be email or phone",
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 3
-                }
-            }
-        },
-        "domain.RefreshTokenRequest": {
-            "type": "object",
-            "required": [
-                "refresh_token"
-            ],
-            "properties": {
-                "refresh_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.RegisterRequest": {
-            "type": "object",
-            "required": [
-                "email",
-                "name",
-                "password",
-                "phone"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 2
-                },
-                "password": {
-                    "description": "Stronger minimum",
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 8
-                },
-                "phone": {
-                    "description": "E.164 format",
-                    "type": "string",
-                    "maxLength": 15,
-                    "minLength": 10
-                }
-            }
-        },
-        "dto.CreateInvoiceRequest": {
-            "type": "object",
-            "required": [
-                "customer",
-                "issue_date",
-                "issuer",
-                "items"
-            ],
-            "properties": {
-                "customer": {
-                    "type": "string",
-                    "maxLength": 200,
-                    "minLength": 1
-                },
-                "issue_date": {
-                    "type": "string"
-                },
-                "issuer": {
-                    "type": "string",
-                    "maxLength": 200,
-                    "minLength": 1
-                },
-                "items": {
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                        "$ref": "#/definitions/dto.InvoiceItemRequest"
-                    }
-                },
-                "note": {
-                    "type": "string",
-                    "maxLength": 1000
-                }
-            }
-        },
-        "dto.InvoiceItemRequest": {
+        "domain.InvoiceItemRequest": {
             "type": "object",
             "required": [
                 "description",
@@ -428,6 +383,101 @@ const docTemplate = `{
                 "qty": {
                     "type": "integer",
                     "minimum": 1
+                }
+            }
+        },
+        "domain.InvoiceRequest": {
+            "type": "object",
+            "required": [
+                "customer",
+                "due_date",
+                "id",
+                "issue_date",
+                "issuer",
+                "items"
+            ],
+            "properties": {
+                "customer": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "minLength": 1
+                },
+                "due_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "issue_date": {
+                    "type": "string"
+                },
+                "issuer": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "minLength": 1
+                },
+                "items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/domain.InvoiceItemRequest"
+                    }
+                },
+                "note": {
+                    "type": "string",
+                    "maxLength": 1000
+                }
+            }
+        },
+        "domain.LoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "description": "email or phone",
+                    "type": "string"
+                }
+            }
+        },
+        "domain.RefreshTokenRequest": {
+            "type": "object",
+            "required": [
+                "refresh_token"
+            ],
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "password",
+                "phone"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 2
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 6
+                },
+                "phone": {
+                    "type": "string",
+                    "maxLength": 15,
+                    "minLength": 10
                 }
             }
         },

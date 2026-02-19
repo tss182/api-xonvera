@@ -90,6 +90,19 @@ func NewConnection(cfg *config.DatabaseConfig) (*gorm.DB, error) {
 	sqlDB.SetConnMaxIdleTime(cfg.ConnMaxIdleTime)
 	sqlDB.SetConnMaxLifetime(cfg.ConnMaxLifeTime)
 
+	// Periodically log pool stats
+	ticker := time.NewTicker(5 * time.Minute)
+	go func() {
+		for range ticker.C {
+			stats := sqlDB.Stats()
+			logger.Info("Connection pool stats",
+				zap.Int("open_connections", stats.OpenConnections),
+				zap.Int("in_use", stats.InUse),
+				zap.Int("idle", stats.Idle),
+			)
+		}
+	}()
+
 	logger.Info("Database connection established",
 		zap.String("host", cfg.Host),
 		zap.String("database", cfg.Name),

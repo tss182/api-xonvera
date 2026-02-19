@@ -9,10 +9,14 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 )
+
+var fieldNameCache = make(map[string]map[string]string)
+var cacheMutex sync.RWMutex
 
 func HandlerBindingError(c fiber.Ctx, obj any, shouldType string, skips ...string) (res []string) {
 	var err error
@@ -50,10 +54,37 @@ func Validation(obj interface{}, skips ...string) []string {
 	return ErrorHandle(obj, err, skips...)
 }
 
+// Extract field name from struct field tags
+func extractFieldName(structField reflect.StructField) string {
+	jsonTag := structField.Tag.Get("json")
+	if jsonTag != "" && jsonTag != "-" {
+		return strings.Split(jsonTag, ",")[0]
+	}
+
+	queryTag := structField.Tag.Get("query")
+	if queryTag != "" && queryTag != "-" {
+		return strings.Split(queryTag, ",")[0]
+	}
+
+	formTag := structField.Tag.Get("form")
+	if formTag != "" && formTag != "-" {
+		return strings.Split(formTag, ",")[0]
+	}
+
+	return structField.Name
+}
+
 // Map field names to their JSON tags.
 func getJSONFieldName(obj interface{}) map[string]string {
 	objValue := reflect.ValueOf(obj)
 	objType := objValue.Type()
+
+	cacheMutex.RLock()
+	if cached, ok := fieldNameCache[objType.String()]; ok {
+		cacheMutex.RUnlock()
+		return cached
+	}
+	cacheMutex.RUnlock()
 
 	// Handle a pointer to struct if necessary
 	if objType.Kind() == reflect.Ptr {
@@ -69,19 +100,7 @@ func getJSONFieldName(obj interface{}) map[string]string {
 	// Iterate over struct fields
 	for i := 0; i < objType.NumField(); i++ {
 		structField := objType.Field(i)
-		var field string
-		jsonTag := structField.Tag.Get("json")
-		queryTag := structField.Tag.Get("query")
-		formTag := structField.Tag.Get("form")
-		if jsonTag != "" && jsonTag != "-" {
-			field = strings.Split(jsonTag, ",")[0] // Handle response like `json:"field,omitempty"`
-		} else if queryTag != "" && queryTag != "-" {
-			field = strings.Split(queryTag, ",")[0]
-		} else if formTag != "" && formTag != "-" {
-			field = strings.Split(formTag, ",")[0]
-		} else {
-			field = structField.Name
-		}
+		field := extractFieldName(structField)
 
 		// Handle embedded (anonymous) structs
 		if structField.Anonymous {
@@ -89,13 +108,16 @@ func getJSONFieldName(obj interface{}) map[string]string {
 			if embeddedField.IsValid() {
 				embeddedResp := getJSONFieldName(embeddedField.Interface())
 				maps.Copy(resp, embeddedResp)
-
 			}
 		}
 
 		resp[structField.Name] = field
-
 	}
+
+	cacheMutex.Lock()
+	fieldNameCache[objType.String()] = resp
+	cacheMutex.Unlock()
+
 	return resp // Return the original field name by default
 }
 
